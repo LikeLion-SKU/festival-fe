@@ -2,11 +2,12 @@ import { RouterProvider, createBrowserRouter } from 'react-router';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+import MobileLayout from '@/layouts/MobileLayout';
 import RootLayout from '@/layouts/RootLayout';
 import ServiceLayout from '@/layouts/ServiceLayout';
 import ProtectedRoute from '@/router/ProtectedRoute';
 
-//const page = (importFn) => () => importFn().then((m) => ({ Component: m.default }));
+const page = (importFn) => () => importFn().then((m) => ({ Component: m.default }));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,19 +20,17 @@ const router = createBrowserRouter([
     Component: RootLayout,
     children: [
       {
+        Component: MobileLayout,
+        children: [
+          { path: '/adminlogin', lazy: page(() => import('@/pages/admin/AdminLoginPage')) },
+        ],
+      },
+      {
         Component: ProtectedRoute,
         children: [
           //{ path: "", lazy: page(() => import("파일 경로")) },
         ],
       },
-    ],
-  },
-  {
-    path: '/auth',
-    Component: ServiceLayout,
-    children: [
-      //{ index: true, lazy: page(() => import("파일 경로")) },
-      //{ path: "", lazy: page(() => import("파일 경로")) },
     ],
   },
 ]);
