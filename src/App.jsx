@@ -8,7 +8,7 @@ import RootLayout from '@/layouts/RootLayout';
 import ServiceLayout from '@/layouts/ServiceLayout';
 import ProtectedRoute from '@/router/ProtectedRoute';
 
-//const page = (importFn) => () => importFn().then((m) => ({ Component: m.default }));
+const page = (importFn) => () => importFn().then((m) => ({ Component: m.default }));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,6 +39,10 @@ const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    Component: AdminLayout,
+    children: [{ path: '/login', lazy: page(() => import('@/pages/admin/AdminLogin')) }],
   },
 ]);
 
