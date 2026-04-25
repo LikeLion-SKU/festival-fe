@@ -1,5 +1,8 @@
 import { useState } from 'react';
 
+import EyeClose from '@/assets/icons/eye-close-icon.svg?react';
+import EyeOpen from '@/assets/icons/eye-open-icon.svg?react';
+
 export default function PasswordBox({ value, onChange, correctPassword }) {
   const [visible, setVisible] = useState(false);
 
@@ -16,7 +19,7 @@ export default function PasswordBox({ value, onChange, correctPassword }) {
   return (
     <div className="flex w-full min-w-87.5 flex-col gap-1.25">
       <div
-        className={`flex w-full items-center justify-between border-b-2 pb-[15px] pl-[10px] ${borderColor}`}
+        className={`flex w-full items-center justify-between border-b-2 pb-3.75 pl-2.5 ${borderColor}`}
       >
         <input
           type={visible ? 'text' : 'password'}
@@ -31,34 +34,7 @@ export default function PasswordBox({ value, onChange, correctPassword }) {
           className="shrink-0"
           aria-label={visible ? '비밀번호 숨기기' : '비밀번호 표시'}
         >
-          {visible ? (
-            <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-              <path
-                d="M5 15s3.75-6.25 10-6.25S25 15 25 15s-3.75 6.25-10 6.25S5 15 5 15Z"
-                stroke="#7F7F7F"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <circle cx="15" cy="15" r="2.5" stroke="#7F7F7F" strokeWidth="1.5" />
-            </svg>
-          ) : (
-            <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
-              <path
-                d="M6.25 11.25S8.75 16.25 15 16.25s8.75-5 8.75-5"
-                stroke="#7F7F7F"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="m20 16 2 3M15 17.5v3M10 16l-2 3"
-                stroke="#7F7F7F"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-            </svg>
-          )}
+          {visible ? <EyeOpen /> : <EyeClose />}
         </button>
       </div>
       <div className="flex w-full items-center px-2.5">
