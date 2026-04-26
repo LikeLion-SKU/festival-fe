@@ -17,7 +17,7 @@ export default function Main() {
         <Booth />
         <Safety />
         <About />
-        <footer id="footer" className="h-[37.75rem]"></footer>
+        <footer id="footer" className="h-[9.4375rem]"></footer>
       </div>
     </div>
   );
