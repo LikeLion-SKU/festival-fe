@@ -81,10 +81,10 @@ export default function Intro() {
       </button>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-[60rem]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-[65rem]"
         style={{
           background:
-            'linear-gradient(180deg, rgba(0,0,0,0.05) 1%, rgba(18,18,18,0.3) 20%, rgba(18,18,18,0.5) 40%, rgba(18,18,18,0.7) 80%, rgba(18,18,18,0.95) 90%, rgba(0,0,0,1) 100%)',
+            'linear-gradient(180deg, rgba(0,0,0,0.05) 0%,  rgba(18,18,18,0.5) 40%, rgba(18,18,18,0.7) 80%, rgba(0,0,0,1) 100%)',
         }}
       />
     </section>
