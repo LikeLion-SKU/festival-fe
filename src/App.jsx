@@ -7,6 +7,7 @@ import MobileLayout from '@/layouts/MobileLayout';
 import RootLayout from '@/layouts/RootLayout';
 import ServiceLayout from '@/layouts/ServiceLayout';
 import Main from '@/pages/Main';
+import AdminMain from '@/pages/admin/AdminMain';
 import ProtectedRoute from '@/router/ProtectedRoute';
 
 const page = (importFn) => () => importFn().then((m) => ({ Component: m.default }));
@@ -38,7 +39,13 @@ const router = createBrowserRouter([
           {
             Component: ProtectedRoute,
             children: [
-              //{ path: "", lazy: page(() => import("파일 경로")) },
+              {
+                path: '/admin',
+                Component: AdminMain,
+                children: [
+                  { path: 'waiting', lazy: page(() => import('@/pages/admin/WatingMenu')) },
+                ],
+              },
             ],
           },
         ],
