@@ -13,7 +13,7 @@ export default function Introduce() {
   return (
     <section
       id="introduce"
-      className="min-h-[38dvh] bg-[#141414] px-[3.65625rem] pt-[3.75rem]"
+      className="min-h-[24rem] bg-[#141414] px-[3.65625rem] pt-[3.75rem]"
       style={{
         backgroundImage:
           'linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 31%, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 125%)',

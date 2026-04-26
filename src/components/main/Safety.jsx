@@ -19,7 +19,7 @@ export default function Safety() {
   return (
     <section
       id="safety"
-      className="relative min-h-[55dvh] overflow-hidden bg-[#141414] px-[3.65625rem] pt-[3.75rem]"
+      className="relative min-h-[26rem] overflow-hidden bg-[#141414] px-[3.65625rem] pt-[3.75rem]"
     >
       <img
         src={DesertBg}

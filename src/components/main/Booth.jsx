@@ -6,9 +6,9 @@ export default function Booth() {
   return (
     <section
       id="booth"
-      className="relative min-h-[100dvh] overflow-hidden bg-[#141414] px-[3.65625rem] pt-[2.5rem]"
+      className="relative min-h-[46rem] overflow-hidden bg-[#141414] px-[3.65625rem] pt-[2.5rem]"
     >
-      <div className="pointer-events-none absolute left-1/2 top-[-23.5rem] z-[1] flex w-[28.125rem] max-w-none -translate-x-1/2 flex-col">
+      <div className="pointer-events-none absolute left-1/2 top-[-29rem] z-0 flex w-[28.125rem] max-w-none -translate-x-1/2 flex-col">
         <img src={FenceBg} alt="" aria-hidden="true" className="w-full object-cover" />
         <img src={DesertBg} alt="" aria-hidden="true" className="-mt-[20rem] w-full object-cover" />
       </div>

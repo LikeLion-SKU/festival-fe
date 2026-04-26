@@ -12,7 +12,7 @@ export default function Footer() {
       <p className="flex items-center gap-[0.25rem] text-[0.5rem] font-bold leading-none tracking-[-0.01rem] text-white [font-family:Pretendard]">
         <span>2026 서경대학교 대동제 X</span>
         <img src={LiklionLogo} alt="" aria-hidden="true" className="h-[0.45rem] w-auto" />
-        <span>SKU LIKELION</span>
+        <span className="-ml-[0.2rem]">SKU LIKELION</span>
       </p>
       <div className="flex items-center gap-[0.35rem] pt-[0.5rem]">
         <img src={EmailIcon} alt="email" className="h-[0.75rem] w-[0.75rem]" />

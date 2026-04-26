@@ -26,9 +26,9 @@ export default function Intro() {
   return (
     <section
       id="intro"
-      className="relative flex min-h-[100dvh] items-start justify-center bg-[#121212] px-[1.5rem] pt-[6.1875rem]"
+      className="relative flex min-h-[48rem] items-start justify-center bg-[#121212] px-[1.5rem] pt-[6.1875rem]"
     >
-      <div className="flex w-[8.5625rem] flex-col items-center gap-[1.0625rem] text-center">
+      <div className="relative z-[10] flex w-[8.5625rem] flex-col items-center gap-[1.0625rem] text-center">
         <img src={HatIcon} alt="" aria-hidden="true" className="h-auto w-[2.3125rem]" />
         <div className="w-full">
           <p className="text-[0.75rem] leading-[1.024rem] text-white tracking-[-0.015rem] [font-family:Pretendard] whitespace-nowrap">
@@ -36,7 +36,7 @@ export default function Intro() {
             <span className="font-bold">서경대학교</span>
             <span className="font-medium"> 대동제</span>
           </p>
-          <div className="mt-[0.375rem] h-[0.03125rem] w-full bg-[#E6E6E6]" />
+          <div className="mt-[0.375rem] h-[0.03125rem] w-full bg-[#FFFFFF]" />
           <div className="mt-[0.8125rem] flex items-center justify-center gap-[0.0625rem]">
             <img src={ZeroIcon} alt="" aria-hidden="true" className="h-auto w-auto" />
             <img src={FiveIcon} alt="" aria-hidden="true" className="h-auto w-auto" />
