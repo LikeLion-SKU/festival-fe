@@ -26,7 +26,7 @@ export default function Intro() {
   return (
     <section
       id="intro"
-      className="relative flex min-h-[100dvh] items-start justify-center bg-[#141414] px-[1.5rem] pt-[6.1875rem]"
+      className="relative flex min-h-[100dvh] items-start justify-center bg-[#121212] px-[1.5rem] pt-[6.1875rem]"
     >
       <div className="flex w-[8.5625rem] flex-col items-center gap-[1.0625rem] text-center">
         <img src={HatIcon} alt="" aria-hidden="true" className="h-auto w-[2.3125rem]" />
@@ -55,7 +55,7 @@ export default function Intro() {
       <button
         type="button"
         aria-label="메뉴 열기"
-        className="absolute bottom-[2rem] left-1/2 flex h-[3.4375rem] w-[3.4375rem] -translate-x-1/2 items-center justify-center overflow-hidden rounded-[12.5rem]"
+        className="absolute bottom-[5rem] left-1/2 z-[10] flex h-[3.4375rem] w-[3.4375rem] -translate-x-1/2 items-center justify-center overflow-hidden rounded-[12.5rem]"
         style={{
           background: 'rgba(255, 255, 255, 0.1)',
           border: '1px solid transparent',
@@ -79,6 +79,14 @@ export default function Intro() {
           <span className="h-[0.125rem] w-[1.3rem] rounded-full bg-[#DA3328]" />
         </span>
       </button>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-[60rem]"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(0,0,0,0.05) 1%, rgba(18,18,18,0.3) 20%, rgba(18,18,18,0.5) 40%, rgba(18,18,18,0.7) 80%, rgba(18,18,18,0.95) 90%, rgba(0,0,0,1) 100%)',
+        }}
+      />
     </section>
   );
 }
