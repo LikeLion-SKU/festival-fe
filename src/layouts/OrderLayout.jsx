@@ -16,14 +16,16 @@ export default function OrderLayout() {
   const isLoading = navigation.state === 'loading';
 
   return (
-    <main>
+    <main className="flex h-full flex-col">
       {isLoading && <LoadingBar />}
       <OrderHeader
         title={headerConfig.title}
         showBackButton={headerConfig.showBackButton}
         onBack={headerConfig.onBack}
       />
-      <Outlet context={{ setIsModalOpen, isModalOpen, setHeaderConfig }} />
+      <div className="min-h-0 flex-1">
+        <Outlet context={{ setIsModalOpen, isModalOpen, setHeaderConfig }} />
+      </div>
       <ScrollRestoration />
     </main>
   );

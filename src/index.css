@@ -17,3 +17,9 @@
 body {
   font-family: 'Pretendard', sans-serif;
 }
+
+html,
+body,
+#root {
+  height: 100%;
+}
