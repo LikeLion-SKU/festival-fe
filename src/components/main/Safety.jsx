@@ -19,7 +19,7 @@ export default function Safety() {
   return (
     <section
       id="safety"
-      className="relative min-h-[100dvh] overflow-hidden bg-[#141414] px-[3.65625rem] pt-[3.75rem]"
+      className="relative min-h-[55dvh] overflow-hidden bg-[#141414] px-[3.65625rem] pt-[3.75rem]"
     >
       <img
         src={DesertBg}
@@ -40,7 +40,14 @@ export default function Safety() {
         className="pointer-events-none absolute left-1/2 top-[15rem] z-[2] h-[50rem] w-[28.125rem] max-w-none -translate-x-1/2"
         style={{
           background:
-            'linear-gradient(180deg, rgba(0,0,0, 0.7) 0%, rgba(0,0,0,0.6) 10%, rgba(0,0,0,0.35) 35%,rgba(0,0,0,0.4) 45%, rgba(0,0,0,0.5) 55%, rgba(0,0,0,0.6) 65%, rgba(0,0,0,0.7) 75%, rgba(0,0,0,0.8) 85%, rgba(0,0,0,0.9) 95%, rgba(0,0,0,1) 100%)',
+            'linear-gradient(180deg, rgba(0,0,0, 0.6) 0%, rgba(0,0,0,0.6) 10%, rgba(0,0,0,0.35) 35%,rgba(0,0,0,0.4) 45%, rgba(0,0,0,0.5) 55%, rgba(0,0,0,0.6) 65%, rgba(0,0,0,0.7) 75%, rgba(0,0,0,0.8) 85%, rgba(0,0,0,0.9) 95%, rgba(0,0,0,1) 100%)',
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 left-1/2 z-[3] h-[12rem] w-[28.125rem] max-w-none -translate-x-1/2"
+        style={{
+          background: 'linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.95) 100%)',
         }}
       />
       <div className="relative z-10 flex flex-col items-center gap-[0.25rem]">

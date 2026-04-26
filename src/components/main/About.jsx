@@ -1,9 +1,24 @@
+import AboutFire2 from '@/assets/images/about-fire2.svg';
+import AboutFire from '@/assets/images/about-fire.svg';
+
 export default function About() {
   return (
     <section
       id="about"
       className="relative min-h-[100dvh] overflow-hidden bg-[#141414] px-[3.65625rem] pt-[3.75rem]"
     >
+      <img
+        src={AboutFire}
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 top-0 z-[0] w-[28.125rem] max-w-none -translate-x-1/2 object-cover"
+      />
+      <img
+        src={AboutFire2}
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 left-1/2 z-[0] w-[28.125rem] max-w-none -translate-x-1/2 object-cover"
+      />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[16rem]"
