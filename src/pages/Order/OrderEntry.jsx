@@ -18,7 +18,7 @@ function OrderEntry() {
         content={content}
         images={images}
       />
-      <OrderButtonBox className="relative z-1" buttonName={buttonName} />
+      <OrderButtonBox className="relative z-1" buttonName={buttonName} isOpen={isOpen} />
     </>
   );
 }
