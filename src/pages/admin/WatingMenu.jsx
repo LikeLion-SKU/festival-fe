@@ -1,3 +1,3 @@
 export default function WaitingMenu() {
-  return <>대기 중</>;
+  return <div className="">대기 중</div>;
 }
