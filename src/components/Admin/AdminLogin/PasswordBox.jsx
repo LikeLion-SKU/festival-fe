@@ -26,7 +26,7 @@ export default function PasswordBox({ value, onChange, correctPassword }) {
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="비밀번호를 입력해주세요"
-          className="flex-1 bg-transparent text-[18px] leading-[1.6] text-[#1A1A1A] outline-none placeholder:text-[#A0A0A0]"
+          className="flex-1 h-7.5 bg-transparent text-[18px] leading-[1.6] text-[#1A1A1A] outline-none placeholder:text-[#A0A0A0]"
         />
         <button
           type="button"
