@@ -12,10 +12,12 @@ export default function RootLayout() {
   const isLoading = navigation.state === 'loading';
 
   return (
-    <main>
+    <main className="flex h-full flex-col">
       {isLoading && <LoadingBar />}
       {/* <Header /> */}
-      <Outlet context={{ onModalChange: setIsModalOpen, isModalOpen: isModalOpen }} />
+      <div className="min-h-0 flex-1">
+        <Outlet context={{ onModalChange: setIsModalOpen, isModalOpen: isModalOpen }} />
+      </div>
       <ScrollRestoration />
     </main>
   );

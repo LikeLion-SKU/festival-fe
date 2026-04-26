@@ -27,3 +27,9 @@ body {
   --color-deep-gray: #595959;
   --color-order-button: #fe5f54;
 }
+
+html,
+body,
+#root {
+  height: 100%;
+}
