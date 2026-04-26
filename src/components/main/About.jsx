@@ -44,11 +44,7 @@ export default function About() {
           <span className="h-[0.3125rem] w-[0.3125rem] rounded-full bg-white" />
           <span className="h-[0.3125rem] w-[0.3125rem] rounded-full bg-white" />
         </div>
-        <img
-          src={SkuLogo}
-          alt="SKU LIKELION 로고"
-          className="mt-[3.125rem] h-[10.75rem] w-[10.75rem]"
-        />
+        <img src={SkuLogo} alt="SKU LIKELION 로고" className="mt-[3.125rem] h-[9rem] w-[9rem]" />
         <p className="mt-[2rem] text-[1.125rem] leading-[1.2] text-[#fefefe] [font-family:Sekuya]">
           SKU LIKELION 14TH
         </p>
