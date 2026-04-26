@@ -8,7 +8,7 @@ import RootLayout from '@/layouts/RootLayout';
 import ServiceLayout from '@/layouts/ServiceLayout';
 import ProtectedRoute from '@/router/ProtectedRoute';
 
-//const page = (importFn) => () => importFn().then((m) => ({ Component: m.default }));
+const page = (importFn) => () => importFn().then((m) => ({ Component: m.default }));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,7 +23,8 @@ const router = createBrowserRouter([
       {
         Component: MobileLayout,
         children: [
-          //{ path: '', lazy: page(() => import('파일 경로')) },
+          { path: '/lost-items', lazy: page(() => import('@/pages/LostItem/LostItem')) },
+          { path: '/lost-items/:id', lazy: page(() => import('@/pages/LostItem/LostItemDetail')) },
         ],
       },
       {
