@@ -17,3 +17,13 @@
 body {
   font-family: 'Pretendard', sans-serif;
 }
+
+@theme {
+  --color-button-red: #ff756c;
+  --color-button-red-bg: #ffbbb8;
+  --color-button-gray: #868686;
+  --color-button-gray-bg: #efefef;
+  --color-text-gray: #a0a0a0;
+  --color-deep-gray: #595959;
+  --color-order-button: #fe5f54;
+}
