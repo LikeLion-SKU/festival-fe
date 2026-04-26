@@ -6,8 +6,6 @@ import AdminLayout from '@/layouts/AdminLayout';
 import MobileLayout from '@/layouts/MobileLayout';
 import OrderLayout from '@/layouts/OrderLayout';
 import RootLayout from '@/layouts/RootLayout';
-import ServiceLayout from '@/layouts/ServiceLayout';
-import Main from '@/pages/Main';
 import AdminMain from '@/pages/admin/AdminMain';
 import ProtectedRoute from '@/router/ProtectedRoute';
 
@@ -21,10 +19,7 @@ const queryClient = new QueryClient({
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    Component: Main,
-  },
-  {
+    //헤더가 있는 디자인 페이지
     Component: RootLayout,
     children: [
       {
@@ -36,7 +31,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    //주문 시스템 레이아웃
+    //헤더 있는 주문 시스템 레이아웃
     Component: OrderLayout,
     children: [
       {
@@ -66,6 +61,12 @@ const router = createBrowserRouter([
     ],
   },
   {
+    //헤더 없는 사용자 페이지
+    Component: MobileLayout,
+    children: [{ path: '/', lazy: page(() => import('@/pages/Main')) }],
+  },
+  {
+    //헤더 없는 관리자 페이지
     Component: AdminLayout,
     children: [{ path: '/login', lazy: page(() => import('@/pages/admin/AdminLogin')) }],
   },
