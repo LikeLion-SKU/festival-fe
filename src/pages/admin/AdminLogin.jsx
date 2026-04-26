@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import CheckIcon from '@/assets/icons/check_red_icon.svg?react';
+import CheckIcon from '@/assets/icons/admin/check_red_icon.svg?react';
 import DepartmentBox from '@/components/Admin/AdminLogin/DepartmentBox';
 import PasswordBox from '@/components/Admin/AdminLogin/PasswordBox';
 import OrderButton from '@/components/common/OrderButton';
