@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import AdminLayout from '@/layouts/AdminLayout';
 import MobileLayout from '@/layouts/MobileLayout';
+import OrderLayout from '@/layouts/OrderLayout';
 import RootLayout from '@/layouts/RootLayout';
 import ServiceLayout from '@/layouts/ServiceLayout';
 import Main from '@/pages/Main';
@@ -25,6 +26,18 @@ const router = createBrowserRouter([
   },
   {
     Component: RootLayout,
+    children: [
+      {
+        Component: MobileLayout,
+        children: [
+          //{ path: '', lazy: page(() => import('파일 경로')) },
+        ],
+      },
+    ],
+  },
+  {
+    //주문 시스템 레이아웃
+    Component: OrderLayout,
     children: [
       {
         Component: MobileLayout,
