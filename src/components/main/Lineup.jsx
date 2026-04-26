@@ -24,19 +24,19 @@ export default function Lineup() {
         src={HorseCard}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-[0.75rem] z-[10] w-full object-contain"
+        className="pointer-events-none absolute left-1/2 top-[0.75rem] z-[10] w-[28.125rem] max-w-none -translate-x-1/2 object-contain"
       />
       <img
         src={HorseRed}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-[8rem] z-[11] w-[33%] -translate-x-1/2 object-contain mix-blend-multiply"
+        className="pointer-events-none absolute left-1/2 top-[8rem] z-[11] w-[9.28125rem] max-w-none -translate-x-1/2 object-contain mix-blend-multiply"
       />
       <img
         src={FenceBg}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-[-5rem] z-[2] w-full object-cover"
+        className="pointer-events-none absolute left-1/2 bottom-[-5rem] z-[2] w-[28.125rem] max-w-none -translate-x-1/2 object-cover"
       />
       <div className="relative z-10 flex flex-col items-center gap-[0.25rem]">
         <img src={HorseIcon} alt="" aria-hidden="true" className="h-[2.5rem] w-[2.4375rem]" />
