@@ -36,11 +36,11 @@ export default function Lineup() {
         src={FenceBg}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-[-2rem] z-[2] w-full object-cover"
+        className="pointer-events-none absolute inset-x-0 bottom-[-5rem] z-[2] w-full object-cover"
       />
       <div className="relative z-10 flex flex-col items-center gap-[0.25rem]">
         <img src={HorseIcon} alt="" aria-hidden="true" className="h-[2.5rem] w-[2.4375rem]" />
-        <p className="text-center text-[1rem] leading-[1] text-[#fefefe] [font-family:Sekuya] [text-shadow:1px_1px_0px_rgba(0,0,0,0.11)]">
+        <p className="text-center text-[1rem] leading-[3.2] text-[#fefefe] [font-family:Sekuya] [text-shadow:1px_1px_0px_rgba(0,0,0,0.11)]">
           LINEUP
         </p>
       </div>

@@ -19,10 +19,10 @@ export default function Introduce() {
           'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 31%, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 125%)',
       }}
     >
-      <div className="flex flex-col items-center gap-[1.3125rem]">
+      <div className="flex flex-col items-center gap-[0.75rem]">
         <div className="flex flex-col items-center gap-[0.25rem]">
           <img src={HorseIcon} alt="" aria-hidden="true" className="h-[2.5rem] w-[2.4375rem]" />
-          <p className="text-center text-[1rem] leading-[1] text-[#fefefe] [font-family:Sekuya] [text-shadow:1px_1px_0px_rgba(0,0,0,0.11)]">
+          <p className="text-center text-[1rem] leading-[3.2] text-[#fefefe] [font-family:Sekuya] [text-shadow:1px_1px_0px_rgba(0,0,0,0.11)]">
             INTRODUCE
           </p>
         </div>
