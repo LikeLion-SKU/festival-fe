@@ -1,9 +1,24 @@
-import Booth from '@/assets/images/booth_image.svg?react';
+import { useOutletContext } from 'react-router';
+
+import BoothImageSection from '@/components/Order/OrderEntry/BoothImageSection';
+import BoothInfoSection from '@/components/Order/OrderEntry/BoothInfoSection';
+import OrderButtonBox from '@/components/Order/OrderEntry/OrderButtonBox';
 
 function OrderEntry() {
+  const { boothName, location, isOpen, content, HeroImage, images, buttonName } =
+    useOutletContext();
+
   return (
     <>
-      <Booth className="w-49 h-49" />
+      <BoothImageSection Image={HeroImage} />
+      <BoothInfoSection
+        boothName={boothName}
+        location={location}
+        isOpen={isOpen}
+        content={content}
+        images={images}
+      />
+      <OrderButtonBox className="relative z-1" buttonName={buttonName} />
     </>
   );
 }
