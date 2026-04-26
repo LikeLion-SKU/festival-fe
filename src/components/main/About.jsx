@@ -1,3 +1,4 @@
+import SkuLogo from '@/assets/icons/sku-logo.svg';
 import AboutFire2 from '@/assets/images/about-fire2.svg';
 import AboutFire from '@/assets/images/about-fire.svg';
 
@@ -5,7 +6,7 @@ export default function About() {
   return (
     <section
       id="about"
-      className="relative min-h-[100dvh] overflow-hidden bg-[#141414] px-[3.65625rem] pt-[3.75rem]"
+      className="relative min-h-[140dvh] overflow-hidden bg-[#141414] px-[3.65625rem] pt-[3.75rem]"
     >
       <img
         src={AboutFire}
@@ -27,10 +28,33 @@ export default function About() {
             'linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0.35) 70%, rgba(0,0,0,0.15) 90%,rgba(0,0,0,0) 100%)',
         }}
       />
-      <div className="relative z-10 flex flex-col items-center gap-[1rem]">
-        <p className="text-center text-[1.25rem] leading-[3.2] text-[#fefefe] [font-family:Sekuya] [text-shadow:1px_1px_0px_rgba(0,0,0,0.11)]">
+      <div className="relative z-10 flex flex-col items-center pt-[0.5rem] text-center text-white">
+        <p className="text-[1.25rem] leading-[1.2] text-[#fefefe] [font-family:Sekuya] [text-shadow:1px_1px_0px_rgba(0,0,0,0.11)]">
           ABOUT
         </p>
+        <div className="mt-[2.25rem] flex flex-col items-center gap-[1.3rem]">
+          <span className="h-[0.3125rem] w-[0.3125rem] rounded-full bg-white" />
+          <span className="h-[0.3125rem] w-[0.3125rem] rounded-full bg-white" />
+          <span className="h-[0.3125rem] w-[0.3125rem] rounded-full bg-white" />
+        </div>
+        <img
+          src={SkuLogo}
+          alt="SKU LIKELION 로고"
+          className="mt-[3.125rem] h-[10.75rem] w-[10.75rem]"
+        />
+        <p className="mt-[2rem] text-[1.125rem] leading-[1.2] text-[#fefefe] [font-family:Sekuya]">
+          SKU LIKELION 14TH
+        </p>
+        <p className="mt-[3.25rem] text-[0.75rem] font-normal leading-[1.6] text-[#fefefe] [font-family:Pretendard]">
+          안녕하세요, <span className="font-bold">멋쟁이사자처럼 서경대</span>입니다.
+        </p>
+        <div className="mt-[2.25rem] text-[0.625rem] font-normal leading-[1.6] text-[#fefefe] [font-family:Pretendard]">
+          <p className="m-0">학우분들께서 축제를 더욱 즐겁고</p>
+          <p className="m-0">편리하게 즐길 수 있도록 축제 페이지를 제작하였습니다.</p>
+          <p className="m-0">
+            여러분들께 도움이 되는 페이지가 되길 바라며, 즐거운 축제 즐기시길 바랍니다 !
+          </p>
+        </div>
       </div>
     </section>
   );
