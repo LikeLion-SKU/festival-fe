@@ -1,1 +1,23 @@
 @import 'tailwindcss';
+
+@font-face {
+  font-family: 'Sekuya';
+  src: url('/fonts/Sekuya-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
+  font-weight: 45 920;
+  font-style: normal;
+}
+
+body {
+  font-family: 'Pretendard', sans-serif;
+}
+
+html {
+  font-size: 4px;
+}

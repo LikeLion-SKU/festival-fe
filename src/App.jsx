@@ -6,6 +6,7 @@ import AdminLayout from '@/layouts/AdminLayout';
 import MobileLayout from '@/layouts/MobileLayout';
 import RootLayout from '@/layouts/RootLayout';
 import ServiceLayout from '@/layouts/ServiceLayout';
+import Main from '@/pages/Main';
 import ProtectedRoute from '@/router/ProtectedRoute';
 
 //const page = (importFn) => () => importFn().then((m) => ({ Component: m.default }));
@@ -17,6 +18,10 @@ const queryClient = new QueryClient({
 });
 
 const router = createBrowserRouter([
+  {
+    path: '/',
+    Component: Main,
+  },
   {
     Component: RootLayout,
     children: [
