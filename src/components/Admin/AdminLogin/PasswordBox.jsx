@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import EyeClose from '@/assets/icons/eye-close-icon.svg?react';
-import EyeOpen from '@/assets/icons/eye-open-icon.svg?react';
+import EyeClose from '@/assets/icons/admin/eye-close-icon.svg?react';
+import EyeOpen from '@/assets/icons/admin/eye-open-icon.svg?react';
 
 export default function PasswordBox({ value, onChange, correctPassword }) {
   const [visible, setVisible] = useState(false);
