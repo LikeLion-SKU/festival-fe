@@ -118,7 +118,7 @@ export default function OrderCard({
                   strokeLinejoin="round"
                 />
               </svg>
-              <span className="text-[14px] font-semibold leading-[21px] text-[#FBFBFB]">
+              <span className="text-[14px] font-semibold leading-5.25 text-[#FBFBFB]">
                 확인 완료
               </span>
             </button>
