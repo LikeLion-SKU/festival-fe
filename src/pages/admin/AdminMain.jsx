@@ -16,7 +16,13 @@ import NavButton from '@/components/Admin/NavButton';
 
 const NAV_ITEMS = [
   { key: 'wait', name: '대기', icon: WaitIcon, activeIcon: WaitActiveIcon, goto: '/admin/waiting' },
-  { key: 'cook', name: '조리', icon: CookIcon, activeIcon: CookActiveIcon, goto: '/admin/cooking' },
+  {
+    key: 'cook',
+    name: '조리 중',
+    icon: CookIcon,
+    activeIcon: CookActiveIcon,
+    goto: '/admin/cooking',
+  },
   { key: 'done', name: '완료', icon: DoneIcon, activeIcon: DoneActiveIcon, goto: '/admin/done' },
   {
     key: 'cancel',
