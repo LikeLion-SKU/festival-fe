@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Outlet, useNavigate, useOutletContext } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 
 import CancelIcon from '@/assets/icons/admin/cancel_gray_icon.svg';
 import CancelActiveIcon from '@/assets/icons/admin/cancel_red_icon.svg';
@@ -35,9 +35,12 @@ const NAV_ITEMS = [
 ];
 
 export default function AdminMain() {
+  const context = useOutletContext();
   const { setHeaderConfig } = useOutletContext();
   const navigate = useNavigate();
-  const [selected, setSelected] = useState('wait');
+  const location = useLocation();
+
+  const selected = NAV_ITEMS.find((item) => location.pathname.startsWith(item.goto))?.key ?? 'wait';
 
   useEffect(() => {
     setHeaderConfig({
@@ -46,7 +49,6 @@ export default function AdminMain() {
   }, [setHeaderConfig]);
 
   const moveToMenu = (item) => {
-    setSelected(item.key);
     navigate(item.goto);
   };
 
@@ -65,7 +67,7 @@ export default function AdminMain() {
         ))}
       </nav>
       <div className="flex-1">
-        <Outlet />
+        <Outlet context={context} />
       </div>
     </div>
   );

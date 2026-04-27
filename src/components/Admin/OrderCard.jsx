@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import CheckGrayIcon from '@/assets/icons/check_gray_icon.svg?react';
 import CheckWhiteIcon from '@/assets/icons/check_white_icon.svg?react';
+import OpenButton from '@/components/Admin/OpenButton';
 
 const formatPrice = (n) => `${n.toLocaleString('ko-KR')}원`;
 
@@ -16,14 +17,22 @@ export default function OrderCard({
   totalAmount,
   onConfirm,
   onCancel,
+  checkedItems: checkedItemsProp,
+  onToggleItem,
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [checkedItems, setCheckedItems] = useState(() => new Set());
+  const [internalChecked, setInternalChecked] = useState(() => new Set());
 
   const isCooking = variant === 'cooking';
+  const isControlled = checkedItemsProp !== undefined;
+  const checkedItems = isControlled ? checkedItemsProp : internalChecked;
 
   const toggleChecked = (idx) => {
-    setCheckedItems((prev) => {
+    if (isControlled) {
+      onToggleItem?.(idx);
+      return;
+    }
+    setInternalChecked((prev) => {
       const next = new Set(prev);
       if (next.has(idx)) next.delete(idx);
       else next.add(idx);
@@ -62,22 +71,7 @@ export default function OrderCard({
             aria-label={isOpen ? '주문 상세 닫기' : '주문 상세 보기'}
             className="flex size-5 flex-col items-start"
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className={`transition-transform ${isOpen ? 'rotate-180' : ''}`}
-            >
-              <path
-                d="M5 7.5L10 12.5L15 7.5"
-                stroke="#252525"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <OpenButton open={isOpen} />
           </button>
         </div>
       </div>

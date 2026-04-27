@@ -53,7 +53,7 @@ export default function WaitingMenu() {
       ) : (
         <div className="flex flex-col items-center mt-60">
           <NothingIcon />
-          <p className="font-semibold text-[20px] text-[#595959]">대기 중인 주문이 없어요!</p>
+          <p className="font-semibold text-[20px] text-deep-gray">대기 중인 주문이 없어요!</p>
         </div>
       )}
 

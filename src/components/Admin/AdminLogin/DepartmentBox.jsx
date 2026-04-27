@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
+import OpenButton from '@/components/Admin/OpenButton';
+
 const DEFAULT_DEPARTMENTS = [
   '경영학부',
   '공공인재학부',
@@ -58,21 +60,11 @@ export default function DepartmentBox({
         >
           {selected || placeholder}
         </span>
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-          className={`shrink-0 transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
-        >
-          <path
-            d="M5 7.5L10 12.5L15 7.5"
-            stroke={selected ? '#FE5F54' : '#7F7F7F'}
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <OpenButton
+          open={open}
+          color={selected ? '#FE5F54' : '#7F7F7F'}
+          className="shrink-0 duration-150"
+        />
       </button>
 
       {open && (
