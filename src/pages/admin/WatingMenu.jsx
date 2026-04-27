@@ -87,7 +87,7 @@ export default function WaitingMenu() {
   };
 
   return (
-    <div className="flex flex-1 w-full h-full bg-[#EFEFEF] justify-center pt-7">
+    <div className="flex h-full w-full bg-[#EFEFEF] justify-center py-7">
       {orderData.length > 0 ? (
         <div className="flex flex-col gap-2 overflow-auto no-scrollbar">
           {orderData.map((data) => (
