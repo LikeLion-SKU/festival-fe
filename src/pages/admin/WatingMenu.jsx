@@ -4,10 +4,10 @@ import CheckIcon from '@/assets/icons/admin/check_red_big_icon.svg?react';
 import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
 import BottomSheet from '@/components/Admin/BottomSheet';
+import CancelReasonModal from '@/components/Admin/CancelReasonModal';
+import OrderCancelModal from '@/components/Admin/OrderCancelModal';
 import OrderCard from '@/components/Admin/OrderCard';
 import { orderData } from '@/constants/orderDummyData';
-
-const CANCEL_REASONS = ['재료 소진', '주문 실수', '고객 요청', '기타'];
 
 export default function WaitingMenu() {
   const [modal, setModal] = useState(null);
@@ -78,54 +78,19 @@ export default function WaitingMenu() {
         </div>
       </BottomSheet>
 
-      <BottomSheet
+      <CancelReasonModal
         open={modal === 'cancelReason'}
         onOpenChange={(o) => !o && closeModal()}
-        showButton
-        buttonName="취소하기"
-        onButtonClick={handleCancelSubmit}
-      >
-        <div className="flex w-full flex-col items-center pt-3">
-          <p className="text-[20px] font-semibold leading-6 tracking-[-0.2px] text-[#1A1A1A]">
-            주문 취소 사유를 골라주세요.
-          </p>
-          <div className="mt-11 flex flex-col items-center gap-1">
-            {CANCEL_REASONS.map((r) => {
-              const selected = reason === r;
-              return (
-                <button
-                  key={r}
-                  type="button"
-                  onClick={() => setReason(r)}
-                  className={`px-2 py-0.5 text-[20px] font-medium leading-[1.6] ${
-                    selected ? 'border-y-2 border-[#FE5F54] text-[#FE5F54]' : 'text-[#C9C9C9]'
-                  }`}
-                >
-                  {r}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </BottomSheet>
+        reason={reason}
+        onReasonChange={setReason}
+        onSubmit={handleCancelSubmit}
+      />
 
-      <BottomSheet
+      <OrderCancelModal
         open={modal === 'cancelDone'}
         onOpenChange={(o) => !o && closeModal()}
-        showButton
-        buttonName="확인"
-        onButtonClick={closeModal}
-      >
-        <div className="flex w-full flex-col items-center pt-15 pb-15">
-          <CheckIcon />
-          <p className="mt-3.5 text-[20px] font-semibold leading-6 tracking-[-0.2px] text-[#1A1A1A]">
-            주문이 취소되었어요!
-          </p>
-          <p className="mt-1 text-[14px] font-medium leading-6 tracking-[-0.14px] text-[#7F7F7F]">
-            취소한 주문은 상단 ‘취소’탭에서 되돌릴 수 있어요.
-          </p>
-        </div>
-      </BottomSheet>
+        onConfirm={closeModal}
+      />
     </div>
   );
 }
