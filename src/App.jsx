@@ -6,6 +6,7 @@ import AdminLayout from '@/layouts/AdminLayout';
 import MobileLayout from '@/layouts/MobileLayout';
 import OrderLayout from '@/layouts/OrderLayout';
 import RootLayout from '@/layouts/RootLayout';
+import Order from '@/pages/Order/Order';
 import AdminMain from '@/pages/admin/AdminMain';
 import ProtectedRoute from '@/router/ProtectedRoute';
 
@@ -40,6 +41,16 @@ const router = createBrowserRouter([
           //{ path: '', lazy: page(() => import('파일 경로')) },
         ],
       },
+    ],
+  },
+  {
+    //헤더 있는 주문 시스템 레이아웃
+    Component: OrderLayout,
+    children: [
+      {
+        Component: MobileLayout,
+        children: [],
+      },
       {
         Component: AdminLayout,
         children: [
@@ -63,7 +74,18 @@ const router = createBrowserRouter([
   {
     //헤더 없는 사용자 페이지
     Component: MobileLayout,
-    children: [{ path: '/', lazy: page(() => import('@/pages/Main')) }],
+    children: [
+      { path: '/', lazy: page(() => import('@/pages/Main')) },
+      {
+        path: '/order',
+        Component: Order,
+        children: [
+          { index: true, lazy: page(() => import('@/pages/Order/OrderEntry')) }, // order 접속 시 자동으로 OrderEntry부터 기본으로
+          //{ path: 'confirm', lazy: page(() => import('@/pages/Order/OrderConfirm')) },
+          //{ path: 'complete', lazy: page(() => import('@/pages/Order/OrderComplete')) },
+        ],
+      },
+    ],
   },
   {
     //헤더 없는 관리자 페이지
