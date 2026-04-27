@@ -55,7 +55,7 @@ export default function OrderCard({
         isOpen ? 'gap-2' : 'h-15 justify-center'
       }`}
     >
-      <div className="flex h-7 w-full items-center justify-between">
+      <div className="flex h-7 w-full items-center justify-between" onClick={toggleOpen}>
         <p className="text-[16px] font-semibold leading-6.75 tracking-[-0.5px] text-[#222]">
           {tableNumber != 0 ? `테이블 ${tableNumber}` : '포장'}
         </p>
@@ -78,7 +78,6 @@ export default function OrderCard({
           )}
           <button
             type="button"
-            onClick={toggleOpen}
             aria-label={isOpen ? '주문 상세 닫기' : '주문 상세 보기'}
             className="flex size-5 flex-col items-start"
           >
@@ -114,12 +113,12 @@ export default function OrderCard({
                   className={`flex h-12 items-center justify-between gap-3 px-2 ${
                     idx < items.length - 1 ? 'border-b border-dashed border-[#EFEFEF]' : ''
                   }`}
+                  onClick={() => toggleChecked(idx)}
                 >
                   <div className="flex flex-1 items-center gap-3">
                     {isCooking && (
                       <button
                         type="button"
-                        onClick={() => toggleChecked(idx)}
                         aria-label={checked ? '체크 해제' : '체크'}
                         aria-pressed={checked}
                         className={`flex size-7 shrink-0 items-center justify-center rounded-[5px] border
