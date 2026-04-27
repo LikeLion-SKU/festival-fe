@@ -37,18 +37,6 @@ const router = createBrowserRouter([
     children: [
       {
         Component: MobileLayout,
-        children: [
-          //{ path: '', lazy: page(() => import('파일 경로')) },
-        ],
-      },
-    ],
-  },
-  {
-    //헤더 있는 주문 시스템 레이아웃
-    Component: OrderLayout,
-    children: [
-      {
-        Component: MobileLayout,
         children: [],
       },
       {
