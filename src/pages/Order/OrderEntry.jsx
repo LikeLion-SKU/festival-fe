@@ -51,7 +51,7 @@ function OrderEntry() {
       <OrderButtonBox
         className="relative z-1 "
         buttonName={buttonName}
-        isOpen={isOpen}
+        isActive={isOpen}
         onClick={() => navigate('/order/progress')}
       />
     </>

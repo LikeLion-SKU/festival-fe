@@ -10,7 +10,8 @@ const CATEGORY_MAP = { 메인: 'main', 사이드: 'side', 음료: 'drink' };
 
 function OrderProgress() {
   const navigate = useNavigate();
-  const { boothName, foodData, quantities, onSelect, onIncrease, onDecrease } = useOutletContext();
+  const { boothName, foodData, quantities, onSelect, onIncrease, onDecrease, onReset } =
+    useOutletContext();
 
   const [activeCategory, setActiveCategory] = useState('메인');
   const scrollContainerRef = useRef(null);
@@ -35,7 +36,14 @@ function OrderProgress() {
   return (
     <div className="flex flex-col h-full bg-white">
       <div className="shrink-0">
-        <OrderHeader title={boothName} showBackButton onBack={() => navigate(-1)} />
+        <OrderHeader
+          title={boothName}
+          showBackButton
+          onBack={() => {
+            onReset();
+            navigate(-1);
+          }}
+        />
         <FoodNavbar activeCategory={activeCategory} onCategoryClick={handleCategoryClick} />
       </div>
       <div ref={scrollContainerRef} className="flex-1 overflow-y-auto min-h-0">
@@ -52,7 +60,8 @@ function OrderProgress() {
       </div>
       <OrderButtonBox
         buttonName={hasSelection ? `주문하기(${totalCount})` : '주문하기'}
-        hasSelection={hasSelection}
+        isActive={hasSelection}
+        inactiveColor="var(--color-pink-100)"
         onClick={() => {}}
       />
     </div>

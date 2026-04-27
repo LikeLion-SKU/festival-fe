@@ -113,6 +113,12 @@ function Order() {
     return saved ? JSON.parse(saved) : {};
   });
 
+  const handleReset = () => {
+    setQuantities({});
+    sessionStorage.removeItem('orderQuantities');
+    sessionStorage.removeItem('orderCart');
+  };
+
   const handleSelect = (key) => setQuantities((prev) => ({ ...prev, [key]: 1 }));
   const handleIncrease = (key) => setQuantities((prev) => ({ ...prev, [key]: prev[key] + 1 }));
   const handleDecrease = (key) =>
@@ -134,6 +140,13 @@ function Order() {
     sessionStorage.setItem('orderCart', JSON.stringify(cart));
   }, [quantities]);
 
+  useEffect(() => {
+    return () => {
+      sessionStorage.removeItem('orderQuantities');
+      sessionStorage.removeItem('orderCart');
+    };
+  }, []);
+
   return (
     <Outlet
       context={{
@@ -143,6 +156,7 @@ function Order() {
         onSelect: handleSelect,
         onIncrease: handleIncrease,
         onDecrease: handleDecrease,
+        onReset: handleReset,
       }}
     />
   );
