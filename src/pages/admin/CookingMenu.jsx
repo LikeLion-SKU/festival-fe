@@ -69,7 +69,7 @@ export default function CookingMenu() {
 
   return (
     <div className="flex flex-col w-full h-full bg-[#f8f8f8] items-center pb-7">
-      {orderData.length > 10 ? (
+      {orderData.length > 0 ? (
         <>
           <div className="flex w-full flex-col bg-white px-5 py-2 shadow-[0_1px_2px_0_rgba(0,0,0,0.1)]">
             <button
