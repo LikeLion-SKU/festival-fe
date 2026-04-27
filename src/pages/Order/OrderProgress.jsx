@@ -14,8 +14,22 @@ function OrderProgress() {
   const { boothName, foodData } = useOutletContext();
 
   const [activeCategory, setActiveCategory] = useState('메인');
+  const [quantities, setQuantities] = useState({});
   const scrollContainerRef = useRef(null);
   const sectionRefs = { main: useRef(null), side: useRef(null), drink: useRef(null) };
+
+  const handleSelect = (key) => setQuantities((prev) => ({ ...prev, [key]: 1 }));
+  const handleIncrease = (key) => setQuantities((prev) => ({ ...prev, [key]: prev[key] + 1 }));
+  const handleDecrease = (key) =>
+    setQuantities((prev) => {
+      const next = { ...prev };
+      if (next[key] <= 1) delete next[key];
+      else next[key] -= 1;
+      return next;
+    });
+
+  const totalCount = Object.values(quantities).reduce((sum, qty) => sum + qty, 0);
+  const hasSelection = totalCount > 0;
 
   const handleCategoryClick = (category) => {
     setActiveCategory(category);
@@ -41,10 +55,18 @@ function OrderProgress() {
           foodData={foodData}
           sectionRefs={sectionRefs}
           activeCategory={activeCategory}
+          quantities={quantities}
+          onSelect={handleSelect}
+          onIncrease={handleIncrease}
+          onDecrease={handleDecrease}
         />
         <div className="h-25" />
       </div>
-      <OrderButtonBox buttonName="주문하기" isOpen={true} onClick={() => {}} />
+      <OrderButtonBox
+        buttonName={hasSelection ? `주문하기(${totalCount})` : '주문하기'}
+        hasSelection={hasSelection}
+        onClick={() => {}}
+      />
     </div>
   );
 }

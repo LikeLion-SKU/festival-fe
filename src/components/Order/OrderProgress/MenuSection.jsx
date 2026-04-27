@@ -1,30 +1,21 @@
-import { useState } from 'react';
-
 import Garbage from '@/assets/icons/garbage.svg?react';
 import Plus from '@/assets/icons/plus.svg?react';
 
 const CATEGORY_LABELS = { main: '메인', side: '사이드', drink: '음료' };
 const CATEGORY_ORDER = ['main', 'side', 'drink'];
 
-function MenuSection({ foodData, sectionRefs, activeCategory }) {
-  const [quantities, setQuantities] = useState({});
-
-  const handleSelect = (key) => {
-    setQuantities((prev) => ({ ...prev, [key]: 1 }));
-  };
-
-  const handleIncrease = (key) => {
-    setQuantities((prev) => ({ ...prev, [key]: prev[key] + 1 }));
-  };
-
-  const handleDecrease = (key) => {
-    setQuantities((prev) => {
-      const next = { ...prev };
-      if (next[key] <= 1) delete next[key];
-      else next[key] -= 1;
-      return next;
-    });
-  };
+function MenuSection({
+  foodData,
+  sectionRefs,
+  activeCategory,
+  quantities,
+  onSelect,
+  onIncrease,
+  onDecrease,
+}) {
+  const handleSelect = onSelect;
+  const handleIncrease = onIncrease;
+  const handleDecrease = onDecrease;
 
   const grouped = CATEGORY_ORDER.reduce((acc, cat) => {
     acc[cat] = foodData.filter((item) => item.category === cat);
