@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router';
 
 import Noodle from '@/assets/icons/noodle.svg';
@@ -107,7 +108,44 @@ const foodData = [
 ];
 
 function Order() {
-  return <Outlet context={{ ...boothData, foodData }} />;
+  const [quantities, setQuantities] = useState(() => {
+    const saved = sessionStorage.getItem('orderQuantities');
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  const handleSelect = (key) => setQuantities((prev) => ({ ...prev, [key]: 1 }));
+  const handleIncrease = (key) => setQuantities((prev) => ({ ...prev, [key]: prev[key] + 1 }));
+  const handleDecrease = (key) =>
+    setQuantities((prev) => {
+      const next = { ...prev };
+      if (next[key] <= 1) delete next[key];
+      else next[key] -= 1;
+      return next;
+    });
+
+  useEffect(() => {
+    sessionStorage.setItem('orderQuantities', JSON.stringify(quantities));
+
+    const cart = Object.entries(quantities).map(([key, qty]) => {
+      const [cat, idx] = key.split('-');
+      const item = foodData.filter((i) => i.category === cat)[parseInt(idx)];
+      return { key, name: item.name, price: item.price, quantity: qty };
+    });
+    sessionStorage.setItem('orderCart', JSON.stringify(cart));
+  }, [quantities]);
+
+  return (
+    <Outlet
+      context={{
+        ...boothData,
+        foodData,
+        quantities,
+        onSelect: handleSelect,
+        onIncrease: handleIncrease,
+        onDecrease: handleDecrease,
+      }}
+    />
+  );
 }
 
 export default Order;
