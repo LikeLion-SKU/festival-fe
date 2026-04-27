@@ -1,15 +1,17 @@
-import { useState } from 'react';
-
 const CATEGORIES = ['메인', '사이드', '음료'];
 
-function FoodNavbar() {
-  const [active, setActive] = useState('메인');
+function FoodNavbar({ activeCategory, onCategoryClick }) {
+  const active = activeCategory;
 
   return (
     <div className="pt-6">
       <div className="flex pl-5 gap-5">
         {CATEGORIES.map((category) => (
-          <div key={category} className="w-fit cursor-pointer" onClick={() => setActive(category)}>
+          <div
+            key={category}
+            className="w-fit cursor-pointer"
+            onClick={() => onCategoryClick(category)}
+          >
             <div
               className={active === category ? 'font-semibold text-order-button' : 'text-gray-400'}
             >
