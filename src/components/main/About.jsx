@@ -93,13 +93,13 @@ export default function About() {
         <div className="mt-[8rem] -mx-[1rem] flex w-[calc(100%+2rem)] flex-col gap-[0.55rem]">
           <button
             type="button"
-            className="h-[3rem] w-full border border-[rgba(255,255,255,0.2)] bg-[rgba(34,34,34,0.72)] text-[1rem] font-bold leading-none text-white [font-family:Pretendard]"
+            className="h-[3rem] w-full border border-[rgba(255,255,255,0.2)] bg-[rgba(34,34,34,0.72)] text-[1rem] font-semibold leading-none text-white [font-family:Pretendard]"
           >
             제작자 보러가기
           </button>
           <button
             type="button"
-            className="h-[3rem] w-full border border-[rgba(255,255,255,0.2)] bg-[rgba(34,34,34,0.72)] text-[1rem] font-bold leading-none text-white [font-family:Pretendard]"
+            className="h-[3rem] w-full border border-[rgba(255,255,255,0.2)] bg-[rgba(34,34,34,0.72)] text-[1rem] font-semibold leading-none text-white [font-family:Pretendard]"
           >
             부스 보러가기
           </button>
