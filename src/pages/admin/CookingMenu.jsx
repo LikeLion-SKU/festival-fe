@@ -5,16 +5,58 @@ import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
 import BottomSheet from '@/components/Admin/BottomSheet';
 import OrderCard from '@/components/Admin/OrderCard';
-import { orderData } from '@/constants/orderDummyData';
+
+const orderData = [
+  {
+    id: 1,
+    tableNumber: 4,
+    peopleCount: 4,
+    orderTime: '18:27',
+    customerName: '김멋사',
+    phone: '010-1234-5678',
+    items: [
+      { name: '해물야끼우동', quantity: 2, price: 26000 },
+      { name: '주먹밥', quantity: 1, price: 2000 },
+      { name: '음료수', quantity: 3, price: 6000 },
+    ],
+    totalAmount: 34000,
+  },
+  {
+    id: 2,
+    tableNumber: 5,
+    peopleCount: 2,
+    orderTime: '18:32',
+    customerName: '박싸피',
+    phone: '010-2345-6789',
+    items: [
+      { name: '해물야끼우동', quantity: 1, price: 13000 },
+      { name: '음료수', quantity: 2, price: 4000 },
+    ],
+    totalAmount: 17000,
+  },
+  {
+    id: 3,
+    tableNumber: 6,
+    peopleCount: 5,
+    orderTime: '18:35',
+    customerName: '이멋사',
+    phone: '010-3456-7890',
+    items: [
+      { name: '해물야끼우동', quantity: 3, price: 39000 },
+      { name: '주먹밥', quantity: 2, price: 4000 },
+    ],
+    totalAmount: 43000,
+  },
+];
 
 const CANCEL_REASONS = ['재료 소진', '주문 실수', '고객 요청', '기타'];
 
-export default function WaitingMenu() {
+export default function CookingMenu() {
   const [modal, setModal] = useState(null);
   const [reason, setReason] = useState(null);
 
   useEffect(() => {
-    if (modal !== 'confirmDone') return;
+    if (modal !== 'cookingDone') return;
     const t = setTimeout(() => setModal(null), 1500);
     return () => clearTimeout(t);
   }, [modal]);
@@ -24,7 +66,11 @@ export default function WaitingMenu() {
     setReason(null);
   };
 
-  const handleConfirm = () => setModal('confirmDone');
+  const handleConfirm = ({ allChecked }) => {
+    setModal(allChecked ? 'cookingDone' : 'warning');
+  };
+
+  const handleWarningConfirm = () => setModal('cookingDone');
 
   const handleCancelSubmit = () => {
     if (!reason) return;
@@ -32,12 +78,13 @@ export default function WaitingMenu() {
   };
 
   return (
-    <div className="flex h-full w-full bg-[#EFEFEF] justify-center py-7">
+    <div className="flex flex-1 w-full h-full bg-[#EFEFEF] justify-center pt-7">
       {orderData.length > 0 ? (
         <div className="flex flex-col gap-2 overflow-auto no-scrollbar">
           {orderData.map((data) => (
             <OrderCard
               key={data.id}
+              variant="cooking"
               tableNumber={data.tableNumber}
               peopleCount={data.peopleCount}
               orderTime={data.orderTime}
@@ -45,7 +92,7 @@ export default function WaitingMenu() {
               phone={data.phone}
               items={data.items}
               totalAmount={data.totalAmount}
-              onConfirm={() => setModal('confirm')}
+              onConfirm={handleConfirm}
               onCancel={() => setModal('cancelReason')}
             />
           ))}
@@ -53,28 +100,30 @@ export default function WaitingMenu() {
       ) : (
         <div className="flex flex-col items-center mt-60">
           <NothingIcon />
-          <p className="font-semibold text-[20px] text-[#595959]">대기 중인 주문이 없어요!</p>
+          <p className="font-semibold text-[20px] text-[#595959]">조리 중인 주문이 없어요!</p>
         </div>
       )}
 
       <BottomSheet
-        open={modal === 'confirm'}
+        open={modal === 'warning'}
         onOpenChange={(o) => !o && closeModal()}
         showButton
-        buttonName="확인했어요"
-        onButtonClick={handleConfirm}
+        buttonName="완료 처리"
+        onButtonClick={handleWarningConfirm}
       >
         <div className="flex flex-col items-center pt-15 pb-10">
           <WarningIcon />
-          <p className="font-semibold text-[1.25rem]">신분증, 계좌이체 확인하셨나요?</p>
-          <p className="text-[14px] text-[#7F7F7F] ">버튼을 누르면 조리 중으로 상태가 변경돼요.</p>
+          <p className="font-semibold text-[1.25rem]">아직 체크하지 않은 메뉴가 있어요</p>
+          <p className="text-[14px] text-[#7F7F7F]">
+            완료 처리 시 모든 메뉴가 조리 완료로 변경돼요.
+          </p>
         </div>
       </BottomSheet>
 
-      <BottomSheet open={modal === 'confirmDone'} onOpenChange={(o) => !o && closeModal()}>
+      <BottomSheet open={modal === 'cookingDone'} onOpenChange={(o) => !o && closeModal()}>
         <div className="flex flex-col items-center pt-13 pb-30">
           <CheckIcon />
-          <p className="font-semibold text-[1.25rem]">영수증이 조리 중으로 이동했어요</p>
+          <p className="font-semibold text-[1.25rem]">주문이 완료 처리되었어요</p>
         </div>
       </BottomSheet>
 

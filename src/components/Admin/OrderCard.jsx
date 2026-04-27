@@ -1,8 +1,12 @@
 import { useState } from 'react';
 
+import CheckGrayIcon from '@/assets/icons/check_gray_icon.svg?react';
+import CheckWhiteIcon from '@/assets/icons/check_white_icon.svg?react';
+
 const formatPrice = (n) => `${n.toLocaleString('ko-KR')}원`;
 
 export default function OrderCard({
+  variant = 'waiting',
   tableNumber,
   peopleCount,
   orderTime,
@@ -14,6 +18,18 @@ export default function OrderCard({
   onCancel,
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [checkedItems, setCheckedItems] = useState(() => new Set());
+
+  const isCooking = variant === 'cooking';
+
+  const toggleChecked = (idx) => {
+    setCheckedItems((prev) => {
+      const next = new Set(prev);
+      if (next.has(idx)) next.delete(idx);
+      else next.add(idx);
+      return next;
+    });
+  };
 
   return (
     <div
@@ -82,20 +98,42 @@ export default function OrderCard({
           </div>
 
           <div className="flex w-full flex-col">
-            {items.map((item, idx) => (
-              <div
-                key={idx}
-                className={`flex h-10 items-center justify-between px-2 ${
-                  idx < items.length - 1 ? 'border-b border-dashed border-[#EFEFEF]' : ''
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-[14px] text-[#222]">{item.name}</span>
-                  <span className="text-[14px] text-[#FE5F54]">x{item.quantity}</span>
+            {items.map((item, idx) => {
+              const checked = checkedItems.has(idx);
+              const strike = isCooking && checked;
+              return (
+                <div
+                  key={idx}
+                  className={`flex h-12 items-center justify-between gap-3 px-2 ${
+                    idx < items.length - 1 ? 'border-b border-dashed border-[#EFEFEF]' : ''
+                  }`}
+                >
+                  <div className="flex flex-1 items-center gap-3">
+                    {isCooking && (
+                      <button
+                        type="button"
+                        onClick={() => toggleChecked(idx)}
+                        aria-label={checked ? '체크 해제' : '체크'}
+                        aria-pressed={checked}
+                        className={`flex size-7 shrink-0 items-center justify-center rounded-[5px] border
+                            border-[#EFEFEF] bg-[#F6F6F6]`}
+                      >
+                        {checked && <CheckGrayIcon />}
+                      </button>
+                    )}
+                    <span className={`text-[14px] text-[#222] ${strike ? 'line-through' : ''}`}>
+                      {item.name}
+                    </span>
+                    {!isCooking && (
+                      <span className="text-[14px] text-[#FE5F54]">x{item.quantity}</span>
+                    )}
+                  </div>
+                  <span className={`text-[14px] text-[#222] ${strike ? 'line-through' : ''}`}>
+                    {formatPrice(item.price)}
+                  </span>
                 </div>
-                <span className="text-[14px] text-[#222]">{formatPrice(item.price)}</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="flex h-15 w-full items-center justify-between">
@@ -106,20 +144,17 @@ export default function OrderCard({
           <div className="flex w-full items-center justify-center gap-2">
             <button
               type="button"
-              onClick={onConfirm}
+              onClick={() =>
+                onConfirm?.({
+                  allChecked: items.length > 0 && checkedItems.size === items.length,
+                  checkedCount: checkedItems.size,
+                })
+              }
               className="flex h-11 flex-1 items-center justify-center gap-1 rounded-lg bg-[#FF756C] px-4 py-2.5"
             >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path
-                  d="M5 10L8.5 13.5L15 6.5"
-                  stroke="#FBFBFB"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <CheckWhiteIcon />
               <span className="text-[14px] font-semibold leading-5.25 text-[#FBFBFB]">
-                확인 완료
+                {isCooking ? '조리 완료' : '확인 완료'}
               </span>
             </button>
             <button
