@@ -62,8 +62,8 @@ export default function CompleteMenu() {
   };
 
   return (
-    <div className="flex flex-col w-full h-full bg-[#F8F8F8] items-center pb-7">
-      <div className="flex w-full flex-col gap-3 bg-white px-5 py-3 shadow-[0_1px_2px_0_rgba(0,0,0,0.1)]">
+    <div className="flex flex-col w-full h-full bg-[#F8F8F8] items-center">
+      <div className="sticky flex w-full flex-col gap-3 bg-white px-5 py-3 shadow-[0_1px_2px_0_rgba(0,0,0,0.1)]">
         <p className="text-[16px] font-semibold leading-[1.6] text-[#222]">
           완료된 주문{' '}
           <span className="text-[14px] font-medium text-[#A0A0A0]">(총 {filtered.length}건)</span>
@@ -108,7 +108,7 @@ export default function CompleteMenu() {
       </div>
 
       {filtered.length > 0 ? (
-        <div className="flex flex-col gap-2 overflow-auto no-scrollbar pt-5">
+        <div className="flex flex-col gap-2 overflow-auto no-scrollbar py-5">
           {filtered.map((data) => (
             <CompletedOrderCard
               key={data.id}

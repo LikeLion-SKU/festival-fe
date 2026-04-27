@@ -78,7 +78,7 @@ export default function AdminMain() {
           />
         ))}
       </nav>
-      <div className="flex-1">
+      <div className="flex-1 overflow-auto">
         <Outlet context={context} />
       </div>
     </div>

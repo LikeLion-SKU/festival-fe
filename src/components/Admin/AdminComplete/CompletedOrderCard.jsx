@@ -13,7 +13,7 @@ export default function CompletedOrderCard({
   onUndo,
 }) {
   return (
-    <div className="flex w-87.5 flex-col items-center gap-2 overflow-hidden rounded-[10px] border border-[#EFEFEF] bg-white px-5 pt-4">
+    <div className="flex flex-shrink-0 w-87.5 flex-col items-center gap-2 overflow-hidden rounded-[10px] border border-[#EFEFEF] bg-white px-5 pt-4">
       <div className="flex w-full flex-col items-center gap-3">
         <div className="flex h-7 w-full items-center justify-between">
           <div className="flex items-center gap-2">
