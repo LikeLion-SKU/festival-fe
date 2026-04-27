@@ -7,6 +7,8 @@ import MenuSection from '@/components/Order/OrderProgress/MenuSection';
 import OrderHeader from '@/components/common/OrderHeader';
 
 const CATEGORY_MAP = { 메인: 'main', 사이드: 'side', 음료: 'drink' };
+const CATEGORY_ORDER = ['main', 'side', 'drink'];
+const CATEGORY_LABEL_MAP = { main: '메인', side: '사이드', drink: '음료' };
 
 function OrderProgress() {
   const navigate = useNavigate();
@@ -19,6 +21,27 @@ function OrderProgress() {
 
   const totalCount = Object.values(quantities).reduce((sum, qty) => sum + qty, 0);
   const hasSelection = totalCount > 0;
+
+  const handleScroll = () => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const isBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - 1;
+    if (isBottom) {
+      setActiveCategory('음료');
+      return;
+    }
+
+    const containerTop = container.getBoundingClientRect().top;
+    let current = '메인';
+    for (const cat of CATEGORY_ORDER) {
+      const ref = sectionRefs[cat];
+      if (ref?.current && ref.current.getBoundingClientRect().top - containerTop <= 24) {
+        current = CATEGORY_LABEL_MAP[cat];
+      }
+    }
+    setActiveCategory(current);
+  };
 
   const handleCategoryClick = (category) => {
     setActiveCategory(category);
@@ -46,7 +69,11 @@ function OrderProgress() {
         />
         <FoodNavbar activeCategory={activeCategory} onCategoryClick={handleCategoryClick} />
       </div>
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto min-h-0">
+      <div
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto min-h-0"
+        onScroll={handleScroll}
+      >
         <MenuSection
           foodData={foodData}
           sectionRefs={sectionRefs}
