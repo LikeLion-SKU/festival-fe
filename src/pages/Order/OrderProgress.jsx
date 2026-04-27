@@ -4,6 +4,7 @@ import { useNavigate, useOutletContext } from 'react-router';
 import OrderButtonBox from '@/components/Order/OrderEntry/OrderButtonBox';
 import FoodNavbar from '@/components/Order/OrderProgress/FoodNavbar';
 import MenuSection from '@/components/Order/OrderProgress/MenuSection';
+import Modal from '@/components/common/Modal';
 import OrderHeader from '@/components/common/OrderHeader';
 
 const CATEGORY_MAP = { 메인: 'main', 사이드: 'side', 음료: 'drink' };
@@ -16,6 +17,7 @@ function OrderProgress() {
     useOutletContext();
 
   const [activeCategory, setActiveCategory] = useState('메인');
+  const [showBackModal, setShowBackModal] = useState(false);
   const scrollContainerRef = useRef(null);
   const sectionRefs = { main: useRef(null), side: useRef(null), drink: useRef(null) };
 
@@ -62,10 +64,7 @@ function OrderProgress() {
         <OrderHeader
           title={boothName}
           showBackButton
-          onBack={() => {
-            onReset();
-            navigate(-1);
-          }}
+          onBack={() => (hasSelection ? setShowBackModal(true) : navigate(-1))}
         />
         <FoodNavbar activeCategory={activeCategory} onCategoryClick={handleCategoryClick} />
       </div>
@@ -85,6 +84,22 @@ function OrderProgress() {
         />
         <div className="h-25" />
       </div>
+      <Modal
+        isOpen={showBackModal}
+        cancelText="뒤로 가기"
+        confirmText="계속 주문하기"
+        onCancel={() => {
+          onReset();
+          navigate(-1);
+        }}
+        onConfirm={() => setShowBackModal(false)}
+      >
+        <div className="flex gap-1.5">
+          <div className="font-semibold">뒤로 가면</div>
+          <div className="font-semibold text-order-button"> 담은 주문이 모두 사라집니다.</div>
+        </div>
+        <div className="font-semibold">그래도 뒤로 가시겠습니까?</div>
+      </Modal>
       <OrderButtonBox
         buttonName={hasSelection ? `주문하기(${totalCount})` : '주문하기'}
         isActive={hasSelection}
