@@ -52,4 +52,17 @@ export const orderData = [
     ],
     totalAmount: 12000,
   },
+  {
+    id: 5,
+    tableNumber: 0,
+    peopleCount: null,
+    orderTime: '18:55',
+    customerName: '최멋사',
+    phone: '010-4567-8901',
+    items: [
+      { name: '주먹밥', quantity: 3, price: 6000 },
+      { name: '음료수', quantity: 3, price: 6000 },
+    ],
+    totalAmount: 12000,
+  },
 ];

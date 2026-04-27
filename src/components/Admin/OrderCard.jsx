@@ -19,13 +19,22 @@ export default function OrderCard({
   onCancel,
   checkedItems: checkedItemsProp,
   onToggleItem,
+  isOpen: isOpenProp,
+  onOpenChange,
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
   const [internalChecked, setInternalChecked] = useState(() => new Set());
 
   const isCooking = variant === 'cooking';
+  const isOpenControlled = isOpenProp !== undefined;
+  const isOpen = isOpenControlled ? isOpenProp : internalOpen;
   const isControlled = checkedItemsProp !== undefined;
   const checkedItems = isControlled ? checkedItemsProp : internalChecked;
+
+  const toggleOpen = () => {
+    if (isOpenControlled) onOpenChange?.(!isOpen);
+    else setInternalOpen((v) => !v);
+  };
 
   const toggleChecked = (idx) => {
     if (isControlled) {
@@ -48,16 +57,18 @@ export default function OrderCard({
     >
       <div className="flex h-7 w-full items-center justify-between">
         <p className="text-[16px] font-semibold leading-6.75 tracking-[-0.5px] text-[#222]">
-          테이블 {tableNumber}
+          {tableNumber != 0 ? `테이블 ${tableNumber}` : '포장'}
         </p>
         <div className="flex items-center justify-end gap-3">
           {!isOpen && (
             <div className="flex items-center gap-1">
-              <div className="flex h-7 min-w-8.5 items-center justify-center rounded-[5px] bg-[#F6F6F6] px-2 py-1">
-                <p className="text-[12px] font-medium leading-[1.6] text-[#252525]">
-                  {peopleCount}명
-                </p>
-              </div>
+              {tableNumber != 0 && (
+                <div className="flex h-7 min-w-8.5 items-center justify-center rounded-[5px] bg-[#F6F6F6] px-2 py-1">
+                  <p className="text-[12px] font-medium leading-[1.6] text-[#252525]">
+                    {peopleCount}명
+                  </p>
+                </div>
+              )}
               <div className="flex h-7 max-w-17 items-center justify-center rounded-[5px] bg-[#F6F6F6] px-2 py-1">
                 <p className="whitespace-nowrap text-[12px] font-medium leading-[1.6] text-[#252525]">
                   {orderTime} 주문
@@ -67,7 +78,7 @@ export default function OrderCard({
           )}
           <button
             type="button"
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={toggleOpen}
             aria-label={isOpen ? '주문 상세 닫기' : '주문 상세 보기'}
             className="flex size-5 flex-col items-start"
           >
@@ -83,7 +94,9 @@ export default function OrderCard({
           <div className="flex h-14 w-full items-center justify-between">
             <div className="flex items-center gap-4 text-[14px] text-[#353535]">
               <span className="font-semibold tracking-[-0.35px]">{customerName}</span>
-              <span className="font-medium tracking-[-0.42px]">{peopleCount}명</span>
+              {tableNumber != 0 && (
+                <span className="font-medium tracking-[-0.42px]">{peopleCount}명</span>
+              )}
               <span className="font-medium">{phone}</span>
             </div>
             <span className="whitespace-nowrap text-[12px] font-medium text-[#7F7F7F]">

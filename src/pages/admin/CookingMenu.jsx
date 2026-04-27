@@ -16,9 +16,25 @@ export default function CookingMenu() {
   const [modal, setModal] = useState(null);
   const [reason, setReason] = useState(null);
   const [summaryOpen, setSummaryOpen] = useState(false);
+  const [expandedIds, setExpandedIds] = useState(() => new Set());
   const [checkedMap, setCheckedMap] = useState(() =>
     Object.fromEntries(orderData.map((d) => [d.id, new Set()]))
   );
+
+  const allExpanded = orderData.length > 0 && expandedIds.size === orderData.length;
+
+  const toggleAll = () => {
+    setExpandedIds(allExpanded ? new Set() : new Set(orderData.map((d) => d.id)));
+  };
+
+  const toggleOne = (id, open) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (open) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  };
 
   const toggleItem = (orderId, idx) => {
     setCheckedMap((prev) => {
@@ -52,7 +68,7 @@ export default function CookingMenu() {
   };
 
   return (
-    <div className="flex flex-col w-full h-full bg-[#EFEFEF] items-center pb-7">
+    <div className="flex flex-col w-full h-full bg-[#f8f8f8] items-center pb-7">
       <div className="flex w-full flex-col bg-white px-5 py-2 shadow-[0_1px_2px_0_rgba(0,0,0,0.1)]">
         <button
           type="button"
@@ -81,7 +97,16 @@ export default function CookingMenu() {
         )}
       </div>
 
-      <div className="pt-7" />
+      <button
+        type="button"
+        onClick={toggleAll}
+        className="flex items-center gap-1 mt-5 ml-auto mr-5 text-[14px] font-medium text-deep-gray"
+      >
+        {allExpanded ? '전체 접기' : '전체 펼치기'}
+        <OpenButton open={allExpanded} color="#595959" />
+      </button>
+
+      <div className="pt-2" />
 
       {orderData.length > 0 ? (
         <div className="flex flex-col gap-2 overflow-auto no-scrollbar">
@@ -98,6 +123,8 @@ export default function CookingMenu() {
               totalAmount={data.totalAmount}
               checkedItems={checkedMap[data.id]}
               onToggleItem={(idx) => toggleItem(data.id, idx)}
+              isOpen={expandedIds.has(data.id)}
+              onOpenChange={(o) => toggleOne(data.id, o)}
               onConfirm={handleConfirm}
               onCancel={() => setModal('cancelReason')}
             />
