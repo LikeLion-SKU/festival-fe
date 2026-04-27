@@ -47,7 +47,7 @@ function OrderEntry() {
         menus={isNight ? nightMenus : dayMenus}
       />
       <div className="h-28" />
-      <OrderButtonBox className="relative z-1" buttonName={buttonName} isOpen={isOpen} />
+      <OrderButtonBox className="relative z-1 " buttonName={buttonName} isOpen={isOpen} />
     </>
   );
 }

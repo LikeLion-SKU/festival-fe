@@ -2,15 +2,13 @@ import OrderButton from '@/components/common/OrderButton';
 
 function OrderButtonBox({ buttonName, isOpen }) {
   return (
-    <div className="flex w-full justify-center h-28 fixed bottom-0 left-0 z-50 shadow-[0px_-1px_7px_-2px_rgba(0,0,0,0.25)] overflow-hidden bg-white">
-      <div className="absolute w-full px-7 mt-3.75">
-        <OrderButton
-          width={340}
-          height={48}
-          color={isOpen ? 'var(--color-order-button)' : 'var(--color-disable-gray)'}
-          buttonName={buttonName}
-        />
-      </div>
+    <div className="w-full h-28 fixed bottom-0 left-1/2 -translate-x-1/2 z-50 shadow-[0px_-1px_7px_-2px_rgba(0,0,0,0.25)] bg-white px-7 pt-3.75">
+      <OrderButton
+        width="100%"
+        height={48}
+        color={isOpen ? 'var(--color-order-button)' : 'var(--color-disable-gray)'}
+        buttonName={buttonName}
+      />
     </div>
   );
 }

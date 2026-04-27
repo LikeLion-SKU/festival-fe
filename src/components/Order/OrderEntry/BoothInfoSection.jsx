@@ -22,7 +22,7 @@ function BoothInfoSection({ boothName, location, isOpen, content, images }) {
         <div className="w-16 h-5 font-semibold text-deep-gray">{location}</div>
       </div>
       <div className="relative mt-6 text-sm text-deep-gray">{content}</div>
-      <div className="flex gap-1 mt-6">
+      <div className="flex gap-1 mt-6 overflow-hidden">
         {images.map((src, index) => (
           <img className="w-27.5 h-28" key={index} src={src} />
         ))}
