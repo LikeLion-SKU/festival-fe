@@ -51,7 +51,7 @@ export default function AdminMain() {
   };
 
   return (
-    <>
+    <div className="flex flex-col h-full">
       <nav className="flex w-full items-start border-b border-[#E5E5E5] bg-white mt-4">
         {NAV_ITEMS.map((item) => (
           <NavButton
@@ -64,7 +64,9 @@ export default function AdminMain() {
           />
         ))}
       </nav>
-      <Outlet />
-    </>
+      <div className="flex-1">
+        <Outlet />
+      </div>
+    </div>
   );
 }
