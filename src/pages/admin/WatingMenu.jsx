@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import CheckIcon from '@/assets/icons/admin/check_red_big_icon.svg?react';
+import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
 import BottomSheet from '@/components/Admin/BottomSheet';
 import OrderCard from '@/components/Admin/OrderCard';
@@ -87,22 +88,29 @@ export default function WaitingMenu() {
 
   return (
     <div className="flex flex-1 w-full h-full bg-[#EFEFEF] justify-center pt-7">
-      <div className="flex flex-col gap-2 overflow-auto no-scrollbar">
-        {orderData.map((data) => (
-          <OrderCard
-            key={data.id}
-            tableNumber={data.tableNumber}
-            peopleCount={data.peopleCount}
-            orderTime={data.orderTime}
-            customerName={data.customerName}
-            phone={data.phone}
-            items={data.items}
-            totalAmount={data.totalAmount}
-            onConfirm={() => setModal('confirm')}
-            onCancel={() => setModal('cancelReason')}
-          />
-        ))}
-      </div>
+      {orderData.length > 0 ? (
+        <div className="flex flex-col gap-2 overflow-auto no-scrollbar">
+          {orderData.map((data) => (
+            <OrderCard
+              key={data.id}
+              tableNumber={data.tableNumber}
+              peopleCount={data.peopleCount}
+              orderTime={data.orderTime}
+              customerName={data.customerName}
+              phone={data.phone}
+              items={data.items}
+              totalAmount={data.totalAmount}
+              onConfirm={() => setModal('confirm')}
+              onCancel={() => setModal('cancelReason')}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center mt-60">
+          <NothingIcon />
+          <p className="font-semibold text-[20px] text-[#595959]">대기 중인 주문이 없어요!</p>
+        </div>
+      )}
 
       <BottomSheet
         open={modal === 'confirm'}
