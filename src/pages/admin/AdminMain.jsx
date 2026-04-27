@@ -50,7 +50,7 @@ export default function AdminMain() {
 
   useEffect(() => {
     setHeaderConfig({
-      title: '관리자 페이지',
+      title: '주문 관리',
     });
   }, [setHeaderConfig]);
 
