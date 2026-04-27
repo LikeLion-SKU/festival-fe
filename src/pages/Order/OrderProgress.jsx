@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useOutletContext } from 'react-router';
 
+import OrderButtonBox from '@/components/Order/OrderEntry/OrderButtonBox';
 import FoodNavbar from '@/components/Order/OrderProgress/FoodNavbar';
 import MenuSection from '@/components/Order/OrderProgress/MenuSection';
 import OrderHeader from '@/components/common/OrderHeader';
@@ -41,7 +42,9 @@ function OrderProgress() {
           sectionRefs={sectionRefs}
           activeCategory={activeCategory}
         />
+        <div className="h-25" />
       </div>
+      <OrderButtonBox buttonName="주문하기" isOpen={true} onClick={() => {}} />
     </div>
   );
 }
