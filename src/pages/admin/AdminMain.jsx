@@ -23,7 +23,13 @@ const NAV_ITEMS = [
     activeIcon: CookActiveIcon,
     goto: '/admin/cooking',
   },
-  { key: 'done', name: '완료', icon: DoneIcon, activeIcon: DoneActiveIcon, goto: '/admin/done' },
+  {
+    key: 'complete',
+    name: '완료',
+    icon: DoneIcon,
+    activeIcon: DoneActiveIcon,
+    goto: '/admin/complete',
+  },
   {
     key: 'cancel',
     name: '취소',
