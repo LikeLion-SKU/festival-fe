@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router';
 
+import Noodle from '@/assets/icons/noodle.svg';
 import BoothHero from '@/assets/images/booth_image.svg?react';
 import Info1 from '@/assets/images/booth_info_1.svg';
 
@@ -33,55 +34,76 @@ const boothData = {
 
 const foodData = [
   {
-    image: Info1,
+    image: Noodle,
     name: '닭발&주먹밥',
     description: '매콤한 닭발과 든든한 주먹밥 세트',
     price: 3000,
     category: 'main',
   },
   {
-    image: Info1,
+    image: Noodle,
     name: '김치우동',
     description: '칼칼한 김치가 들어간 따뜻한 우동',
     price: 5000,
     category: 'main',
   },
   {
-    image: Info1,
+    image: Noodle,
     name: '김치전',
     description: '바삭하게 구운 김치전',
     price: 3000,
     category: 'main',
   },
   {
-    image: Info1,
+    image: Noodle,
     name: '어묵우동',
     description: '부드러운 어묵과 우동의 조합',
     price: 10000,
     category: 'main',
   },
   {
-    image: Info1,
+    image: Noodle,
     name: '옥수수전',
     description: '달콤한 옥수수가 들어간 전',
     price: 3000,
     category: 'side',
   },
   {
-    image: Info1,
+    image: Noodle,
     name: '어묵탕',
     description: '시원하고 깔끔한 어묵탕',
     price: 10000,
     category: 'side',
   },
   {
-    image: Info1,
+    image: Noodle,
     name: '주먹밥',
     description: '한 입 크기로 먹기 좋은 주먹밥',
     price: 3000,
     category: 'side',
   },
-  { image: Info1, name: '음료수', description: '시원한 음료수', price: 1000, category: 'drink' },
+  {
+    image: Noodle,
+    name: '주먹밥',
+    description: '한 입 크기로 먹기 좋은 주먹밥',
+    price: 3000,
+    category: 'side',
+  },
+  {
+    image: Noodle,
+    name: '주먹밥',
+    description: '한 입 크기로 먹기 좋은 주먹밥',
+    price: 3000,
+    category: 'side',
+  },
+  { image: Noodle, name: '슬러시', description: '시원한 음료수', price: 1000, category: 'drink' },
+  {
+    image: Noodle,
+    name: '제로 콜라',
+    description: '시원한 음료수',
+    price: 1000,
+    category: 'drink',
+  },
 ];
 
 function Order() {
