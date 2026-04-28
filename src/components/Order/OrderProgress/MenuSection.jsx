@@ -1,4 +1,5 @@
 import Garbage from '@/assets/icons/garbage.svg?react';
+import Minus from '@/assets/icons/minus.svg?react';
 import Plus from '@/assets/icons/plus.svg?react';
 
 const CATEGORY_LABELS = { main: '메인', side: '사이드', drink: '음료' };
@@ -65,12 +66,12 @@ function MenuSection({
                             e.stopPropagation();
                             handleDecrease(key);
                           }}
-                          className="w-5 h-5 rounded-full bg-white shadow flex items-center justify-center text-gray-400"
+                          className="w-7 h-7 rounded-full bg-white shadow flex items-center justify-center text-gray-400"
                         >
                           {qty === 1 ? (
-                            <Garbage />
+                            <Garbage className="w-2 h-2" />
                           ) : (
-                            <div className=" w-2 border-b border-light-gray text-xs leading-none" />
+                            <Minus className="w-2 h-2" />
                           )}
                         </button>
                         <span className="text-sm font-medium w-4 text-center">{qty}</span>
@@ -79,9 +80,9 @@ function MenuSection({
                             e.stopPropagation();
                             handleIncrease(key);
                           }}
-                          className="w-5 h-5 rounded-full bg-white shadow flex items-center justify-center text-gray-400"
+                          className="w-7 h-7 rounded-full bg-white shadow flex items-center justify-center text-gray-400"
                         >
-                          <Plus />
+                          <Plus className="w-2 h-2" />
                         </button>
                       </div>
                     )}

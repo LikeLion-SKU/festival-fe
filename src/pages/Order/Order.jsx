@@ -129,6 +129,13 @@ function Order() {
       return next;
     });
 
+  const handleRemove = (key) =>
+    setQuantities((prev) => {
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+
   useEffect(() => {
     sessionStorage.setItem('orderQuantities', JSON.stringify(quantities));
 
@@ -155,6 +162,7 @@ function Order() {
         quantities,
         onSelect: handleSelect,
         onIncrease: handleIncrease,
+        onRemove: handleRemove,
         onDecrease: handleDecrease,
         onReset: handleReset,
       }}
