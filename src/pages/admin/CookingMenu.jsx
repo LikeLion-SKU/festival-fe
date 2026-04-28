@@ -6,6 +6,7 @@ import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
 import TableOrderCard from '@/components/Admin/AdminCooking/TableOrderCard';
 import BottomSheet from '@/components/Admin/BottomSheet';
+import CancelGuideModal from '@/components/Admin/CancelGuideModal';
 import CancelReasonModal from '@/components/Admin/CancelReasonModal';
 import OpenButton from '@/components/Admin/OpenButton';
 import OrderCancelModal from '@/components/Admin/OrderCancelModal';
@@ -64,14 +65,14 @@ export default function CookingMenu() {
 
   const handleCancelSubmit = () => {
     if (!reason) return;
-    setModal('cancelDone');
+    setModal('cancelGuide');
   };
 
   return (
     <div className="flex flex-col w-full h-full bg-[#f8f8f8] items-center">
       {orderData.length > 0 ? (
         <>
-          <div className="sticky flex w-full flex-col bg-white px-5 py-2 shadow-[0_1px_2px_0_rgba(0,0,0,0.1)]">
+          <div className="sticky flex w-full min-h-13 max-h-50 overflow-auto flex-col bg-white px-5 py-2 shadow-[0_1px_2px_0_rgba(0,0,0,0.1)]">
             <button
               type="button"
               onClick={() => setSummaryOpen((v) => !v)}
@@ -94,7 +95,7 @@ export default function CookingMenu() {
                     key={data.id}
                     tableNumber={data.tableNumber}
                     checkedCount={checkedMap[data.id]?.size ?? 0}
-                    totalCount={data.items.length}
+                    totalCount={data.items.reduce((sum, i) => sum + i.quantity, 0)}
                   />
                 ))}
               </div>
@@ -150,19 +151,21 @@ export default function CookingMenu() {
         buttonName="완료 처리"
         onButtonClick={handleWarningConfirm}
       >
-        <div className="flex flex-col items-center pt-15 pb-10">
+        <div className="flex flex-col items-center pt-11.75">
           <WarningIcon />
-          <p className="font-semibold text-[1.25rem]">아직 체크하지 않은 메뉴가 있어요</p>
-          <p className="text-[14px] text-[#7F7F7F]">
-            완료 처리 시 모든 메뉴가 조리 완료로 변경돼요.
+          <p className="font-semibold text-[1.25rem] mt-7">
+            아직 <span className="text-[#FE5F54]">제공 전인 메뉴</span>가 있어요
           </p>
+          <p className="font-semibold text-[1.25rem]">그래도 주문을 완료할까요?</p>
+          <p className="text-[14px] text-[#7F7F7F] mt-2">완료하면 주문이 완료로 이동해요</p>
         </div>
       </BottomSheet>
 
       <BottomSheet open={modal === 'cookingDone'} onOpenChange={(o) => !o && closeModal()}>
-        <div className="flex flex-col items-center pt-13 pb-30">
+        <div className="flex flex-col items-center pt-16.75">
           <CheckIcon />
-          <p className="font-semibold text-[1.25rem]">주문이 완료 처리되었어요</p>
+          <p className="font-semibold text-[1.25rem] mt-7">주문이</p>
+          <p className="font-semibold text-[1.25rem]">완료 처리되었어요</p>
         </div>
       </BottomSheet>
 
@@ -172,6 +175,12 @@ export default function CookingMenu() {
         reason={reason}
         onReasonChange={setReason}
         onSubmit={handleCancelSubmit}
+      />
+
+      <CancelGuideModal
+        open={modal === 'cancelGuide'}
+        onOpenChange={(o) => !o && closeModal()}
+        onConfirm={() => setModal('cancelDone')}
       />
 
       <OrderCancelModal
