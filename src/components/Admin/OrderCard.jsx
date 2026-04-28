@@ -31,6 +31,16 @@ export default function OrderCard({
   const isControlled = checkedItemsProp !== undefined;
   const checkedItems = isControlled ? checkedItemsProp : internalChecked;
 
+  const renderItems = isCooking
+    ? items.flatMap((item) =>
+        Array.from({ length: item.quantity }, () => ({
+          name: item.name,
+          quantity: 1,
+          price: item.quantity > 0 ? item.price / item.quantity : item.price,
+        }))
+      )
+    : items;
+
   const toggleOpen = () => {
     if (isOpenControlled) onOpenChange?.(!isOpen);
     else setInternalOpen((v) => !v);
@@ -108,14 +118,14 @@ export default function OrderCard({
           </div>
 
           <div className="flex w-full flex-col">
-            {items.map((item, idx) => {
+            {renderItems.map((item, idx) => {
               const checked = checkedItems.has(idx);
               const strike = isCooking && checked;
               return (
                 <div
                   key={idx}
                   className={`flex h-12 items-center justify-between gap-3 px-2 ${
-                    idx < items.length - 1 ? 'border-b border-dashed border-[#EFEFEF]' : ''
+                    idx < renderItems.length - 1 ? 'border-b border-dashed border-[#EFEFEF]' : ''
                   }`}
                   onClick={() => toggleChecked(idx)}
                 >
@@ -162,7 +172,7 @@ export default function OrderCard({
               type="button"
               onClick={() =>
                 onConfirm?.({
-                  allChecked: items.length > 0 && checkedItems.size === items.length,
+                  allChecked: renderItems.length > 0 && checkedItems.size === renderItems.length,
                   checkedCount: checkedItems.size,
                 })
               }
