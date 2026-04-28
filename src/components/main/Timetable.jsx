@@ -3,6 +3,26 @@ import { useState } from 'react';
 import HorseIcon from '@/assets/icons/horse.svg';
 import FireBg from '@/assets/images/fire1.svg';
 import FireBg2 from '@/assets/images/fire2.svg';
+import Banner from '@/components/main/Banner';
+
+const DAY_BANNERS = {
+  day2: [
+    { id: 1, artist: '세븐틴', time: '18:00 ★ ~ 18:30', variant: 1 },
+    { id: 2, artist: '지드래곤', time: '18:00 ★ ~ 18:30', variant: 2 },
+    { id: 3, artist: '엔하이픈', time: '18:00 ★ ~ 18:30', variant: 1 },
+    { id: 4, artist: '아이유', time: '18:00 ★ ~ 18:30', variant: 2 },
+    { id: 5, artist: '블랙핑크', time: '18:00 ★ ~ 18:30', variant: 1 },
+    { id: 6, artist: '방탄소년단', time: '18:00 ★ ~ 18:30', variant: 2 },
+    { id: 7, artist: '투어스', time: '18:00 ★ ~ 18:30', variant: 1 },
+    { id: 8, artist: '프로미스나인', time: '18:00 ★ ~ 18:30', variant: 2 },
+  ],
+  day3: [
+    { id: 1, artist: '윤희준', time: '18:00 ★ ~ 18:30', variant: 2 },
+    { id: 2, artist: '임다현', time: '18:00 ★ ~ 18:30', variant: 1 },
+    { id: 3, artist: '아이브', time: '18:00 ★ ~ 18:30', variant: 2 },
+    { id: 4, artist: '에스파', time: '18:00 ★ ~ 18:30', variant: 1 },
+  ],
+};
 
 export default function Timetable() {
   const [selectedDay, setSelectedDay] = useState('day2');
@@ -55,6 +75,28 @@ export default function Timetable() {
             </button>
           );
         })}
+      </div>
+
+      <div
+        className={`mx-auto mt-[1.5rem] flex w-full max-w-[24rem] flex-col ${
+          selectedDay === 'day2' ? 'gap-[0.05rem]' : 'gap-[0.6rem]'
+        }`}
+      >
+        {(DAY_BANNERS[selectedDay] ?? []).map((banner, index) => (
+          <div
+            key={`${selectedDay}-${banner.id}`}
+            className={`${index % 2 === 0 ? 'self-start' : 'self-end'} ${
+              banner.id >= 2 ? '-mt-[1.5rem]' : ''
+            } ${banner.variant === 2 ? 'z-0' : 'z-10'}`}
+          >
+            <Banner
+              artist={banner.artist}
+              time={banner.time}
+              variant={banner.variant}
+              reverse={index % 2 === 1}
+            />
+          </div>
+        ))}
       </div>
     </section>
   );
