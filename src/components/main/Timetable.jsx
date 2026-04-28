@@ -84,32 +84,20 @@ export default function Timetable() {
 
       <div className="mx-auto mt-[1.5rem] flex w-full max-w-[24rem] flex-col gap-[0.05rem]">
         {(DAY_BANNERS[selectedDay] ?? []).map((banner, index) => {
-          const isDay3 = selectedDay === 'day3';
-          const isDay2Variant2 = selectedDay === 'day2' && banner.variant === 2;
-          const isDay2Variant1 = selectedDay === 'day2' && banner.variant === 1;
-          const isDay3Variant2 = selectedDay === 'day3' && banner.variant === 2;
-          const isRightAligned = isDay3 ? index % 2 === 0 : index % 2 === 1;
-          const timeBadgeOffsetClass = isDay3
-            ? banner.variant === 2
-              ? '!-translate-x-[0.9rem]'
-              : '!translate-x-[0.9rem]'
-            : isDay2Variant1
-              ? '!translate-x-[0.45rem]'
-              : '';
-          const rightImageSlotOffsetClass = isDay2Variant1
-            ? '!top-[45%] !translate-x-[0.55rem]'
-            : '';
-          const leftImageSlotOffsetClass = isDay2Variant2
-            ? '!top-[42%] !translate-x-[-15.85rem]'
-            : '';
-          const day2Variant1ShiftClass = isDay2Variant1 ? 'translate-x-[0.95rem]' : '';
-          const day2Variant2ShiftClass = isDay2Variant2 ? '-translate-x-[0.95rem]' : '';
-          const artistOffsetClass = isDay2Variant1 ? '!ml-[2.5rem]' : '';
+          const isVariant2 = banner.variant === 2;
+          const isVariant1 = banner.variant === 1;
+          const isRightAligned = index % 2 === 1;
+          const timeBadgeOffsetClass = isVariant1 ? '!translate-x-[0.45rem]' : '';
+          const rightImageSlotOffsetClass = isVariant1 ? '!top-[45%] !translate-x-[0.55rem]' : '';
+          const leftImageSlotOffsetClass = isVariant2 ? '!top-[42%] !translate-x-[-15.85rem]' : '';
+          const variant1ShiftClass = isVariant1 ? 'translate-x-[0.95rem]' : '';
+          const variant2ShiftClass = isVariant2 ? '-translate-x-[0.95rem]' : '';
+          const artistOffsetClass = isVariant1 ? '!ml-[2.5rem]' : '';
 
           return (
             <div
               key={`${selectedDay}-${banner.id}`}
-              className={`${isRightAligned ? 'self-end' : 'self-start'} ${day2Variant1ShiftClass} ${day2Variant2ShiftClass} ${
+              className={`${isRightAligned ? 'self-end' : 'self-start'} ${variant1ShiftClass} ${variant2ShiftClass} ${
                 banner.id >= 2 ? '-mt-[1.5rem]' : ''
               } ${banner.variant === 2 ? 'z-0' : 'z-10'}`}
             >
@@ -118,19 +106,19 @@ export default function Timetable() {
                 time={banner.time}
                 variant={banner.variant}
                 reverse={isRightAligned}
-                mirrorImage={isDay3}
-                tiltTimeBadgeLeft={isDay3 && banner.variant === 2}
+                mirrorImage={false}
+                tiltTimeBadgeLeft={false}
                 timeBadgeOffsetClass={timeBadgeOffsetClass}
-                enableVariant2BaseShift={!isDay3}
-                adjustDay2Variant2Text={isDay2Variant2}
-                useVariant1TextLayoutForVariant2={isDay3Variant2}
+                enableVariant2BaseShift
+                adjustDay2Variant2Text={isVariant2}
+                useVariant1TextLayoutForVariant2={false}
                 artistOffsetClass={artistOffsetClass}
-                showRightImageSlot={isDay2Variant1}
-                rightImageSlotSrc={isDay2Variant1 ? Singer1 : ''}
+                showRightImageSlot={isVariant1}
+                rightImageSlotSrc={isVariant1 ? Singer1 : ''}
                 rightImageSlotOffsetClass={rightImageSlotOffsetClass}
-                showLeftImageSlot={isDay2Variant2}
-                leftImageSlotSrc={isDay2Variant2 ? Singer1 : ''}
-                leftImageSlotMirror={isDay2Variant2}
+                showLeftImageSlot={isVariant2}
+                leftImageSlotSrc={isVariant2 ? Singer1 : ''}
+                leftImageSlotMirror={isVariant2}
                 leftImageSlotOffsetClass={leftImageSlotOffsetClass}
                 leftImageSlotRotateDeg={-10}
               />
