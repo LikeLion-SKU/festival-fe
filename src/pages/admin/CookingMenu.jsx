@@ -72,7 +72,7 @@ export default function CookingMenu() {
     <div className="flex flex-col w-full h-full bg-[#f8f8f8] items-center">
       {orderData.length > 0 ? (
         <>
-          <div className="sticky flex w-full max-h-50 overflow-auto flex-col bg-white px-5 py-2 shadow-[0_1px_2px_0_rgba(0,0,0,0.1)]">
+          <div className="sticky flex w-full min-h-13 max-h-50 overflow-auto flex-col bg-white px-5 py-2 shadow-[0_1px_2px_0_rgba(0,0,0,0.1)]">
             <button
               type="button"
               onClick={() => setSummaryOpen((v) => !v)}
@@ -151,7 +151,7 @@ export default function CookingMenu() {
         buttonName="완료 처리"
         onButtonClick={handleWarningConfirm}
       >
-        <div className="flex flex-col items-center pt-15 pb-10">
+        <div className="flex flex-col items-center pt-11.75">
           <WarningIcon />
           <p className="font-semibold text-[1.25rem] mt-7">
             아직 <span className="text-[#FE5F54]">제공 전인 메뉴</span>가 있어요
@@ -162,7 +162,7 @@ export default function CookingMenu() {
       </BottomSheet>
 
       <BottomSheet open={modal === 'cookingDone'} onOpenChange={(o) => !o && closeModal()}>
-        <div className="flex flex-col items-center pt-13 pb-30">
+        <div className="flex flex-col items-center pt-16.75">
           <CheckIcon />
           <p className="font-semibold text-[1.25rem] mt-7">주문이</p>
           <p className="font-semibold text-[1.25rem]">완료 처리되었어요</p>

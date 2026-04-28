@@ -10,9 +10,9 @@ export default function CancelGuideModal({ open, onOpenChange, onConfirm }) {
       buttonName="확인했어요"
       onButtonClick={onConfirm}
     >
-      <div className="flex w-full flex-col items-center pt-13 pb-7">
+      <div className="flex w-full flex-col items-center pt-11.75">
         <CheckIcon />
-        <div className="mt-3.5 text-center text-[20px] font-semibold leading-7 tracking-[-0.2px] text-[#1A1A1A]">
+        <div className="mt-7 text-center text-[20px] font-semibold leading-7 tracking-[-0.2px] text-[#1A1A1A]">
           <p>취소할 경우 사유는</p>
           <p>
             <span className="text-[#FE5F54]">고객에게 직접 전달</span>

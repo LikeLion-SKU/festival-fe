@@ -17,11 +17,11 @@ export default function CancelReasonModal({
       buttonName="취소하기"
       onButtonClick={onSubmit}
     >
-      <div className="flex w-full flex-col items-center pt-3">
+      <div className="flex w-full flex-col items-center pt-9.5">
         <p className="text-[20px] font-semibold leading-6 tracking-[-0.2px] text-[#1A1A1A]">
           주문 취소 사유를 골라주세요.
         </p>
-        <div className="mt-11 flex flex-col items-center gap-1">
+        <div className="mt-7.75 flex flex-col items-center gap-1">
           {CANCEL_REASONS.map((r) => {
             const selected = reason === r;
             return (
