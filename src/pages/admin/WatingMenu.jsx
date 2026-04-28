@@ -32,9 +32,9 @@ export default function WaitingMenu() {
   };
 
   return (
-    <div className="flex h-full w-full bg-[#EFEFEF] justify-center py-7">
+    <div className="flex h-full w-full bg-[#EFEFEF] justify-center">
       {orderData.length > 0 ? (
-        <div className="flex flex-col gap-2 overflow-auto no-scrollbar">
+        <div className="flex flex-col gap-2 overflow-auto no-scrollbar py-7">
           {orderData.map((data) => (
             <OrderCard
               key={data.id}
@@ -51,7 +51,7 @@ export default function WaitingMenu() {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center mt-60">
+        <div className="flex flex-col items-center mt-67">
           <NothingIcon />
           <p className="font-semibold text-[20px] text-deep-gray">대기 중인 주문이 없어요!</p>
         </div>
