@@ -23,7 +23,13 @@ const NAV_ITEMS = [
     activeIcon: CookActiveIcon,
     goto: '/admin/cooking',
   },
-  { key: 'done', name: '완료', icon: DoneIcon, activeIcon: DoneActiveIcon, goto: '/admin/done' },
+  {
+    key: 'complete',
+    name: '완료',
+    icon: DoneIcon,
+    activeIcon: DoneActiveIcon,
+    goto: '/admin/complete',
+  },
   {
     key: 'cancel',
     name: '취소',
@@ -50,7 +56,7 @@ export default function AdminMain() {
 
   useEffect(() => {
     setHeaderConfig({
-      title: '관리자 페이지',
+      title: '주문 관리',
     });
   }, [setHeaderConfig]);
 
@@ -72,7 +78,7 @@ export default function AdminMain() {
           />
         ))}
       </nav>
-      <div className="flex-1">
+      <div className="flex-1 overflow-auto">
         <Outlet context={context} />
       </div>
     </div>

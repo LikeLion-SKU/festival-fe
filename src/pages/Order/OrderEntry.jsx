@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useOutletContext } from 'react-router';
+import { useNavigate, useOutletContext } from 'react-router';
 
 import MoonIcon from '@/assets/icons/moon_icon.svg?react';
 import MorningToggle from '@/assets/icons/morning_toggle.svg?react';
@@ -27,6 +27,7 @@ function OrderEntry() {
   const TimeImage = isNight ? MoonIcon : SunIcon;
   const ToggleIcon = isNight ? NightToggle : MorningToggle;
   const word = isNight ? '밤' : '낮';
+  const navigate = useNavigate();
 
   return (
     <>
@@ -47,7 +48,12 @@ function OrderEntry() {
         menus={isNight ? nightMenus : dayMenus}
       />
       <div className="h-28" />
-      <OrderButtonBox className="relative z-1 " buttonName={buttonName} isOpen={isOpen} />
+      <OrderButtonBox
+        className="relative z-1 "
+        buttonName={buttonName}
+        isActive={isOpen}
+        onClick={() => navigate('/order/progress')}
+      />
     </>
   );
 }
