@@ -37,7 +37,7 @@ export default function AdminLogin() {
       <div className="mt-12.75 flex w-87.5 flex-col gap-6.25 ">
         <div className="flex w-full flex-col gap-2.5">
           <div
-            className={`flex items-center gap-1 w-full text-[18px] font-semibold leading-[1.6]  ${department ? 'text-[#FE5F54]' : 'text-[#595959]'}`}
+            className={`flex items-center gap-1 w-full text-[18px] font-semibold leading-[1.6]  ${department ? 'text-[#FE5F54]' : 'text-deep-gray'}`}
           >
             학과 선택
             {department ? <CheckIcon /> : ''}
