@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import CheckIcon from '@/assets/icons/admin/check_red_big_icon.svg?react';
+import ClapIcon from '@/assets/icons/admin/clap_icon.svg?react';
 import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
 import CompletedOrderCard from '@/components/Admin/AdminComplete/CompletedOrderCard';
 import BottomSheet from '@/components/Admin/BottomSheet';
+import OrderReturnModal from '@/components/Admin/OrderReturnModal';
 import { completedOrderData } from '@/constants/completedOrderDummyData';
 
 const ORDERED_DATES = ['5/13', '5/14', '5/15'];
@@ -23,6 +25,7 @@ export default function CompleteMenu() {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [dateFilter, setDateFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
   const filtered = completedOrderData
     .filter((d) => dateFilter === 'all' || d.completedDate === dateFilter)
@@ -35,12 +38,6 @@ export default function CompleteMenu() {
         d.phone.includes(q)
       );
     });
-
-  useEffect(() => {
-    if (modal !== 'undoDone') return;
-    const t = setTimeout(() => setModal(null), 1500);
-    return () => clearTimeout(t);
-  }, [modal]);
 
   const closeModal = () => {
     setModal(null);
@@ -64,10 +61,18 @@ export default function CompleteMenu() {
   return (
     <div className="flex flex-col w-full h-full bg-[#F8F8F8] items-center">
       <div className="sticky flex w-full flex-col gap-3 bg-white px-5 py-3 shadow-[0_1px_2px_0_rgba(0,0,0,0.1)]">
-        <p className="text-[16px] font-semibold leading-[1.6] text-[#222]">
-          완료된 주문{' '}
-          <span className="text-[14px] font-medium text-[#A0A0A0]">(총 {filtered.length}건)</span>
-        </p>
+        <div className="flex justify-between items-center">
+          <p className="text-[16px] font-semibold leading-[1.6] text-[#222]">
+            완료된 주문{' '}
+            <span className="text-[14px] font-medium text-[#A0A0A0]">(총 {filtered.length}건)</span>
+          </p>
+          <button
+            onClick={() => setModal('total')}
+            className="flex w-18 h-8 justify-center items-center bg-[#FFDDDB] text-[#FE5F54] text-[14px] font-medium rounded-lg"
+          >
+            매출 확인
+          </button>
+        </div>
 
         <div className="flex gap-2">
           {FILTERS.map((f) => {
@@ -77,8 +82,8 @@ export default function CompleteMenu() {
                 key={f.key}
                 type="button"
                 onClick={() => setDateFilter(f.key)}
-                className={`h-8 rounded-lg px-3 text-[13px] font-medium ${
-                  active ? 'bg-[#FE5F54] text-white' : 'bg-[#F6F6F6] text-[#7F7F7F]'
+                className={`w-14 h-8 rounded-lg px-3 text-[13px] font-medium ${
+                  active ? 'bg-[#FF756C] text-white' : 'bg-[#F6F6F6] text-[#7F7F7F]'
                 }`}
               >
                 {f.label}
@@ -87,7 +92,7 @@ export default function CompleteMenu() {
           })}
         </div>
 
-        <div className="flex h-10 w-full items-center gap-2 rounded-[8px] bg-[#F6F6F6] px-3">
+        <div className="flex h-10 w-full items-center gap-2 rounded-lg border border-[#A0A0A0] px-3">
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
             <circle cx="8" cy="8" r="5.5" stroke="#A0A0A0" strokeWidth="1.4" />
             <path
@@ -101,7 +106,7 @@ export default function CompleteMenu() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="테이블 번호, 이름, 연락처 검색"
+            placeholder="이름 또는 전화번호로 검색"
             className="flex-1 bg-transparent text-[14px] text-[#222] placeholder:text-[#A0A0A0] outline-none"
           />
         </div>
@@ -143,19 +148,24 @@ export default function CompleteMenu() {
         buttonName="되돌리기"
         onButtonClick={() => handleUndoConfirm(selectedOrderId)}
       >
-        <div className="flex flex-col items-center pt-15 pb-10">
+        <div className="flex flex-col items-center pt-11.5">
           <WarningIcon />
-          <p className="font-semibold text-[1.25rem] mt-2">이미 완료된 주문이에요.</p>
+          <p className="font-semibold text-[1.25rem] mt-7">
+            이미 <span className="text-[#FE5F54]">완료된</span> 주문이에요.
+          </p>
           <p className="font-semibold text-[1.25rem]">조리 중으로 되돌릴까요?</p>
         </div>
       </BottomSheet>
 
-      <BottomSheet open={modal === 'undoDone'} onOpenChange={(o) => !o && closeModal()}>
-        <div className="flex flex-col items-center pt-13 pb-30 gap-2">
-          <CheckIcon />
-          <p className="font-semibold text-[1.25rem]">주문이 되돌리기 처리됐어요.</p>
-        </div>
-      </BottomSheet>
+      <OrderReturnModal
+        open={modal === 'undoDone'}
+        onOpenChange={(o) => !o && closeModal()}
+        onMove={() => {
+          closeModal();
+          navigate('/admin/cooking');
+        }}
+        onConfirm={closeModal}
+      />
 
       <BottomSheet
         open={modal === 'pastDate'}
@@ -164,9 +174,30 @@ export default function CompleteMenu() {
         buttonName="확인"
         onButtonClick={closeModal}
       >
-        <div className="flex flex-col items-center pt-15 pb-10 gap-2">
+        <div className="flex flex-col items-center pt-16.75">
           <WarningIcon />
-          <p className="font-semibold text-[1.25rem]">지난 날짜의 주문은 되돌릴 수 없어요.</p>
+          <p className="font-semibold text-[1.25rem] mt-6.25">
+            지난 날짜의 주문은 되돌릴 수 없어요.
+          </p>
+        </div>
+      </BottomSheet>
+
+      <BottomSheet
+        open={modal === 'total'}
+        onOpenChange={(o) => !o && closeModal()}
+        showButton
+        buttonName="확인"
+        onButtonClick={closeModal}
+      >
+        <div className="flex flex-col items-center pt-7.75">
+          <ClapIcon />
+          <p className="font-semibold text-[1.25rem] mt-7">오늘은</p>
+          <p className="font-semibold text-[1.25rem]">
+            <span className="text-[#FE5F54] font-bold">100만 원</span> 벌었어요!
+          </p>
+          <p className="font-semibold text-[14px] text-[#FFBBB8] mt-2">
+            수고한 내자신..기특하ㄷr...
+          </p>
         </div>
       </BottomSheet>
     </div>
