@@ -56,7 +56,9 @@ export default function OrderCard({
       }`}
     >
       <div className="flex h-7 w-full items-center justify-between" onClick={toggleOpen}>
-        <p className="text-[16px] font-semibold leading-6.75 tracking-[-0.5px] text-[#222]">
+        <p
+          className={`text-[16px] ${isOpen ? 'font-bold' : 'font-semibold'} leading-6.75 tracking-[-0.5px] text-[#222]`}
+        >
           {tableNumber != 0 ? `테이블 ${tableNumber}` : '포장'}
         </p>
         <div className="flex items-center justify-end gap-3">
@@ -92,11 +94,13 @@ export default function OrderCard({
 
           <div className="flex h-14 w-full items-center justify-between">
             <div className="flex items-center gap-4 text-[14px] text-[#353535]">
-              <span className="font-semibold tracking-[-0.35px]">{customerName}</span>
+              <span className="font-bold tracking-[-0.35px]">{customerName}</span>
               {tableNumber != 0 && (
-                <span className="font-medium tracking-[-0.42px]">{peopleCount}명</span>
+                <span className="font-semibold tracking-[-0.42px] text-[#FE5F54]">
+                  {peopleCount}명
+                </span>
               )}
-              <span className="font-medium">{phone}</span>
+              <span className="font-semibold">{phone}</span>
             </div>
             <span className="whitespace-nowrap text-[12px] font-medium text-[#7F7F7F]">
               {orderTime} 주문
@@ -127,14 +131,20 @@ export default function OrderCard({
                         {checked && <CheckGrayIcon />}
                       </button>
                     )}
-                    <span className={`text-[14px] text-[#222] ${strike ? 'line-through' : ''}`}>
+                    <span
+                      className={`text-[14px] text-deep-gray font-medium ${strike ? 'line-through' : ''}`}
+                    >
                       {item.name}
                     </span>
                     {!isCooking && (
-                      <span className="text-[14px] text-[#FE5F54]">x{item.quantity}</span>
+                      <span className="font-medium text-[14px] text-[#A0A0A0]">
+                        x{item.quantity}
+                      </span>
                     )}
                   </div>
-                  <span className={`text-[14px] text-[#222] ${strike ? 'line-through' : ''}`}>
+                  <span
+                    className={`font-medium text-[14px] text-[#222] ${strike ? 'line-through' : ''}`}
+                  >
                     {formatPrice(item.price)}
                   </span>
                 </div>

@@ -6,6 +6,7 @@ import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
 import TableOrderCard from '@/components/Admin/AdminCooking/TableOrderCard';
 import BottomSheet from '@/components/Admin/BottomSheet';
+import CancelGuideModal from '@/components/Admin/CancelGuideModal';
 import CancelReasonModal from '@/components/Admin/CancelReasonModal';
 import OpenButton from '@/components/Admin/OpenButton';
 import OrderCancelModal from '@/components/Admin/OrderCancelModal';
@@ -64,7 +65,7 @@ export default function CookingMenu() {
 
   const handleCancelSubmit = () => {
     if (!reason) return;
-    setModal('cancelDone');
+    setModal('cancelGuide');
   };
 
   return (
@@ -172,6 +173,12 @@ export default function CookingMenu() {
         reason={reason}
         onReasonChange={setReason}
         onSubmit={handleCancelSubmit}
+      />
+
+      <CancelGuideModal
+        open={modal === 'cancelGuide'}
+        onOpenChange={(o) => !o && closeModal()}
+        onConfirm={() => setModal('cancelDone')}
       />
 
       <OrderCancelModal
