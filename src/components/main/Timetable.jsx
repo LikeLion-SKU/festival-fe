@@ -93,15 +93,20 @@ export default function Timetable() {
             ? banner.variant === 2
               ? '!-translate-x-[0.9rem]'
               : '!translate-x-[0.9rem]'
-            : '';
+            : isDay2Variant1
+              ? '!translate-x-[0.45rem]'
+              : '';
           const rightImageSlotOffsetClass = isDay2Variant1
-            ? '!top-[45%] !translate-x-[-0.35rem]'
+            ? '!top-[45%] !translate-x-[0.55rem]'
             : '';
+          const day2Variant1ShiftClass = isDay2Variant1 ? 'translate-x-[0.95rem]' : '';
+          const day2Variant2ShiftClass = isDay2Variant2 ? '-translate-x-[0.95rem]' : '';
+          const artistOffsetClass = isDay2Variant1 ? '!ml-[2.5rem]' : '';
 
           return (
             <div
               key={`${selectedDay}-${banner.id}`}
-              className={`${isRightAligned ? 'self-end' : 'self-start'} ${
+              className={`${isRightAligned ? 'self-end' : 'self-start'} ${day2Variant1ShiftClass} ${day2Variant2ShiftClass} ${
                 banner.id >= 2 ? '-mt-[1.5rem]' : ''
               } ${banner.variant === 2 ? 'z-0' : 'z-10'}`}
             >
@@ -116,6 +121,7 @@ export default function Timetable() {
                 enableVariant2BaseShift={!isDay3}
                 adjustDay2Variant2Text={isDay2Variant2}
                 useVariant1TextLayoutForVariant2={isDay3Variant2}
+                artistOffsetClass={artistOffsetClass}
                 showRightImageSlot={isDay2Variant1}
                 rightImageSlotSrc={isDay2Variant1 ? Singer1 : ''}
                 rightImageSlotOffsetClass={rightImageSlotOffsetClass}

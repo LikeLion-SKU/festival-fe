@@ -18,6 +18,7 @@ export default function Banner({
   enableVariant2BaseShift = true,
   adjustDay2Variant2Text = false,
   useVariant1TextLayoutForVariant2 = false,
+  artistOffsetClass = '',
   showRightImageSlot = false,
   rightImageSlotSrc = '',
   rightImageSlotOffsetClass = '',
@@ -67,7 +68,7 @@ export default function Banner({
                     ? 'mr-[1.75rem] origin-right rotate-[5deg]'
                     : 'ml-[2.35rem] origin-left -rotate-[3deg]'
                   : ''
-            }`}
+            } ${artistOffsetClass}`}
           >
             {artist}
           </p>
