@@ -67,7 +67,11 @@ function MenuSection({
                           }}
                           className="w-5 h-5 rounded-full bg-white shadow flex items-center justify-center text-gray-400"
                         >
-                          <Garbage />
+                          {qty === 1 ? (
+                            <Garbage />
+                          ) : (
+                            <div className=" w-2 border-b border-light-gray text-xs leading-none" />
+                          )}
                         </button>
                         <span className="text-sm font-medium w-4 text-center">{qty}</span>
                         <button
