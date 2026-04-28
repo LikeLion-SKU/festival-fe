@@ -26,7 +26,16 @@ const router = createBrowserRouter([
       {
         Component: MobileLayout,
         children: [
-          //{ path: '', lazy: page(() => import('파일 경로')) },
+          { path: '/lost-items', lazy: page(() => import('@/pages/LostItem/LostItem')) },
+          {
+            path: '/lost-items/new',
+            lazy: page(() => import('@/pages/LostItem/LostItemRegister')),
+          },
+          {
+            path: '/lost-items/:id/edit',
+            lazy: page(() => import('@/pages/LostItem/LostItemEdit')),
+          },
+          { path: '/lost-items/:id', lazy: page(() => import('@/pages/LostItem/LostItemDetail')) },
         ],
       },
     ],
