@@ -17,10 +17,14 @@ const DAY_BANNERS = {
     { id: 8, artist: '프로미스나인', time: '18:00 ★ ~ 18:30', variant: 2 },
   ],
   day3: [
-    { id: 1, artist: '윤희준', time: '18:00 ★ ~ 18:30', variant: 2 },
-    { id: 2, artist: '임다현', time: '18:00 ★ ~ 18:30', variant: 1 },
-    { id: 3, artist: '아이브', time: '18:00 ★ ~ 18:30', variant: 2 },
-    { id: 4, artist: '에스파', time: '18:00 ★ ~ 18:30', variant: 1 },
+    { id: 1, artist: '윤희준', time: '18:00 ★ ~ 18:30', variant: 1 },
+    { id: 2, artist: '임다현', time: '18:00 ★ ~ 18:30', variant: 2 },
+    { id: 3, artist: '정영진', time: '18:00 ★ ~ 18:30', variant: 1 },
+    { id: 4, artist: '최운조', time: '18:00 ★ ~ 18:30', variant: 2 },
+    { id: 5, artist: '김정현', time: '18:00 ★ ~ 18:30', variant: 1 },
+    { id: 6, artist: '금시언', time: '18:00 ★ ~ 18:30', variant: 2 },
+    { id: 7, artist: '김나경', time: '18:00 ★ ~ 18:30', variant: 1 },
+    { id: 8, artist: '신채린', time: '18:00 ★ ~ 18:30', variant: 2 },
   ],
 };
 
@@ -77,26 +81,36 @@ export default function Timetable() {
         })}
       </div>
 
-      <div
-        className={`mx-auto mt-[1.5rem] flex w-full max-w-[24rem] flex-col ${
-          selectedDay === 'day2' ? 'gap-[0.05rem]' : 'gap-[0.6rem]'
-        }`}
-      >
-        {(DAY_BANNERS[selectedDay] ?? []).map((banner, index) => (
-          <div
-            key={`${selectedDay}-${banner.id}`}
-            className={`${index % 2 === 0 ? 'self-start' : 'self-end'} ${
-              banner.id >= 2 ? '-mt-[1.5rem]' : ''
-            } ${banner.variant === 2 ? 'z-0' : 'z-10'}`}
-          >
-            <Banner
-              artist={banner.artist}
-              time={banner.time}
-              variant={banner.variant}
-              reverse={index % 2 === 1}
-            />
-          </div>
-        ))}
+      <div className="mx-auto mt-[1.5rem] flex w-full max-w-[24rem] flex-col gap-[0.05rem]">
+        {(DAY_BANNERS[selectedDay] ?? []).map((banner, index) => {
+          const isDay3 = selectedDay === 'day3';
+          const isRightAligned = isDay3 ? index % 2 === 0 : index % 2 === 1;
+          const timeBadgeOffsetClass = isDay3
+            ? banner.variant === 2
+              ? '!-translate-x-[0.9rem]'
+              : '!translate-x-[0.9rem]'
+            : '';
+
+          return (
+            <div
+              key={`${selectedDay}-${banner.id}`}
+              className={`${isRightAligned ? 'self-end' : 'self-start'} ${
+                banner.id >= 2 ? '-mt-[1.5rem]' : ''
+              } ${banner.variant === 2 ? 'z-0' : 'z-10'}`}
+            >
+              <Banner
+                artist={banner.artist}
+                time={banner.time}
+                variant={banner.variant}
+                reverse={isRightAligned}
+                mirrorImage={isDay3}
+                tiltTimeBadgeLeft={isDay3 && banner.variant === 2}
+                timeBadgeOffsetClass={timeBadgeOffsetClass}
+                enableVariant2BaseShift={!isDay3}
+              />
+            </div>
+          );
+        })}
       </div>
     </section>
   );
