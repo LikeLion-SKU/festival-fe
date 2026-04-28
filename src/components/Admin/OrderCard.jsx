@@ -1,8 +1,13 @@
 import { useState } from 'react';
 
+import CheckGrayIcon from '@/assets/icons/check_gray_icon.svg?react';
+import CheckWhiteIcon from '@/assets/icons/check_white_icon.svg?react';
+import OpenButton from '@/components/Admin/OpenButton';
+
 const formatPrice = (n) => `${n.toLocaleString('ko-KR')}원`;
 
 export default function OrderCard({
+  variant = 'waiting',
   tableNumber,
   peopleCount,
   orderTime,
@@ -12,8 +17,37 @@ export default function OrderCard({
   totalAmount,
   onConfirm,
   onCancel,
+  checkedItems: checkedItemsProp,
+  onToggleItem,
+  isOpen: isOpenProp,
+  onOpenChange,
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const [internalChecked, setInternalChecked] = useState(() => new Set());
+
+  const isCooking = variant === 'cooking';
+  const isOpenControlled = isOpenProp !== undefined;
+  const isOpen = isOpenControlled ? isOpenProp : internalOpen;
+  const isControlled = checkedItemsProp !== undefined;
+  const checkedItems = isControlled ? checkedItemsProp : internalChecked;
+
+  const toggleOpen = () => {
+    if (isOpenControlled) onOpenChange?.(!isOpen);
+    else setInternalOpen((v) => !v);
+  };
+
+  const toggleChecked = (idx) => {
+    if (isControlled) {
+      onToggleItem?.(idx);
+      return;
+    }
+    setInternalChecked((prev) => {
+      const next = new Set(prev);
+      if (next.has(idx)) next.delete(idx);
+      else next.add(idx);
+      return next;
+    });
+  };
 
   return (
     <div
@@ -21,18 +55,20 @@ export default function OrderCard({
         isOpen ? 'gap-2' : 'h-15 justify-center'
       }`}
     >
-      <div className="flex h-7 w-full items-center justify-between">
+      <div className="flex h-7 w-full items-center justify-between" onClick={toggleOpen}>
         <p className="text-[16px] font-semibold leading-6.75 tracking-[-0.5px] text-[#222]">
-          테이블 {tableNumber}
+          {tableNumber != 0 ? `테이블 ${tableNumber}` : '포장'}
         </p>
         <div className="flex items-center justify-end gap-3">
           {!isOpen && (
             <div className="flex items-center gap-1">
-              <div className="flex h-7 min-w-8.5 items-center justify-center rounded-[5px] bg-[#F6F6F6] px-2 py-1">
-                <p className="text-[12px] font-medium leading-[1.6] text-[#252525]">
-                  {peopleCount}명
-                </p>
-              </div>
+              {tableNumber != 0 && (
+                <div className="flex h-7 min-w-8.5 items-center justify-center rounded-[5px] bg-[#F6F6F6] px-2 py-1">
+                  <p className="text-[12px] font-medium leading-[1.6] text-[#252525]">
+                    {peopleCount}명
+                  </p>
+                </div>
+              )}
               <div className="flex h-7 max-w-17 items-center justify-center rounded-[5px] bg-[#F6F6F6] px-2 py-1">
                 <p className="whitespace-nowrap text-[12px] font-medium leading-[1.6] text-[#252525]">
                   {orderTime} 주문
@@ -42,26 +78,10 @@ export default function OrderCard({
           )}
           <button
             type="button"
-            onClick={() => setIsOpen(!isOpen)}
             aria-label={isOpen ? '주문 상세 닫기' : '주문 상세 보기'}
             className="flex size-5 flex-col items-start"
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className={`transition-transform ${isOpen ? 'rotate-180' : ''}`}
-            >
-              <path
-                d="M5 7.5L10 12.5L15 7.5"
-                stroke="#252525"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <OpenButton open={isOpen} />
           </button>
         </div>
       </div>
@@ -73,7 +93,9 @@ export default function OrderCard({
           <div className="flex h-14 w-full items-center justify-between">
             <div className="flex items-center gap-4 text-[14px] text-[#353535]">
               <span className="font-semibold tracking-[-0.35px]">{customerName}</span>
-              <span className="font-medium tracking-[-0.42px]">{peopleCount}명</span>
+              {tableNumber != 0 && (
+                <span className="font-medium tracking-[-0.42px]">{peopleCount}명</span>
+              )}
               <span className="font-medium">{phone}</span>
             </div>
             <span className="whitespace-nowrap text-[12px] font-medium text-[#7F7F7F]">
@@ -82,20 +104,42 @@ export default function OrderCard({
           </div>
 
           <div className="flex w-full flex-col">
-            {items.map((item, idx) => (
-              <div
-                key={idx}
-                className={`flex h-10 items-center justify-between px-2 ${
-                  idx < items.length - 1 ? 'border-b border-dashed border-[#EFEFEF]' : ''
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-[14px] text-[#222]">{item.name}</span>
-                  <span className="text-[14px] text-[#FE5F54]">x{item.quantity}</span>
+            {items.map((item, idx) => {
+              const checked = checkedItems.has(idx);
+              const strike = isCooking && checked;
+              return (
+                <div
+                  key={idx}
+                  className={`flex h-12 items-center justify-between gap-3 px-2 ${
+                    idx < items.length - 1 ? 'border-b border-dashed border-[#EFEFEF]' : ''
+                  }`}
+                  onClick={() => toggleChecked(idx)}
+                >
+                  <div className="flex flex-1 items-center gap-3">
+                    {isCooking && (
+                      <button
+                        type="button"
+                        aria-label={checked ? '체크 해제' : '체크'}
+                        aria-pressed={checked}
+                        className={`flex size-7 shrink-0 items-center justify-center rounded-[5px] border
+                            border-[#EFEFEF] bg-[#F6F6F6]`}
+                      >
+                        {checked && <CheckGrayIcon />}
+                      </button>
+                    )}
+                    <span className={`text-[14px] text-[#222] ${strike ? 'line-through' : ''}`}>
+                      {item.name}
+                    </span>
+                    {!isCooking && (
+                      <span className="text-[14px] text-[#FE5F54]">x{item.quantity}</span>
+                    )}
+                  </div>
+                  <span className={`text-[14px] text-[#222] ${strike ? 'line-through' : ''}`}>
+                    {formatPrice(item.price)}
+                  </span>
                 </div>
-                <span className="text-[14px] text-[#222]">{formatPrice(item.price)}</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="flex h-15 w-full items-center justify-between">
@@ -106,20 +150,17 @@ export default function OrderCard({
           <div className="flex w-full items-center justify-center gap-2">
             <button
               type="button"
-              onClick={onConfirm}
+              onClick={() =>
+                onConfirm?.({
+                  allChecked: items.length > 0 && checkedItems.size === items.length,
+                  checkedCount: checkedItems.size,
+                })
+              }
               className="flex h-11 flex-1 items-center justify-center gap-1 rounded-lg bg-[#FF756C] px-4 py-2.5"
             >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path
-                  d="M5 10L8.5 13.5L15 6.5"
-                  stroke="#FBFBFB"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <CheckWhiteIcon />
               <span className="text-[14px] font-semibold leading-5.25 text-[#FBFBFB]">
-                확인 완료
+                {isCooking ? '조리 완료' : '확인 완료'}
               </span>
             </button>
             <button

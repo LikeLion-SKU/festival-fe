@@ -51,6 +51,8 @@ const router = createBrowserRouter([
                 Component: AdminMain,
                 children: [
                   { path: 'waiting', lazy: page(() => import('@/pages/admin/WatingMenu')) },
+                  { path: 'cooking', lazy: page(() => import('@/pages/admin/CookingMenu')) },
+                  { path: 'complete', lazy: page(() => import('@/pages/admin/CompleteMenu')) },
                 ],
               },
             ],

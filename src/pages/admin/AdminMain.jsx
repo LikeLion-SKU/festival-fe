@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Outlet, useNavigate, useOutletContext } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 
 import CancelIcon from '@/assets/icons/admin/cancel_gray_icon.svg';
 import CancelActiveIcon from '@/assets/icons/admin/cancel_red_icon.svg';
@@ -16,8 +16,20 @@ import NavButton from '@/components/Admin/NavButton';
 
 const NAV_ITEMS = [
   { key: 'wait', name: '대기', icon: WaitIcon, activeIcon: WaitActiveIcon, goto: '/admin/waiting' },
-  { key: 'cook', name: '조리', icon: CookIcon, activeIcon: CookActiveIcon, goto: '/admin/cooking' },
-  { key: 'done', name: '완료', icon: DoneIcon, activeIcon: DoneActiveIcon, goto: '/admin/done' },
+  {
+    key: 'cook',
+    name: '조리 중',
+    icon: CookIcon,
+    activeIcon: CookActiveIcon,
+    goto: '/admin/cooking',
+  },
+  {
+    key: 'complete',
+    name: '완료',
+    icon: DoneIcon,
+    activeIcon: DoneActiveIcon,
+    goto: '/admin/complete',
+  },
   {
     key: 'cancel',
     name: '취소',
@@ -35,18 +47,20 @@ const NAV_ITEMS = [
 ];
 
 export default function AdminMain() {
+  const context = useOutletContext();
   const { setHeaderConfig } = useOutletContext();
   const navigate = useNavigate();
-  const [selected, setSelected] = useState('wait');
+  const location = useLocation();
+
+  const selected = NAV_ITEMS.find((item) => location.pathname.startsWith(item.goto))?.key ?? 'wait';
 
   useEffect(() => {
     setHeaderConfig({
-      title: '관리자 페이지',
+      title: '주문 관리',
     });
   }, [setHeaderConfig]);
 
   const moveToMenu = (item) => {
-    setSelected(item.key);
     navigate(item.goto);
   };
 
@@ -64,8 +78,8 @@ export default function AdminMain() {
           />
         ))}
       </nav>
-      <div className="flex-1">
-        <Outlet />
+      <div className="flex-1 overflow-auto">
+        <Outlet context={context} />
       </div>
     </div>
   );
