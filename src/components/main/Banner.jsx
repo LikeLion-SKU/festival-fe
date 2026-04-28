@@ -16,6 +16,12 @@ export default function Banner({
   tiltTimeBadgeLeft = false,
   timeBadgeOffsetClass = '',
   enableVariant2BaseShift = true,
+  adjustDay2Variant2Text = false,
+  useVariant1TextLayoutForVariant2 = false,
+  showRightImageSlot = false,
+  rightImageSlotSrc = '',
+  rightImageSlotOffsetClass = '',
+  rightImageSlotRotateDeg = 8,
 }) {
   const bannerImage = BANNER_BACKGROUNDS[variant] ?? WhiteBanner1;
   const timeSegments = time.split('★');
@@ -37,22 +43,30 @@ export default function Banner({
           <p
             className={`text-[0.7rem] font-medium leading-none tracking-[-0.01em] text-[#545454]
           ${
-            variant === 1
+            variant === 1 || (variant === 2 && useVariant1TextLayoutForVariant2)
               ? reverse
                 ? 'mr-[1.7rem] origin-right rotate-[4.3deg]'
                 : 'ml-[1.7rem] origin-left -rotate-[4.3deg]'
-              : ''
+              : variant === 2 && adjustDay2Variant2Text
+                ? reverse
+                  ? 'mr-[1.3rem] origin-right rotate-[5deg]'
+                  : 'ml-[1.3rem] origin-left -rotate-[3deg]'
+                : ''
           }`}
           >
             {team}
           </p>
           <p
             className={`mt-[0.3rem] text-[1.85rem] font-black leading-none tracking-[0.02rem] text-[#cf3a23] ${
-              variant === 1
+              variant === 1 || (variant === 2 && useVariant1TextLayoutForVariant2)
                 ? reverse
                   ? 'mr-[3rem] origin-right rotate-[4.3deg]'
                   : 'ml-[3rem] origin-left -rotate-[4.3deg]'
-                : ''
+                : variant === 2 && adjustDay2Variant2Text
+                  ? reverse
+                    ? 'mr-[1.75rem] origin-right rotate-[5deg]'
+                    : 'ml-[2.35rem] origin-left -rotate-[3deg]'
+                  : ''
             }`}
           >
             {artist}
@@ -90,6 +104,24 @@ export default function Banner({
           ))}
         </p>
       </div>
+
+      {showRightImageSlot && (
+        <div
+          className={`absolute top-1/2 z-20 h-[4.5rem] w-[5.75rem] overflow-hidden shadow-[0_10px_22px_rgba(0,0,0,0.45)] ${
+            reverse ? 'left-[-2.1rem]' : 'right-[-1.1rem]'
+          } ${rightImageSlotOffsetClass}`}
+          style={{ transform: `translateY(-55%) rotate(${rightImageSlotRotateDeg}deg)` }}
+        >
+          {rightImageSlotSrc && (
+            <img
+              src={rightImageSlotSrc}
+              alt=""
+              aria-hidden="true"
+              className="h-full w-full object-cover"
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }

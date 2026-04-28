@@ -3,6 +3,7 @@ import { useState } from 'react';
 import HorseIcon from '@/assets/icons/horse.svg';
 import FireBg from '@/assets/images/fire1.svg';
 import FireBg2 from '@/assets/images/fire2.svg';
+import Singer1 from '@/assets/images/singer1.png';
 import Banner from '@/components/main/Banner';
 
 const DAY_BANNERS = {
@@ -14,7 +15,7 @@ const DAY_BANNERS = {
     { id: 5, artist: '블랙핑크', time: '18:00 ★ ~ 18:30', variant: 1 },
     { id: 6, artist: '방탄소년단', time: '18:00 ★ ~ 18:30', variant: 2 },
     { id: 7, artist: '투어스', time: '18:00 ★ ~ 18:30', variant: 1 },
-    { id: 8, artist: '프로미스나인', time: '18:00 ★ ~ 18:30', variant: 2 },
+    { id: 8, artist: '데이식스', time: '18:00 ★ ~ 18:30', variant: 2 },
   ],
   day3: [
     { id: 1, artist: '윤희준', time: '18:00 ★ ~ 18:30', variant: 1 },
@@ -39,7 +40,7 @@ export default function Timetable() {
   return (
     <section
       id="timetable"
-      className="min-h-[70rem] bg-[#141414] px-[1.5rem] pt-[7.5rem]"
+      className="min-h-[70rem] overflow-x-hidden bg-[#141414] px-[1.5rem] pt-[7.5rem]"
       style={{
         backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 32%), linear-gradient(0deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0) 35%), url(${FireBg}), url(${FireBg2}), linear-gradient(180deg, rgba(20,20,20,0.6) 0%, rgba(20,20,20,1) 100%)`,
         backgroundRepeat: 'no-repeat, no-repeat, no-repeat, no-repeat, no-repeat',
@@ -84,11 +85,17 @@ export default function Timetable() {
       <div className="mx-auto mt-[1.5rem] flex w-full max-w-[24rem] flex-col gap-[0.05rem]">
         {(DAY_BANNERS[selectedDay] ?? []).map((banner, index) => {
           const isDay3 = selectedDay === 'day3';
+          const isDay2Variant2 = selectedDay === 'day2' && banner.variant === 2;
+          const isDay2Variant1 = selectedDay === 'day2' && banner.variant === 1;
+          const isDay3Variant2 = selectedDay === 'day3' && banner.variant === 2;
           const isRightAligned = isDay3 ? index % 2 === 0 : index % 2 === 1;
           const timeBadgeOffsetClass = isDay3
             ? banner.variant === 2
               ? '!-translate-x-[0.9rem]'
               : '!translate-x-[0.9rem]'
+            : '';
+          const rightImageSlotOffsetClass = isDay2Variant1
+            ? '!top-[45%] !translate-x-[-0.35rem]'
             : '';
 
           return (
@@ -107,6 +114,11 @@ export default function Timetable() {
                 tiltTimeBadgeLeft={isDay3 && banner.variant === 2}
                 timeBadgeOffsetClass={timeBadgeOffsetClass}
                 enableVariant2BaseShift={!isDay3}
+                adjustDay2Variant2Text={isDay2Variant2}
+                useVariant1TextLayoutForVariant2={isDay3Variant2}
+                showRightImageSlot={isDay2Variant1}
+                rightImageSlotSrc={isDay2Variant1 ? Singer1 : ''}
+                rightImageSlotOffsetClass={rightImageSlotOffsetClass}
               />
             </div>
           );
