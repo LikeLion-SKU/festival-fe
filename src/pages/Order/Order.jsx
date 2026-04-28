@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router';
 
+import Noodle from '@/assets/icons/noodle.svg';
 import BoothHero from '@/assets/images/booth_image.svg?react';
 import Info1 from '@/assets/images/booth_info_1.svg';
 
@@ -31,8 +33,133 @@ const boothData = {
   ],
 };
 
+const foodData = [
+  {
+    image: Noodle,
+    name: '닭발&주먹밥',
+    description: '매콤한 닭발과 든든한 주먹밥 세트',
+    price: 3000,
+    category: 'main',
+  },
+  {
+    image: Noodle,
+    name: '김치우동',
+    description: '칼칼한 김치가 들어간 따뜻한 우동',
+    price: 5000,
+    category: 'main',
+  },
+  {
+    image: Noodle,
+    name: '김치전',
+    description: '바삭하게 구운 김치전',
+    price: 3000,
+    category: 'main',
+  },
+  {
+    image: Noodle,
+    name: '어묵우동',
+    description: '부드러운 어묵과 우동의 조합',
+    price: 10000,
+    category: 'main',
+  },
+  {
+    image: Noodle,
+    name: '옥수수전',
+    description: '달콤한 옥수수가 들어간 전',
+    price: 3000,
+    category: 'side',
+  },
+  {
+    image: Noodle,
+    name: '어묵탕',
+    description: '시원하고 깔끔한 어묵탕',
+    price: 10000,
+    category: 'side',
+  },
+  {
+    image: Noodle,
+    name: '주먹밥',
+    description: '한 입 크기로 먹기 좋은 주먹밥',
+    price: 3000,
+    category: 'side',
+  },
+  {
+    image: Noodle,
+    name: '주먹밥',
+    description: '한 입 크기로 먹기 좋은 주먹밥',
+    price: 3000,
+    category: 'side',
+  },
+  {
+    image: Noodle,
+    name: '주먹밥',
+    description: '한 입 크기로 먹기 좋은 주먹밥',
+    price: 3000,
+    category: 'side',
+  },
+  { image: Noodle, name: '슬러시', description: '시원한 음료수', price: 1000, category: 'drink' },
+  {
+    image: Noodle,
+    name: '제로 콜라',
+    description: '시원한 음료수',
+    price: 1000,
+    category: 'drink',
+  },
+];
+
 function Order() {
-  return <Outlet context={boothData} />;
+  const [quantities, setQuantities] = useState(() => {
+    const saved = sessionStorage.getItem('orderQuantities');
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  const handleReset = () => {
+    setQuantities({});
+    sessionStorage.removeItem('orderQuantities');
+    sessionStorage.removeItem('orderCart');
+  };
+
+  const handleSelect = (key) => setQuantities((prev) => ({ ...prev, [key]: 1 }));
+  const handleIncrease = (key) => setQuantities((prev) => ({ ...prev, [key]: prev[key] + 1 }));
+  const handleDecrease = (key) =>
+    setQuantities((prev) => {
+      const next = { ...prev };
+      if (next[key] <= 1) delete next[key];
+      else next[key] -= 1;
+      return next;
+    });
+
+  useEffect(() => {
+    sessionStorage.setItem('orderQuantities', JSON.stringify(quantities));
+
+    const cart = Object.entries(quantities).map(([key, qty]) => {
+      const [cat, idx] = key.split('-');
+      const item = foodData.filter((i) => i.category === cat)[parseInt(idx)];
+      return { key, name: item.name, price: item.price, quantity: qty };
+    });
+    sessionStorage.setItem('orderCart', JSON.stringify(cart));
+  }, [quantities]);
+
+  useEffect(() => {
+    return () => {
+      sessionStorage.removeItem('orderQuantities');
+      sessionStorage.removeItem('orderCart');
+    };
+  }, []);
+
+  return (
+    <Outlet
+      context={{
+        ...boothData,
+        foodData,
+        quantities,
+        onSelect: handleSelect,
+        onIncrease: handleIncrease,
+        onDecrease: handleDecrease,
+        onReset: handleReset,
+      }}
+    />
+  );
 }
 
 export default Order;
