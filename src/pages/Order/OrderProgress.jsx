@@ -104,7 +104,7 @@ function OrderProgress() {
         buttonName={hasSelection ? `주문하기(${totalCount})` : '주문하기'}
         isActive={hasSelection}
         inactiveColor="var(--color-pink-100)"
-        onClick={() => {}}
+        onClick={() => hasSelection && navigate('/order/confirm')}
       />
     </div>
   );

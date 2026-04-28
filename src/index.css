@@ -44,6 +44,8 @@ body {
   --color-black-1000: #101010;
   --color-pink-100: #ffbbb8;
   --color-light-gray: #a8a8a8;
+  --color-gray-bg: #f6f6f6;
+  --color-light-pink: #ffdddb;
 }
 
 html,
