@@ -23,6 +23,11 @@ export default function Banner({
   rightImageSlotSrc = '',
   rightImageSlotOffsetClass = '',
   rightImageSlotRotateDeg = 8,
+  showLeftImageSlot = false,
+  leftImageSlotSrc = '',
+  leftImageSlotMirror = false,
+  leftImageSlotOffsetClass = '',
+  leftImageSlotRotateDeg = -8,
 }) {
   const bannerImage = BANNER_BACKGROUNDS[variant] ?? WhiteBanner1;
   const timeSegments = time.split('★');
@@ -119,6 +124,24 @@ export default function Banner({
               alt=""
               aria-hidden="true"
               className="h-full w-full object-cover"
+            />
+          )}
+        </div>
+      )}
+
+      {showLeftImageSlot && (
+        <div
+          className={`absolute top-1/2 z-20 h-[4.5rem] w-[5.75rem] overflow-hidden bg-[#e7e7e7] shadow-[0_10px_22px_rgba(0,0,0,0.45)] ${
+            reverse ? 'right-[-1.1rem]' : 'left-[-1.1rem]'
+          } ${leftImageSlotOffsetClass}`}
+          style={{ transform: `translateY(-55%) rotate(${leftImageSlotRotateDeg}deg)` }}
+        >
+          {leftImageSlotSrc && (
+            <img
+              src={leftImageSlotSrc}
+              alt=""
+              aria-hidden="true"
+              className={`h-full w-full object-cover ${leftImageSlotMirror ? '-scale-x-100' : ''}`}
             />
           )}
         </div>

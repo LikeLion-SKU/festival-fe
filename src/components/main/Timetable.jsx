@@ -99,6 +99,9 @@ export default function Timetable() {
           const rightImageSlotOffsetClass = isDay2Variant1
             ? '!top-[45%] !translate-x-[0.55rem]'
             : '';
+          const leftImageSlotOffsetClass = isDay2Variant2
+            ? '!top-[42%] !translate-x-[-15.85rem]'
+            : '';
           const day2Variant1ShiftClass = isDay2Variant1 ? 'translate-x-[0.95rem]' : '';
           const day2Variant2ShiftClass = isDay2Variant2 ? '-translate-x-[0.95rem]' : '';
           const artistOffsetClass = isDay2Variant1 ? '!ml-[2.5rem]' : '';
@@ -125,6 +128,11 @@ export default function Timetable() {
                 showRightImageSlot={isDay2Variant1}
                 rightImageSlotSrc={isDay2Variant1 ? Singer1 : ''}
                 rightImageSlotOffsetClass={rightImageSlotOffsetClass}
+                showLeftImageSlot={isDay2Variant2}
+                leftImageSlotSrc={isDay2Variant2 ? Singer1 : ''}
+                leftImageSlotMirror={isDay2Variant2}
+                leftImageSlotOffsetClass={leftImageSlotOffsetClass}
+                leftImageSlotRotateDeg={-10}
               />
             </div>
           );
