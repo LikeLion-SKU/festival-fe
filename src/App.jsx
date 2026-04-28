@@ -46,18 +46,6 @@ const router = createBrowserRouter([
     children: [
       {
         Component: MobileLayout,
-        children: [
-          //{ path: '', lazy: page(() => import('파일 경로')) },
-        ],
-      },
-    ],
-  },
-  {
-    //헤더 있는 주문 시스템 레이아웃
-    Component: OrderLayout,
-    children: [
-      {
-        Component: MobileLayout,
         children: [],
       },
       {
@@ -72,6 +60,8 @@ const router = createBrowserRouter([
                 Component: AdminMain,
                 children: [
                   { path: 'waiting', lazy: page(() => import('@/pages/admin/WatingMenu')) },
+                  { path: 'cooking', lazy: page(() => import('@/pages/admin/CookingMenu')) },
+                  { path: 'complete', lazy: page(() => import('@/pages/admin/CompleteMenu')) },
                 ],
               },
             ],

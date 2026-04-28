@@ -16,7 +16,7 @@ export default function OrderLayout() {
   const isLoading = navigation.state === 'loading';
 
   return (
-    <main className="flex h-full flex-col">
+    <main className="flex h-full flex-col ">
       {isLoading && <LoadingBar />}
       <OrderHeader
         title={headerConfig.title}
