@@ -10,6 +10,7 @@ export default function CompletedOrderCard({
   items = [],
   totalAmount,
   completedDate,
+  cancelReason,
   onUndo,
 }) {
   return (
@@ -50,6 +51,13 @@ export default function CompletedOrderCard({
             <p className="text-[12px] font-semibold leading-[1.6] text-[#7F7F7F]">되돌리기</p>
           </button>
         </div>
+        {cancelReason && (
+          <div className="flex w-full items-center">
+            <p className="text-[14px] font-semibold tracking-[-0.35px] text-[#595959]">
+              <span className="text-[#FF756C]">{cancelReason}</span>으로 인한 취소
+            </p>
+          </div>
+        )}
         <div className="-mx-5 w-87.5 h-1 bg-[linear-gradient(to_right,#EFEFEF_50%,transparent_50%)] bg-size-[18px_2.5px] bg-repeat-x" />
       </div>
 

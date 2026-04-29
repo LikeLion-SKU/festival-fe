@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import ClapIcon from '@/assets/icons/admin/clap_icon.svg?react';
 import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
 import CompletedOrderCard from '@/components/Admin/AdminComplete/CompletedOrderCard';
@@ -21,7 +20,7 @@ const FILTERS = [
 
 const isPastDate = (date) => ORDERED_DATES.indexOf(date) < ORDERED_DATES.indexOf(TODAY);
 
-export default function CompleteMenu() {
+export default function CancelMenu() {
   const [modal, setModal] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [dateFilter, setDateFilter] = useState('all');
@@ -62,15 +61,13 @@ export default function CompleteMenu() {
   return (
     <div className="flex flex-col w-full h-full bg-[#F8F8F8] items-center">
       <MenuFilterBox
-        title="완료된 주문"
+        title="취소된 주문"
         count={filtered.length}
         filters={FILTERS}
         dateFilter={dateFilter}
         onDateFilterChange={setDateFilter}
         searchQuery={searchQuery}
         onSearchQueryChange={setSearchQuery}
-        showRevenueButton
-        onRevenueClick={() => setModal('total')}
       />
 
       {filtered.length > 0 ? (
@@ -87,6 +84,7 @@ export default function CompleteMenu() {
               items={data.items}
               totalAmount={data.totalAmount}
               completedDate={data.completedDate}
+              cancelReason={data.cancelReason ?? '고객 요청'}
               onUndo={() => handleUndoClick(data)}
             />
           ))}
@@ -95,7 +93,7 @@ export default function CompleteMenu() {
         <div className="flex flex-col items-center mt-50">
           {!searchQuery && <NothingIcon />}
           {!searchQuery ? (
-            <p className="font-semibold text-[20px] text-deep-gray">완료된 주문이 없어요!</p>
+            <p className="font-semibold text-[20px] text-deep-gray">취소된 주문이 없어요!</p>
           ) : (
             <p className="text-[1rem] font-normal text-[#7F7F7F]">일치하는 결과가 없어요.</p>
           )}
@@ -112,7 +110,7 @@ export default function CompleteMenu() {
         <div className="flex flex-col items-center pt-11.5">
           <WarningIcon />
           <p className="font-semibold text-[1.25rem] mt-7">
-            이미 <span className="text-[#FE5F54]">완료된</span> 주문이에요.
+            이미 <span className="text-[#FE5F54]">취소된</span> 주문이에요.
           </p>
           <p className="font-semibold text-[1.25rem]">조리 중으로 되돌릴까요?</p>
         </div>
@@ -123,7 +121,7 @@ export default function CompleteMenu() {
         onOpenChange={(o) => !o && closeModal()}
         onMove={() => {
           closeModal();
-          navigate('/admin/cooking');
+          navigate('/admin/waiting');
         }}
         onConfirm={closeModal}
       />
@@ -139,25 +137,6 @@ export default function CompleteMenu() {
           <WarningIcon />
           <p className="font-semibold text-[1.25rem] mt-6.25">
             지난 날짜의 주문은 되돌릴 수 없어요.
-          </p>
-        </div>
-      </BottomSheet>
-
-      <BottomSheet
-        open={modal === 'total'}
-        onOpenChange={(o) => !o && closeModal()}
-        showButton
-        buttonName="확인"
-        onButtonClick={closeModal}
-      >
-        <div className="flex flex-col items-center pt-7.75">
-          <ClapIcon />
-          <p className="font-semibold text-[1.25rem] mt-7">오늘은</p>
-          <p className="font-semibold text-[1.25rem]">
-            <span className="text-[#FE5F54] font-bold">100만 원</span> 벌었어요!
-          </p>
-          <p className="font-semibold text-[14px] text-[#FFBBB8] mt-2">
-            수고한 내자신..기특하ㄷr...
           </p>
         </div>
       </BottomSheet>
