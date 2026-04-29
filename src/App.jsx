@@ -82,6 +82,7 @@ const router = createBrowserRouter([
           { index: true, lazy: page(() => import('@/pages/Order/OrderEntry')) }, // order 접속 시 자동으로 OrderEntry부터 기본으로
           { path: 'progress', lazy: page(() => import('@/pages/Order/OrderProgress')) },
           { path: 'confirm', lazy: page(() => import('@/pages/Order/OrderConfirm')) },
+          { path: 'customer-info', lazy: page(() => import('@/pages/Order/CustomerInfo')) },
           //{ path: 'complete', lazy: page(() => import('@/pages/Order/OrderComplete')) },
         ],
       },
