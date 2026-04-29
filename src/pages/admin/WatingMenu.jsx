@@ -4,6 +4,7 @@ import CheckIcon from '@/assets/icons/admin/check_red_big_icon.svg?react';
 import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
 import BottomSheet from '@/components/Admin/BottomSheet';
+import CancelGuideModal from '@/components/Admin/CancelGuideModal';
 import CancelReasonModal from '@/components/Admin/CancelReasonModal';
 import OrderCancelModal from '@/components/Admin/OrderCancelModal';
 import OrderCard from '@/components/Admin/OrderCard';
@@ -28,7 +29,7 @@ export default function WaitingMenu() {
 
   const handleCancelSubmit = () => {
     if (!reason) return;
-    setModal('cancelDone');
+    setModal('cancelGuide');
   };
 
   return (
@@ -64,17 +65,21 @@ export default function WaitingMenu() {
         buttonName="확인했어요"
         onButtonClick={handleConfirm}
       >
-        <div className="flex flex-col items-center pt-15 pb-10">
+        <div className="flex flex-col items-center pt-11.75">
           <WarningIcon />
-          <p className="font-semibold text-[1.25rem]">신분증, 계좌이체 확인하셨나요?</p>
-          <p className="text-[14px] text-[#7F7F7F] ">버튼을 누르면 조리 중으로 상태가 변경돼요.</p>
+          <p className="font-semibold text-[1.25rem] text-[#FE5F54] mt-7">신분증, 계좌이체</p>
+          <p className="font-semibold text-[1.25rem]">확인하셨나요?</p>
+          <p className="text-[14px] text-[#7F7F7F] mt-2">
+            버튼을 누르면 조리 중으로 상태가 변경돼요
+          </p>
         </div>
       </BottomSheet>
 
       <BottomSheet open={modal === 'confirmDone'} onOpenChange={(o) => !o && closeModal()}>
-        <div className="flex flex-col items-center pt-13 pb-30">
+        <div className="flex flex-col items-center pt-16.75">
           <CheckIcon />
-          <p className="font-semibold text-[1.25rem]">영수증이 조리 중으로 이동했어요</p>
+          <p className="font-semibold text-[1.25rem] mt-7">영수증이 조리 중으로</p>
+          <p className="font-semibold text-[1.25rem]">이동했어요</p>
         </div>
       </BottomSheet>
 
@@ -84,6 +89,12 @@ export default function WaitingMenu() {
         reason={reason}
         onReasonChange={setReason}
         onSubmit={handleCancelSubmit}
+      />
+
+      <CancelGuideModal
+        open={modal === 'cancelGuide'}
+        onOpenChange={(o) => !o && closeModal()}
+        onConfirm={() => setModal('cancelDone')}
       />
 
       <OrderCancelModal

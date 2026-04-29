@@ -17,13 +17,13 @@ export default function BottomSheet({
         <Drawer.Overlay className="fixed inset-0 z-40 bg-black/40" />
         <Drawer.Content
           aria-describedby={undefined}
-          className="fixed bottom-0 left-0 right-0 z-50 mx-auto flex max-w-[430px] flex-col items-center rounded-t-[29px] bg-white pb-6 pt-[9px] shadow-[0_0_7.3px_0_rgba(0,0,0,0.25)] outline-none"
+          className="fixed bottom-0 left-0 right-0 z-50 mx-auto flex max-w-107.5 h-94 flex-col items-center rounded-t-[29px] bg-white pb-6 pt-2.25 shadow-[0_0_7.3px_0_rgba(0,0,0,0.25)] outline-none"
         >
           <Drawer.Title className="sr-only">바텀 시트</Drawer.Title>
 
           <div className="h-1 w-20 rounded-[10px] bg-[#EFEFEF]" />
 
-          <div className="flex w-full flex-1 flex-col items-center px-5 py-8">{children}</div>
+          <div className="flex w-full flex-1 flex-col items-center">{children}</div>
 
           {showButton && (
             <OrderButton
