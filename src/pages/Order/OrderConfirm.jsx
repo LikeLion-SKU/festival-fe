@@ -41,7 +41,11 @@ function OrderConfirm() {
           </span>
         </div>
       </div>
-      <OrderButtonBox buttonName="결제하기" isActive={true} onClick={() => {}} />
+      <OrderButtonBox
+        buttonName="결제하기"
+        isActive={true}
+        onClick={() => navigate('/order/customer-info', { state: { orderType } })}
+      />
       <div className="h-22" />
     </div>
   );
