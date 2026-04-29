@@ -61,7 +61,7 @@ export default function OrderCard({
 
   return (
     <div
-      className={`flex w-87.5 flex-col items-center rounded-[10px] border border-[#EFEFEF] bg-white px-5 py-4 ${
+      className={`flex  flex-col items-center rounded-[10px] border border-[#EFEFEF] bg-white px-5 py-4 ${
         isOpen ? 'gap-2' : 'h-15 justify-center'
       }`}
     >
@@ -100,9 +100,9 @@ export default function OrderCard({
 
       {isOpen && (
         <>
-          <div className="-mx-5 w-87.5 h-1 bg-[linear-gradient(to_right,#EFEFEF_50%,transparent_50%)] bg-size-[18px_2.5px] bg-repeat-x" />
+          <div className="-mx-5 w-[calc(100%+2.5rem)] h-1 bg-[linear-gradient(to_right,#EFEFEF_50%,transparent_50%)] bg-size-[18px_2.5px] bg-repeat-x" />
 
-          <div className="flex h-14 w-full items-center justify-between">
+          <div className="flex h-14 w-full items-center justify-between flex-wrap">
             <div className="flex items-center gap-4 text-[14px] text-[#353535]">
               <span className="font-bold tracking-[-0.35px]">{customerName}</span>
               {tableNumber != 0 && (
