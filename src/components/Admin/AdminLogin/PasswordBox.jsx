@@ -12,16 +12,14 @@ export default function PasswordBox({ value, onChange, isFail, inputRef }) {
 
   return (
     <div className="flex w-full flex-col gap-1.25">
-      <div
-        className={`flex w-full items-center justify-between border-b-2 pb-3.75 pl-2.5 ${borderColor}`}
-      >
+      <div className={`flex w-full items-center border-b-2 pb-3.75 px-3 ${borderColor}`}>
         <input
           ref={inputRef}
           type={visible ? 'text' : 'password'}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="비밀번호를 입력해주세요"
-          className={`flex-1 h-7.5 bg-transparent text-[18px] leading-[1.6] ${isFail ? 'text-[#FF9500]' : 'text-[#1A1A1A]'} outline-none placeholder:text-[#A0A0A0]`}
+          className={`flex-1 min-w-0 h-7.5 bg-transparent text-[18px] leading-[1.6] ${isFail ? 'text-[#FF9500] placeholder:text-[#FF9500]' : 'text-[#1A1A1A] placeholder:text-[#A0A0A0]'} outline-none`}
         />
         <button
           type="button"
