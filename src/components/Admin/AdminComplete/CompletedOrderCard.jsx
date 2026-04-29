@@ -1,3 +1,5 @@
+import ReturnIcon from '@/assets/icons/admin/return_icon.svg?react';
+
 const formatPrice = (n) => `${n.toLocaleString('ko-KR')}원`;
 
 export default function CompletedOrderCard({
@@ -14,7 +16,7 @@ export default function CompletedOrderCard({
   onUndo,
 }) {
   return (
-    <div className="flex flex-shrink-0 w-87.5 flex-col items-center gap-2 overflow-hidden rounded-[10px] border border-[#EFEFEF] bg-white px-5 pt-4">
+    <div className="flex shrink-0 w-87.5 flex-col items-center gap-2 overflow-hidden rounded-[10px] border border-[#EFEFEF] bg-white px-5 pt-4">
       <div className="flex w-full flex-col items-center gap-3">
         <div className="flex h-7 w-full items-center justify-between">
           <div className="flex items-center gap-2">
@@ -32,28 +34,13 @@ export default function CompletedOrderCard({
             onClick={onUndo}
             className="flex h-7 items-center justify-center gap-1 rounded-[5px] bg-[#F6F6F6] px-2 py-1"
           >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path
-                d="M2 2.5V5H4.5"
-                stroke="#7F7F7F"
-                strokeWidth="1.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M2.5 7A4 4 0 1 0 3.5 3.2L2 5"
-                stroke="#7F7F7F"
-                strokeWidth="1.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <ReturnIcon />
             <p className="text-[12px] font-semibold leading-[1.6] text-[#7F7F7F]">되돌리기</p>
           </button>
         </div>
         {cancelReason && (
           <div className="flex w-full items-center">
-            <p className="text-[14px] font-semibold tracking-[-0.35px] text-[#595959]">
+            <p className="text-[14px] font-semibold tracking-[-0.35px] text-deep-gray">
               <span className="text-[#FF756C]">{cancelReason}</span>으로 인한 취소
             </p>
           </div>

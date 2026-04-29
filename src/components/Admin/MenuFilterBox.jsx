@@ -10,7 +10,7 @@ export default function MenuFilterBox({
   onRevenueClick,
 }) {
   return (
-    <div className="sticky flex w-full flex-col gap-3 bg-white px-5 py-3 shadow-[0_1px_2px_0_rgba(0,0,0,0.1)]">
+    <div className="sticky flex w-full flex-col gap-3 bg-white px-5 pt-3 pb-4 shadow-[0_1px_2px_0_rgba(0,0,0,0.1)]">
       <div className="flex justify-between items-center">
         <p className="text-[16px] font-semibold leading-[1.6] text-[#222]">
           {title} <span className="text-[14px] font-medium text-[#A0A0A0]">(총 {count}건)</span>

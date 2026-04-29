@@ -91,11 +91,14 @@ export default function CancelMenu() {
         </div>
       ) : (
         <div className="flex flex-col items-center mt-50">
-          {!searchQuery && <NothingIcon />}
+          <NothingIcon />
           {!searchQuery ? (
-            <p className="font-semibold text-[20px] text-deep-gray">취소된 주문이 없어요!</p>
+            <p className="font-semibold text-[20px] text-[#A0A0A0]">완료된 주문이 없어요!</p>
           ) : (
-            <p className="text-[1rem] font-normal text-[#7F7F7F]">일치하는 결과가 없어요.</p>
+            <>
+              <p className="text-[20px] font-semibold text-[#A0A0A0]">일치하는 결과가</p>
+              <p className="text-[20px] font-semibold text-[#A0A0A0]">없어요!</p>
+            </>
           )}
         </div>
       )}
