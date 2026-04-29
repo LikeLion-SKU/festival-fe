@@ -32,7 +32,7 @@ const LINEUP_ITEMS = [
   {
     id: 3,
     group: '멋쟁이사자차럼',
-    artist: '라이크라이온',
+    artist: '라이크',
     day: 'DAY 2',
     time: '19:20 ~ 19:50',
     image: Singer2,
@@ -148,14 +148,17 @@ function LineupCard({ item, position = 'center' }) {
 
 export default function Lineup() {
   const [centerIndex, setCenterIndex] = useState(0);
+  const [activeNavButton, setActiveNavButton] = useState(null);
   const visibleCards = getVisibleLineupItems(LINEUP_ITEMS, centerIndex);
   const hasManyCards = LINEUP_ITEMS.length > 1;
 
   const handlePrev = () => {
+    setActiveNavButton('prev');
     setCenterIndex((prev) => (prev - 1 + LINEUP_ITEMS.length) % LINEUP_ITEMS.length);
   };
 
   const handleNext = () => {
+    setActiveNavButton('next');
     setCenterIndex((prev) => (prev + 1) % LINEUP_ITEMS.length);
   };
 
@@ -207,22 +210,32 @@ export default function Lineup() {
       </div>
 
       {hasManyCards && (
-        <div className="pointer-events-none absolute left-1/2 top-[12.8rem] z-[30] flex w-full max-w-[22rem] -translate-x-1/2 items-center justify-between px-[0.75rem]">
+        <div className="pointer-events-none absolute left-1/2 top-[22.2rem] z-[30] flex w-full max-w-[22rem] -translate-x-1/2 items-center justify-between px-[0.75rem]">
           <button
             type="button"
             onClick={handlePrev}
             aria-label="이전 라인업 카드"
-            className="pointer-events-auto flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-full bg-white/90 text-[1.35rem] font-bold text-[#141414] shadow-[0_4px_10px_rgba(0,0,0,0.25)] transition hover:bg-white"
+            className={`pointer-events-auto flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.25)] transition ${
+              activeNavButton === 'prev' ? 'bg-[#2A2A2A]' : 'bg-white'
+            }`}
           >
-            {'<'}
+            <span
+              aria-hidden="true"
+              className="h-0 w-0 border-y-[0.5rem] border-y-transparent border-r-[0.9rem] border-r-[#C43A31]"
+            />
           </button>
           <button
             type="button"
             onClick={handleNext}
             aria-label="다음 라인업 카드"
-            className="pointer-events-auto flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-full bg-white/90 text-[1.35rem] font-bold text-[#141414] shadow-[0_4px_10px_rgba(0,0,0,0.25)] transition hover:bg-white"
+            className={`pointer-events-auto flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.25)] transition ${
+              activeNavButton === 'next' ? 'bg-[#2A2A2A]' : 'bg-white'
+            }`}
           >
-            {'>'}
+            <span
+              aria-hidden="true"
+              className="h-0 w-0 border-y-[0.5rem] border-y-transparent border-l-[0.9rem] border-l-[#C43A31]"
+            />
           </button>
         </div>
       )}
