@@ -11,7 +11,7 @@ export default function PasswordBox({ value, onChange, isFail, inputRef }) {
   const borderColor = isFail ? 'border-[#FF9500]' : 'border-[#E3E3E3]';
 
   return (
-    <div className="flex w-full min-w-87.5 flex-col gap-1.25">
+    <div className="flex w-full flex-col gap-1.25">
       <div
         className={`flex w-full items-center justify-between border-b-2 pb-3.75 pl-2.5 ${borderColor}`}
       >

@@ -28,13 +28,16 @@ export default function AdminLogin() {
 
   return (
     <div className="relative flex flex-col items-center mx-auto min-h-dvh  bg-white">
-      <header className="pt-27.25 mr-20">
-        <h1 className="text-[22px] w-68 font-bold leading-8.75 text-[#353535]">
-          안녕하세요, 부스 관리자님 로그인을 완료해주세요.
+      <header className="pt-27.25 mr-auto ml-5">
+        <h1 className="text-[22px] font-bold leading-8.75 text-[#353535]">
+          안녕하세요, 부스 관리자님
+        </h1>
+        <h1 className="text-[22px] font-bold leading-8.75 text-[#353535]">
+          로그인을 완료해주세요.
         </h1>
       </header>
 
-      <div className="mt-12.75 flex w-87.5 flex-col gap-6.25 ">
+      <div className="mt-12.75 flex w-full flex-col gap-6.25 px-5 items-center">
         <div className="flex w-full flex-col gap-2.5">
           <div
             className={`flex items-center gap-1 w-full text-[18px] font-semibold leading-[1.6]  ${department ? 'text-[#FE5F54]' : 'text-deep-gray'}`}
