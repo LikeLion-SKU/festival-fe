@@ -1,0 +1,107 @@
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+
+import InputField from '@/components/Order/CustomerInfo/InputField';
+import OrderButtonBox from '@/components/Order/OrderEntry/OrderButtonBox';
+import OrderHeader from '@/components/common/OrderHeader';
+
+const formatPhone = (digits) => {
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+};
+
+const getState = (value, isValid) => {
+  if (!value) return 'empty';
+  return isValid ? 'valid' : 'invalid';
+};
+
+function CustomerInfo() {
+  const navigate = useNavigate();
+  const { state } = useLocation();
+  const orderType = state?.orderType ?? 'dine-in';
+  const isDineIn = orderType === 'dine-in';
+
+  const [name, setName] = useState('');
+  const [headCount, setHeadCount] = useState('');
+  const [tableNumber, setTableNumber] = useState('');
+  const [phoneDigits, setPhoneDigits] = useState('');
+
+  const phone = formatPhone(phoneDigits);
+
+  const handlePhoneChange = (e) => {
+    const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
+    setPhoneDigits(digits);
+  };
+
+  const handleTableChange = (e) => {
+    setTableNumber(e.target.value.replace(/\D/g, ''));
+  };
+
+  const nameState = getState(name.trim(), true);
+  const headCountState = getState(headCount, /^\d+$/.test(headCount));
+  const tableState = getState(tableNumber, tableNumber.length > 0);
+  const phoneState = getState(phoneDigits, phoneDigits.length === 11);
+
+  const isFormValid =
+    nameState === 'valid' &&
+    phoneState === 'valid' &&
+    (!isDineIn || (headCountState === 'valid' && tableState === 'valid'));
+
+  return (
+    <div className="flex flex-col h-full bg-white">
+      <div className="shrink-0">
+        <OrderHeader showBackButton onBack={() => navigate(-1)} />
+      </div>
+      <div className="flex-1 px-7 pt-10 flex flex-col gap-6">
+        <div className="flex flex-col px-2 gap-1">
+          <p className="text-xl font-semibold text-order-button">결제하기 앞서,</p>
+          <p className="text-xl font-semibold">주문자 정보를 입력해주세요</p>
+        </div>
+        <div className="flex flex-col gap-6 mt-4">
+          <InputField
+            placeholder="이름"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            state={nameState}
+          />
+          {isDineIn && (
+            <>
+              <InputField
+                placeholder="인원 수"
+                value={headCount ? `${headCount}명` : ''}
+                onChange={(e) => setHeadCount(e.target.value.replace(/\D/g, ''))}
+                onKeyDown={(e) => {
+                  if (e.key === 'Backspace') {
+                    e.preventDefault();
+                    setHeadCount((prev) => prev.slice(0, -1));
+                  }
+                }}
+                state={headCountState}
+                type="tel"
+              />
+              <InputField
+                placeholder="테이블 번호"
+                value={tableNumber}
+                onChange={handleTableChange}
+                state={tableState}
+                type="tel"
+              />
+            </>
+          )}
+          <InputField
+            placeholder="휴대폰 번호"
+            value={phone}
+            onChange={handlePhoneChange}
+            state={phoneState}
+            errorMessage="핸드폰 번호는 뒤 8자리 형식으로 입력해주세요."
+            type="tel"
+          />
+        </div>
+      </div>
+      <OrderButtonBox buttonName="주문 요청하기" isActive={isFormValid} onClick={() => {}} />
+    </div>
+  );
+}
+
+export default CustomerInfo;
