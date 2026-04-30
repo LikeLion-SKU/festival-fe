@@ -47,10 +47,10 @@ export default function LostItemRegister() {
     try {
       await createLostItem(formData);
       setShowSuccess(true);
-      setTimeout(() => navigate('/lost-items'), 1500);
+      setTimeout(() => navigate('/lost-items'), 1000);
     } catch {
       setShowSuccess(true);
-      setTimeout(() => navigate('/lost-items'), 1500);
+      setTimeout(() => navigate('/lost-items'), 1000);
     }
   };
 
@@ -214,6 +214,12 @@ export default function LostItemRegister() {
 
             {dateOpen && (
               <div className="border border-[#3a3a3a] overflow-hidden backdrop-blur-md">
+                <style>{`
+                  @keyframes dropdown-item-in {
+                    from { opacity: 0; transform: translateY(-6px); }
+                    to   { opacity: 1; transform: translateY(0); }
+                  }
+                `}</style>
                 {DATE_OPTIONS.map((opt, i) => (
                   <button
                     key={opt.value}
@@ -225,7 +231,12 @@ export default function LostItemRegister() {
                     className={`w-full bg-[#1a1a1a]/20 px-[1rem] py-[1rem] text-left text-white text-[0.9375rem] font-semibold ${
                       i < DATE_OPTIONS.length - 1 ? 'border-b border-[#3a3a3a]' : ''
                     } ${date === opt.value ? 'text-[#C43A31]' : ''}`}
-                    style={{ letterSpacing: '-0.025em' }}
+                    style={{
+                      letterSpacing: '-0.025em',
+                      opacity: 0,
+                      animation: 'dropdown-item-in 0.2s ease forwards',
+                      animationDelay: `${i * 50}ms`,
+                    }}
                   >
                     {opt.label}
                   </button>
@@ -250,12 +261,18 @@ export default function LostItemRegister() {
       />
 
       {/* 등록 버튼 */}
-      <div className="absolute bottom-0 left-0 right-0 px-[1.25rem] pb-[2rem] pt-[1rem] bg-[#1a1a1a]">
+      <div className="absolute left-0 right-0 px-[1.25rem]" style={{ bottom: '2.75rem' }}>
         <button
           type="button"
           onClick={handleSubmit}
-          className="w-full py-[1.125rem] bg-[#7D2A25] text-white text-[1rem] font-semibold text-center"
-          style={{ fontSize: '1rem', lineHeight: '160%', letterSpacing: '0' }}
+          className="w-full text-white text-[1rem] font-semibold text-center transition-colors"
+          style={{
+            height: '3.25rem',
+            background: name && location && date && images.length ? '#C43A31' : '#7D2A25',
+            fontSize: '1rem',
+            lineHeight: '160%',
+            letterSpacing: '0',
+          }}
         >
           분실물 등록하기
         </button>

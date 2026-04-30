@@ -66,10 +66,10 @@ export default function LostItemEdit() {
     try {
       await updateLostItem(id, formData);
       setShowSuccess(true);
-      setTimeout(() => navigate('/lost-items'), 1500);
+      setTimeout(() => navigate('/lost-items'), 1000);
     } catch {
       setShowSuccess(true);
-      setTimeout(() => navigate('/lost-items'), 1500);
+      setTimeout(() => navigate('/lost-items'), 1000);
     }
   };
 
@@ -252,6 +252,12 @@ export default function LostItemEdit() {
             </button>
             {dateOpen && (
               <div className="border border-[#3a3a3a] overflow-hidden backdrop-blur-md">
+                <style>{`
+                  @keyframes dropdown-item-in {
+                    from { opacity: 0; transform: translateY(-6px); }
+                    to   { opacity: 1; transform: translateY(0); }
+                  }
+                `}</style>
                 {DATE_OPTIONS.map((opt, i) => (
                   <button
                     key={opt.value}
@@ -263,7 +269,12 @@ export default function LostItemEdit() {
                     className={`w-full bg-[#1a1a1a]/20 px-[1rem] py-[1rem] text-left text-white text-[0.9375rem] font-semibold ${
                       i < DATE_OPTIONS.length - 1 ? 'border-b border-[#3a3a3a]' : ''
                     } ${date === opt.value ? 'text-[#C43A31]' : ''}`}
-                    style={{ letterSpacing: '-0.025em' }}
+                    style={{
+                      letterSpacing: '-0.025em',
+                      opacity: 0,
+                      animation: 'dropdown-item-in 0.2s ease forwards',
+                      animationDelay: `${i * 50}ms`,
+                    }}
                   >
                     {opt.label}
                   </button>
