@@ -76,7 +76,7 @@ function LineupCard({ item, position = 'center' }) {
       : position === 'right'
         ? 'right-[-15.2rem] top-[0.1rem] z-[2] rotate-[18deg] blur-[2px] opacity-95'
         : 'left-1/2 top-[3.5rem] z-[4] -translate-x-1/2 rotate-[0.85deg]';
-  const starWrapperClass = 'right-[12rem] top-[2.35rem] h-[8.9rem] w-[8.9rem] -rotate-[3deg]';
+  const starWrapperClass = 'right-[12rem] top-[2.35rem] h-[8.9rem] w-[8.9rem]';
   const starTextTiltClass = '-rotate-[7deg]';
 
   return (
@@ -118,11 +118,10 @@ function LineupCard({ item, position = 'center' }) {
         </div>
 
         <div className={`absolute ${starWrapperClass}`}>
-          <img
-            src={LineupStarBg}
-            alt=""
+          <div
             aria-hidden="true"
-            className="h-full w-full object-contain"
+            className="h-full w-full bg-center bg-no-repeat [background-size:100%_100%]"
+            style={{ backgroundImage: `url(${LineupStarBg})` }}
           />
           <div
             className={`absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 ${starTextTiltClass} flex-col items-center text-[#3B2F20]`}

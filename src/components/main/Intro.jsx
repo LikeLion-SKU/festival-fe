@@ -5,6 +5,7 @@ import ThreeIcon from '@/assets/icons/main/3.svg';
 import FiveIcon from '@/assets/icons/main/5.svg';
 import HyphenIcon from '@/assets/icons/main/hypen.svg';
 import SpotIcon from '@/assets/icons/main/spot.svg';
+import MenuButton from '@/components/common/Button/MenuButton';
 
 function DateDot() {
   return (
@@ -52,33 +53,7 @@ export default function Intro() {
           </div>
         </div>
       </div>
-      <button
-        type="button"
-        aria-label="메뉴 열기"
-        className="absolute bottom-[5rem] left-1/2 z-[10] flex h-[3.4375rem] w-[3.4375rem] -translate-x-1/2 items-center justify-center overflow-hidden rounded-[12.5rem]"
-        style={{
-          background: 'rgba(255, 255, 255, 0.1)',
-          border: '1px solid transparent',
-        }}
-      >
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 rounded-full"
-          style={{
-            boxShadow: '0 0 8px rgba(255,255,255,0.22)',
-            filter: 'blur(1.2px)',
-          }}
-        />
-        <span className="sr-only">menu</span>
-        <span
-          aria-hidden="true"
-          className="relative z-10 flex h-[2rem] w-[2rem] flex-col items-center justify-center gap-[0.3125rem]"
-        >
-          <span className="h-[0.125rem] w-[1.3rem] rounded-full bg-[#DA3328]" />
-          <span className="h-[0.125rem] w-[1.3rem] rounded-full bg-[#DA3328]" />
-          <span className="h-[0.125rem] w-[1.3rem] rounded-full bg-[#DA3328]" />
-        </span>
-      </button>
+      <MenuButton className="absolute bottom-[5rem] left-1/2 z-[10] -translate-x-1/2" />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-[65rem]"
