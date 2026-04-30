@@ -38,11 +38,11 @@ const NAV_ITEMS = [
     goto: '/admin/cancel',
   },
   {
-    key: 'product',
-    name: '상품',
+    key: 'menu',
+    name: '메뉴',
     icon: ProductIcon,
     activeIcon: 'ProductActiveIcon',
-    goto: '/admin/product',
+    goto: '/admin/menu',
   },
 ];
 

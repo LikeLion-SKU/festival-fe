@@ -45,7 +45,7 @@ export default function DepartmentBox({
   }, []);
 
   return (
-    <div ref={wrapperRef} className="relative w-87.5">
+    <div ref={wrapperRef} className="relative w-full">
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}

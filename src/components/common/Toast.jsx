@@ -53,12 +53,30 @@ const ICONS = {
   ),
 };
 
-export default function Toast({ message, visible, onClose, duration = 1500, icon = 'check' }) {
+export default function Toast({
+  message,
+  visible,
+  onClose,
+  duration = 1500,
+  icon = 'check',
+  variant,
+  className = '',
+}) {
   useEffect(() => {
-    if (!visible) return;
+    if (!visible || !onClose) return;
     const timer = setTimeout(onClose, duration);
     return () => clearTimeout(timer);
   }, [visible, duration, onClose]);
+
+  if (variant === 'pill') {
+    return (
+      <div
+        className={`w-44 h-11 flex items-center justify-center bg-gray-50 rounded-full shadow-[0px_0px_5px_0px_rgba(196,58,49,0.35)] transition-opacity duration-500 ${visible ? 'opacity-100' : 'opacity-0'} ${className}`}
+      >
+        <span className="text-sm font-semibold text-gray-500">{message}</span>
+      </div>
+    );
+  }
 
   if (!visible) return null;
 
