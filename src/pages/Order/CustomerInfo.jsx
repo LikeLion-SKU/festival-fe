@@ -121,6 +121,7 @@ function CustomerInfo() {
               ...(isDineIn && { headCount, tableNumber }),
             })
           );
+          navigate('/order/pay');
         }}
       >
         <p className="font-medium">주문을 요청하면 되돌릴 수 없습니다.</p>
