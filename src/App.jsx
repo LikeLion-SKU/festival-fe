@@ -75,6 +75,7 @@ const router = createBrowserRouter([
     Component: MobileLayout,
     children: [
       { path: '/', lazy: page(() => import('@/pages/Main')) },
+      { path: '/made-by', lazy: page(() => import('@/pages/MadeBy')) },
       {
         path: '/order',
         Component: Order,
