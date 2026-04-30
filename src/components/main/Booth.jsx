@@ -8,12 +8,29 @@ import DesertBg from '@/assets/images/desert.svg';
 import FenceBg from '@/assets/images/fence.svg';
 import { BOOTH_CARDS, BUILDINGS } from '@/constants/mainDummyData';
 
+function getTitleLines(title) {
+  if (!Array.isArray(title)) {
+    return [String(title).slice(0, 10)];
+  }
+
+  const mergedTitle = title.join(' ');
+  const mergedLength = mergedTitle.replace(/\s+/g, '').length;
+  if (mergedLength <= 9) {
+    return [mergedTitle.slice(0, 10)];
+  }
+
+  return title.map((line) => String(line).slice(0, 10));
+}
+
 function BoothCardTitle({ title }) {
-  const lines = Array.isArray(title) ? title : [title];
+  const lines = getTitleLines(title);
+  const isSingleLine = lines.length === 1;
   return (
     <div className="flex w-full flex-col gap-0 px-1 text-center text-[clamp(1rem,4.3vw,1.25rem)] font-extrabold leading-[1.08] tracking-[-0.03125rem] text-[#141414]">
       {lines.map((line, i) => (
-        <p key={`${line}-${i}`}>{line}</p>
+        <p key={`${line}-${i}`} className={clsx(isSingleLine && 'whitespace-nowrap')}>
+          {line}
+        </p>
       ))}
     </div>
   );
@@ -23,10 +40,9 @@ function BoothCardTitle({ title }) {
 function BoothCard({ image, subtitle, title }) {
   const titleLabel = Array.isArray(title) ? title.join(' ') : title;
   const imageAlt = `${titleLabel} 부스`;
-  const isSingleLineTitle = !Array.isArray(title) || title.length === 1;
-  const isMultiLineTitle = Array.isArray(title)
-    ? title.length > 1
-    : titleLabel.replace(/\s+/g, '').length >= 8;
+  const titleLines = getTitleLines(title);
+  const isSingleLineTitle = titleLines.length === 1;
+  const hasWrappedTitle = titleLines.length > 1;
 
   return (
     <article className="relative h-[13.25rem] w-full overflow-hidden shadow-[1px_1px_0px_rgba(0,0,0,0.12)]">
@@ -47,12 +63,7 @@ function BoothCard({ image, subtitle, title }) {
         </div>
         <div className="flex flex-col items-center text-[#141414]">
           <div className="h-px w-full shrink-0 bg-[#141414]" aria-hidden />
-          <div
-            className={clsx(
-              'flex h-[4rem] w-full flex-col items-center overflow-hidden pt-[0.7rem]',
-              isMultiLineTitle && 'h-[5rem]'
-            )}
-          >
+          <div className="flex min-h-[4rem] w-full flex-col items-center pt-[0.7rem]">
             <p className="w-full max-w-[11rem] text-center text-xs font-regular tracking-[-.01875rem]">
               {subtitle}
             </p>
@@ -63,7 +74,7 @@ function BoothCard({ image, subtitle, title }) {
           <div
             className={clsx(
               'h-px w-full shrink-0 bg-[#141414]',
-              isMultiLineTitle ? 'mt-[0.45rem]' : 'mt-[0.2rem]'
+              hasWrappedTitle ? 'mt-[0.85rem]' : 'mt-[0.2rem]'
             )}
             aria-hidden
           />
