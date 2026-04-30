@@ -70,7 +70,9 @@ export default function CookingMenu() {
 
   return (
     <div className="flex flex-col w-full h-full bg-[#f8f8f8] items-center">
-      <div className="sticky flex w-full min-h-13 max-h-50 overflow-auto flex-col bg-white px-5 py-2 shadow-[0_1px_2px_0_rgba(0,0,0,0.1)]">
+      <div /* 주문 요약 박스*/
+        className="sticky flex w-full min-h-13 max-h-50 overflow-auto flex-col bg-white px-5 py-2 shadow-[0_1px_2px_0_rgba(0,0,0,0.1)]"
+      >
         <button
           type="button"
           onClick={() => setSummaryOpen((v) => !v)}
@@ -86,8 +88,8 @@ export default function CookingMenu() {
           <OpenButton open={summaryOpen} />
         </button>
 
-        {summaryOpen && (
-          <div className="flex flex-wrap gap-2 px-2 pb-2.5 pt-1">
+        {summaryOpen /* 주문 요약 오픈시 박스 */ && (
+          <div className="flex flex-wrap gap-2 pb-2.5 pt-1">
             {orderData.length > 0 ? (
               orderData.map((data) => (
                 <TableOrderCard
@@ -105,8 +107,9 @@ export default function CookingMenu() {
           </div>
         )}
       </div>
-      {orderData.length > 0 ? (
-        <div className="overflow-auto no-scrollbar pb-7">
+
+      {orderData.length > 0 /* 조리 중인 주문들 리스트 */ ? (
+        <div className="overflow-auto w-full no-scrollbar pb-7 px-5">
           <button
             type="button"
             onClick={toggleAll}
@@ -147,7 +150,7 @@ export default function CookingMenu() {
         </div>
       )}
 
-      <BottomSheet
+      <BottomSheet /* 미완성 주문 완료 모달 */
         open={modal === 'warning'}
         onOpenChange={(o) => !o && closeModal()}
         showButton
@@ -164,7 +167,10 @@ export default function CookingMenu() {
         </div>
       </BottomSheet>
 
-      <BottomSheet open={modal === 'cookingDone'} onOpenChange={(o) => !o && closeModal()}>
+      <BottomSheet /* 주문 완료 모달 */
+        open={modal === 'cookingDone'}
+        onOpenChange={(o) => !o && closeModal()}
+      >
         <div className="flex flex-col items-center pt-16.75">
           <CheckIcon />
           <p className="font-semibold text-[1.25rem] mt-7">주문이</p>
@@ -172,7 +178,7 @@ export default function CookingMenu() {
         </div>
       </BottomSheet>
 
-      <CancelReasonModal
+      <CancelReasonModal /* 취소 이유 모달 */
         open={modal === 'cancelReason'}
         onOpenChange={(o) => !o && closeModal()}
         reason={reason}
@@ -180,13 +186,13 @@ export default function CookingMenu() {
         onSubmit={handleCancelSubmit}
       />
 
-      <CancelGuideModal
+      <CancelGuideModal /* 취소 시 안내 문구 모달 */
         open={modal === 'cancelGuide'}
         onOpenChange={(o) => !o && closeModal()}
         onConfirm={() => setModal('cancelDone')}
       />
 
-      <OrderCancelModal
+      <OrderCancelModal /* 취소 모달 */
         open={modal === 'cancelDone'}
         onOpenChange={(o) => !o && closeModal()}
         onConfirm={closeModal}

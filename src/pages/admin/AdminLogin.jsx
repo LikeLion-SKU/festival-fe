@@ -64,7 +64,7 @@ export default function AdminLogin() {
         </div>
       </div>
 
-      <div className="flex mt-auto w-full justify-center items-center h-28 shadow-[0_-1px_7px_-2px_rgba(0,0,0,0.25)]">
+      <div className="flex mt-auto px-5 w-full justify-center items-center h-28 shadow-[0_-1px_7px_-2px_rgba(0,0,0,0.25)]">
         <OrderButton
           width="21.5rem"
           height="3.25rem"

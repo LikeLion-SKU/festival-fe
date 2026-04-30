@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom';
+
 import SkuLogo from '@/assets/icons/sku-logo.svg';
 import AboutFire2 from '@/assets/images/about-fire2.svg';
 import AboutFire from '@/assets/images/about-fire.svg';
@@ -10,6 +12,7 @@ const CAST_ROWS = [
 ];
 
 export default function About() {
+  const navigate = useNavigate();
   return (
     <section
       id="about"
@@ -93,6 +96,7 @@ export default function About() {
         <div className="mt-[8rem] -mx-[1rem] flex w-[calc(100%+2rem)] flex-col gap-[0.55rem]">
           <button
             type="button"
+            onClick={() => navigate('/made-by')}
             className="h-[3rem] w-full border border-[rgba(255,255,255,0.2)] bg-[rgba(34,34,34,0.72)] text-[1rem] font-semibold leading-none text-white [font-family:Pretendard]"
           >
             제작자 보러가기
