@@ -138,6 +138,7 @@ export default function LostItem() {
     >
       <PageHeader
         title="분실물"
+        to="/"
         onTitleClick={handleTitleClick}
         rightElement={
           isLoggedIn ? (
