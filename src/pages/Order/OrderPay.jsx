@@ -124,8 +124,8 @@ function OrderPay() {
       <OrderButtonBox
         buttonName="직원 확인 완료"
         isActive={true}
-        onClick={() => {}}
         note="입금자명은 주문자명과 같아야 해요"
+        onClick={() => navigate('/order/complete')}
       />
     </div>
   );
