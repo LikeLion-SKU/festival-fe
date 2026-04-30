@@ -13,15 +13,11 @@ export default function CancelGuideModal({ open, onOpenChange, onConfirm }) {
       <div className="flex w-full flex-col items-center pt-11.75">
         <CheckIcon />
         <div className="mt-7 text-center text-[20px] font-semibold leading-7 tracking-[-0.2px] text-[#1A1A1A]">
-          <p>취소할 경우 사유는</p>
-          <p>
-            <span className="text-[#FE5F54]">고객에게 직접 전달</span>
-            <span>해야 해요</span>
-          </p>
+          취소 전 확인해 주세요
         </div>
         <div className="mt-2 text-center text-[14px] font-medium leading-5 tracking-[-0.14px] text-[#7F7F7F]">
-          <p>환불 관련하여 직접 고객에게 안내해주세요</p>
-          <p>포장일 경우, 전화번호를 확인해주세요</p>
+          <p>사유와 환불 안내는 고객에게 직접 전달해 주세요.</p>
+          <p>포장 주문은 전화번호를 확인해주세요</p>
         </div>
       </div>
     </BottomSheet>
