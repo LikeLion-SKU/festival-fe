@@ -25,7 +25,7 @@ export default function Safety() {
         src={DesertBg}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-[-46.1rem] z-[1] w-[28.125rem] max-w-none -translate-x-1/2 object-cover"
+        className="pointer-events-none absolute left-1/2 top-[-53rem] z-[1] w-[28.125rem] max-w-none -translate-x-1/2 object-cover"
       />
       <div
         aria-hidden="true"
