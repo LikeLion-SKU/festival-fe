@@ -9,7 +9,7 @@ export default function OrderReturnModal({ open, onOpenChange, onMove, onConfirm
         <Drawer.Overlay className="fixed inset-0 z-40 bg-black/40" />
         <Drawer.Content
           aria-describedby={undefined}
-          className="fixed bottom-0 left-0 right-0 z-50 mx-auto flex max-w-107.5 h-94 flex-col items-center rounded-t-[29px] bg-white pb-6 pt-2.25 shadow-[0_0_7.3px_0_rgba(0,0,0,0.25)] outline-none"
+          className="fixed bottom-0 left-0 right-0 z-50 mx-auto flex h-94 flex-col items-center rounded-t-[29px] bg-white pb-6 pt-2.25 shadow-[0_0_7.3px_0_rgba(0,0,0,0.25)] outline-none"
         >
           <Drawer.Title className="sr-only">바텀 시트</Drawer.Title>
 
@@ -28,9 +28,9 @@ export default function OrderReturnModal({ open, onOpenChange, onMove, onConfirm
             <button
               type="button"
               onClick={onMove}
-              className="flex h-13 w-41 items-center justify-center rounded-lg bg-[#FE5F54] text-[16px] font-semibold tracking-[-0.4px] text-white"
+              className="flex min-w-0 px-3 h-13 w-41 items-center justify-center rounded-lg bg-[#FE5F54] text-[16px] font-semibold tracking-[-0.4px] text-white"
             >
-              되돌린 주문으로 이동
+              <span className="truncate">되돌린 주문으로 이동</span>
             </button>
             <button
               type="button"

@@ -16,7 +16,7 @@ export default function CompletedOrderCard({
   onUndo,
 }) {
   return (
-    <div className="flex shrink-0 w-87.5 flex-col items-center gap-2 overflow-hidden rounded-[10px] border border-[#EFEFEF] bg-white px-5 pt-4">
+    <div className="flex shrink-0 w-full flex-col items-center gap-2 overflow-hidden rounded-[10px] border border-[#EFEFEF] bg-white px-5 pt-4">
       <div className="flex w-full flex-col items-center gap-3">
         <div className="flex h-7 w-full items-center justify-between">
           <div className="flex items-center gap-2">
@@ -45,7 +45,7 @@ export default function CompletedOrderCard({
             </p>
           </div>
         )}
-        <div className="-mx-5 w-87.5 h-1 bg-[linear-gradient(to_right,#EFEFEF_50%,transparent_50%)] bg-size-[18px_2.5px] bg-repeat-x" />
+        <div className="-mx-5 w-[calc(100%+2.5rem)] h-1 bg-[linear-gradient(to_right,#EFEFEF_50%,transparent_50%)] bg-size-[18px_2.5px] bg-repeat-x" />
       </div>
 
       <div className="flex h-14 w-full items-center justify-between">
