@@ -104,7 +104,7 @@ function CustomerInfo() {
       <OrderButtonBox
         buttonName="주문 요청하기"
         isActive={isFormValid}
-        onClick={() => setShowConfirmModal(true)}
+        onClick={() => isFormValid && setShowConfirmModal(true)}
       />
       <Modal
         isOpen={showConfirmModal}
@@ -121,6 +121,7 @@ function CustomerInfo() {
               ...(isDineIn && { headCount, tableNumber }),
             })
           );
+          navigate('/order/pay');
         }}
       >
         <p className="font-medium">주문을 요청하면 되돌릴 수 없습니다.</p>

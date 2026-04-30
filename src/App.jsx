@@ -84,6 +84,7 @@ const router = createBrowserRouter([
           { path: 'progress', lazy: page(() => import('@/pages/Order/OrderProgress')) },
           { path: 'confirm', lazy: page(() => import('@/pages/Order/OrderConfirm')) },
           { path: 'customer-info', lazy: page(() => import('@/pages/Order/CustomerInfo')) },
+          { path: 'pay', lazy: page(() => import('@/pages/Order/OrderPay')) },
           //{ path: 'complete', lazy: page(() => import('@/pages/Order/OrderComplete')) },
         ],
       },
