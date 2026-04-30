@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router';
 
 import ATM from '@/assets/icons/atm.svg?react';
@@ -6,6 +6,7 @@ import Copy from '@/assets/icons/copy.svg?react';
 import Shadow from '@/assets/icons/shadow.svg?react';
 import OrderButton from '@/components/common/OrderButton';
 import OrderHeader from '@/components/common/OrderHeader';
+import Toast from '@/components/common/Toast';
 
 const BANK_INFO = {
   bankName: '카카오뱅크',
@@ -25,6 +26,8 @@ function OrderPay() {
   const orderTypeLabel = orderType === 'dine-in' ? '매장' : '포장';
 
   const [showToast, setShowToast] = useState(true);
+  const [showCopyToast, setShowCopyToast] = useState(false);
+  const copyTimerRef = useRef(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowToast(false), 3000);
@@ -33,6 +36,9 @@ function OrderPay() {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(BANK_INFO.accountNumber);
+    setShowCopyToast(true);
+    clearTimeout(copyTimerRef.current);
+    copyTimerRef.current = setTimeout(() => setShowCopyToast(false), 2000);
   };
 
   return (
@@ -82,7 +88,10 @@ function OrderPay() {
                 </div>
                 <div className="flex items-center gap-3.5">
                   <span className="text-white text-sm font-medium">{BANK_INFO.accountNumber}</span>
-                  <button onClick={handleCopy} className="shrink-0">
+                  <button
+                    onClick={handleCopy}
+                    className="shrink-0 active:opacity-50 transition-opacity duration-100"
+                  >
                     <Copy className="w-5 h-5" />
                   </button>
                 </div>
@@ -91,12 +100,19 @@ function OrderPay() {
           </div>
         </div>
 
-        <div
-          className={`px-6 py-2.5 bg-gray-50 rounded-full shadow-[0px_0px_5px_0px_rgba(196,58,49,0.35)] transition-opacity duration-500 ${showToast ? 'opacity-100' : 'opacity-0'}`}
-        >
-          <span className="text-sm font-semibold text-gray-500">주문이 요청되었어요.</span>
-        </div>
+        <Toast
+          variant="pill"
+          visible={showToast}
+          message="주문이 요청되었어요."
+          className="fixed bottom-32 left-1/2 -translate-x-1/2 z-50"
+        />
       </div>
+      <Toast
+        variant="pill"
+        visible={showCopyToast}
+        message="계좌번호를 복사했어요."
+        className="fixed bottom-32 left-1/2 -translate-x-1/2 z-50"
+      />
 
       <div className="w-full max-w-112.5 fixed bottom-0 left-1/2 -translate-x-1/2 z-50 bg-white shadow-[0px_-1px_7px_-2px_rgba(0,0,0,0.25)] px-7 pt-3.75 pb-4">
         <OrderButton
