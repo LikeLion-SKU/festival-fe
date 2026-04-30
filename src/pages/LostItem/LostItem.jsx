@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 import { getLostItems } from '@/api/lostItem';
+import LockIcon from '@/assets/icons/lock.svg';
 import backgroundImg from '@/assets/images/about-fire2.svg';
 import airpodImg from '@/assets/images/airpod.png';
 import FilterTab from '@/components/common/FilterTab';
@@ -42,6 +43,38 @@ export default function LostItem() {
   const [claimStatus, setClaimStatus] = useState('unclaimed');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [toast, setToast] = useState({ visible: false, message: '' });
+  const [titleClickCount, setTitleClickCount] = useState(0);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginFail, setLoginFail] = useState(false);
+
+  const isLoggedIn = !!localStorage.getItem('accessToken');
+
+  const handleTitleClick = () => {
+    const next = titleClickCount + 1;
+    if (next >= 5) {
+      setTitleClickCount(0);
+      if (isLoggedIn) {
+        setShowLogoutModal(true);
+      } else {
+        setShowLoginModal(true);
+      }
+    } else {
+      setTitleClickCount(next);
+    }
+  };
+
+  const handleLogin = () => {
+    if (loginPassword === 'likelion14') {
+      localStorage.setItem('accessToken', 'admin');
+      setShowLoginModal(false);
+      setLoginPassword('');
+      setLoginFail(false);
+    } else {
+      setLoginFail(true);
+    }
+  };
   const cardContainerRef = useRef(null);
 
   useEffect(() => {
@@ -105,15 +138,19 @@ export default function LostItem() {
     >
       <PageHeader
         title="분실물"
+        to="/"
+        onTitleClick={handleTitleClick}
         rightElement={
-          <button
-            type="button"
-            onClick={() => navigate('/lost-items/new')}
-            className="h-[2rem] px-[0.875rem] text-[0.875rem] font-semibold bg-[#7D2A25] text-[#FFDDDB] border border-[#C43A31]"
-            style={{ letterSpacing: '-0.025em' }}
-          >
-            등록
-          </button>
+          isLoggedIn ? (
+            <button
+              type="button"
+              onClick={() => navigate('/lost-items/new')}
+              className="h-[2rem] px-[0.875rem] text-[0.875rem] font-semibold bg-[#7D2A25] text-[#FFDDDB] border border-[#C43A31]"
+              style={{ letterSpacing: '-0.025em' }}
+            >
+              등록
+            </button>
+          ) : undefined
         }
       />
 
@@ -149,7 +186,7 @@ export default function LostItem() {
                 item={items[i]}
                 className="flex-1 min-h-0 overflow-hidden"
                 onClick={(item) => navigate(`/lost-items/${item.id}`)}
-                isAdmin
+                isAdmin={isLoggedIn}
                 onManage={(item) => {
                   setManagingItem(item);
                   setClaimStatus(item.status ?? 'unclaimed');
@@ -175,10 +212,198 @@ export default function LostItem() {
         onClose={() => setToast({ visible: false, message: '' })}
       />
 
+      {/* 로그아웃 모달 */}
+      {showLogoutModal && (
+        <div className="absolute inset-0 z-[70] flex items-center justify-center bg-black/50 px-[1.5rem]">
+          <div
+            className="flex flex-col items-center gap-[1.5rem] overflow-hidden"
+            style={{
+              width: '332px',
+              height: '176px',
+              background: '#353535',
+              borderRadius: 0,
+              boxShadow: 'inset 0 0 0 1px #595959',
+              justifyContent: 'center',
+              padding: '0 2rem',
+            }}
+          >
+            <div className="flex flex-col items-center gap-[0.375rem]">
+              <p
+                className="text-[#C9C9C9] text-[0.875rem] font-semibold [font-family:Pretendard]"
+                style={{ letterSpacing: '-0.025em' }}
+              >
+                총학생회 CO:RE
+              </p>
+              <p
+                className="text-[#F6F6F6] text-[1.25rem] font-semibold [font-family:Pretendard]"
+                style={{ letterSpacing: '-0.025em', lineHeight: '32.7px' }}
+              >
+                로그아웃 하시겠습니까?
+              </p>
+            </div>
+            <div className="flex w-full gap-[0.625rem]">
+              <button
+                type="button"
+                onClick={() => setShowLogoutModal(false)}
+                className="flex-1 bg-[#7F7F7F] text-[#FFFFFF] text-[0.875rem] font-semibold [font-family:Pretendard]"
+                style={{
+                  height: '40px',
+                  padding: '15px 20px',
+                  lineHeight: '160%',
+                  letterSpacing: '0',
+                  borderRadius: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                뒤로 가기
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  localStorage.removeItem('accessToken');
+                  setShowLogoutModal(false);
+                }}
+                className="flex-1 bg-[#7D2A25] text-[#FFFFFF] text-[0.875rem] font-semibold [font-family:Pretendard]"
+                style={{
+                  height: '40px',
+                  padding: '15px 20px',
+                  lineHeight: '160%',
+                  letterSpacing: '0',
+                  borderRadius: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                로그아웃
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 로그인 모달 */}
+      {showLoginModal && (
+        <div className="absolute inset-0 z-[70] flex items-center justify-center bg-black/50 px-[1.5rem]">
+          <div className="w-full bg-[#2e2e2e] px-[2rem] py-[2.5rem] flex flex-col items-center gap-[1.5rem]">
+            <div className="flex flex-col items-center gap-[0.375rem]">
+              <p
+                className="text-[#C9C9C9] text-[0.875rem] font-semibold [font-family:Pretendard]"
+                style={{ letterSpacing: '-0.025em' }}
+              >
+                총학생회 CO:RE
+              </p>
+              <p
+                className="text-[#F6F6F6] text-[1.5rem] font-semibold [font-family:Pretendard]"
+                style={{ letterSpacing: '-0.025em', lineHeight: '32.7px' }}
+              >
+                관리자 비밀번호
+              </p>
+            </div>
+
+            <div
+              className="flex items-center gap-[0.75rem] px-[1rem]"
+              style={{
+                width: '276px',
+                height: '40px',
+                borderRadius: 0,
+                background: loginFail ? 'rgba(196,58,49,0.2)' : 'rgba(53,53,53,0.2)',
+                boxShadow: `inset 0 0 0 1px ${loginFail ? '#C43A31' : '#EFEFEF'}`,
+                backdropFilter: 'blur(8px)',
+                WebkitBackdropFilter: 'blur(8px)',
+              }}
+            >
+              <img src={LockIcon} alt="" aria-hidden="true" style={{ width: 14, height: 18 }} />
+              <input
+                type="text"
+                value={'*'.repeat(loginPassword.length)}
+                onChange={(e) => {
+                  setLoginFail(false);
+                  const newDisplay = e.target.value;
+                  const diff = newDisplay.length - loginPassword.length;
+                  if (diff > 0) {
+                    const added = newDisplay.replace(/\*/g, '');
+                    setLoginPassword((prev) => prev + added);
+                  } else if (diff < 0) {
+                    setLoginPassword((prev) => prev.slice(0, newDisplay.length));
+                  }
+                }}
+                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+                placeholder="* * * * * * * * *"
+                autoFocus
+                autoComplete="off"
+                className="flex-1 bg-transparent text-white text-[0.875rem] font-bold [font-family:Pretendard] outline-none placeholder-[#868686]"
+                style={{ letterSpacing: '0.12em', lineHeight: '8px' }}
+              />
+            </div>
+            {loginFail && (
+              <p className="text-[#C43A31] text-[0.75rem] font-medium -mt-[0.75rem]">
+                비밀번호가 올바르지 않습니다
+              </p>
+            )}
+
+            <div className="flex w-full gap-[0.625rem]">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowLoginModal(false);
+                  setLoginPassword('');
+                  setLoginFail(false);
+                }}
+                className="bg-[#7F7F7F] text-[#FFFFFF] text-[0.875rem] font-semibold [font-family:Pretendard]"
+                style={{
+                  width: '132px',
+                  height: '40px',
+                  padding: '15px 20px',
+                  borderRadius: 0,
+                  boxShadow: 'inset 0 0 0 1px #A0A0A0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
+                }}
+              >
+                뒤로 가기
+              </button>
+              <button
+                type="button"
+                onClick={handleLogin}
+                className="bg-[#8A2822] text-[#FFFFFF] text-[0.875rem] font-semibold [font-family:Pretendard]"
+                style={{
+                  width: '132px',
+                  height: '40px',
+                  padding: '15px 20px',
+                  borderRadius: 0,
+                  boxShadow: 'inset 0 0 0 1px #C43A31',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
+                }}
+              >
+                로그인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 삭제 확인 모달 */}
       {showDeleteConfirm && (
-        <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/40 px-[1.25rem]">
-          <div className="w-full rounded-[1rem] bg-[#353535]/40 backdrop-blur-xl border border-[#A0A0A0]/30 px-[1.5rem] py-[2rem] flex flex-col items-center gap-[1.25rem]">
+        <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/50 px-[1.25rem]">
+          <div
+            className="w-full flex flex-col items-center gap-[1.25rem]"
+            style={{
+              height: '212px',
+              background: '#353535',
+              borderRadius: 0,
+              boxShadow: 'inset 0 0 0 1px #595959',
+              padding: '1.5rem',
+              justifyContent: 'center',
+            }}
+          >
             <svg
               width="40"
               height="40"
@@ -196,17 +421,23 @@ export default function LostItem() {
               <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
             </svg>
             <p
-              className="text-white text-[1.125rem] font-semibold"
+              className="text-[#F6F6F6] text-[1.25rem] font-semibold [font-family:Pretendard]"
               style={{ letterSpacing: '-0.025em' }}
             >
               분실물을 삭제하시겠습니까?
             </p>
-            <div className="flex gap-[0.75rem] w-full">
+            <div className="flex gap-[0.625rem] w-full">
               <button
                 type="button"
                 onClick={() => setShowDeleteConfirm(false)}
-                className="flex-1 h-[3rem] rounded-[0.5rem] bg-white/20 border border-[#A0A0A0] text-white text-[0.9375rem] font-semibold"
-                style={{ letterSpacing: '-0.025em' }}
+                className="flex-1 bg-[#7F7F7F] text-[#FFFFFF] text-[0.875rem] font-semibold [font-family:Pretendard]"
+                style={{
+                  height: '40px',
+                  borderRadius: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
               >
                 뒤로 가기
               </button>
@@ -217,10 +448,16 @@ export default function LostItem() {
                   setManagingItem(null);
                   setToast({ visible: true, message: '삭제가 완료되었습니다' });
                 }}
-                className="flex-1 h-[3rem] rounded-[0.5rem] bg-[#7D2A25] border border-[#C43A31] text-white text-[0.9375rem] font-semibold"
-                style={{ letterSpacing: '-0.025em' }}
+                className="flex-1 bg-[#7D2A25] text-[#FFFFFF] text-[0.875rem] font-semibold [font-family:Pretendard]"
+                style={{
+                  height: '40px',
+                  borderRadius: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
               >
-                삭제하기
+                삭제
               </button>
             </div>
           </div>
@@ -230,29 +467,27 @@ export default function LostItem() {
       {/* 관리 모달 */}
       {managingItem && !showDeleteConfirm && (
         <div
-          className="absolute inset-0 z-50 flex items-center justify-center bg-black/40 px-[1.25rem]"
+          className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 px-[1.25rem]"
           onClick={() => setManagingItem(null)}
         >
           <div
-            className="relative w-full rounded-[1rem] bg-[#353535]/40 backdrop-blur-xl border border-[#A0A0A0]/30 px-[1.5rem] py-[2rem] flex flex-col gap-[1.25rem]"
+            className="w-full flex flex-col gap-[1.25rem] overflow-hidden"
+            style={{
+              background: '#353535',
+              borderRadius: 0,
+              boxShadow: 'inset 0 0 0 1px #595959',
+              padding: '2rem 1.5rem',
+            }}
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              type="button"
-              onClick={() => setManagingItem(null)}
-              className="absolute top-[1rem] right-[1rem] text-[#A0A0A0] text-[1.25rem] leading-none"
-              aria-label="닫기"
-            >
-              ✕
-            </button>
             {/* 분실물 관리 */}
             <p
-              className="text-white text-[1.125rem] font-semibold text-center"
-              style={{ letterSpacing: '-0.025em' }}
+              className="text-[#F6F6F6] text-[1.5rem] font-semibold [font-family:Pretendard] text-center"
+              style={{ letterSpacing: '-0.025em', lineHeight: '32.7px' }}
             >
               분실물 관리
             </p>
-            <div className="flex flex-col gap-[0.75rem]">
+            <div className="flex flex-col gap-[0.625rem]">
               <button
                 type="button"
                 onClick={() => {
@@ -261,62 +496,98 @@ export default function LostItem() {
                     state: { item: managingItem },
                   });
                 }}
-                className="w-full h-[3rem] rounded-[0.5rem] border border-[#A0A0A0] text-white text-[0.9375rem] font-semibold bg-white/10"
-                style={{ letterSpacing: '-0.025em' }}
+                className="w-full bg-[#7F7F7F] text-[#FFFFFF] text-[0.875rem] font-semibold [font-family:Pretendard]"
+                style={{
+                  height: '40px',
+                  borderRadius: 0,
+                  boxShadow: 'inset 0 0 0 1px #A0A0A0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
               >
-                수정하기
+                수정
               </button>
               <button
                 type="button"
                 onClick={() => setShowDeleteConfirm(true)}
-                className="w-full h-[3rem] rounded-[0.5rem] border border-[#A0A0A0] text-white text-[0.9375rem] font-semibold bg-white/10"
-                style={{ letterSpacing: '-0.025em' }}
+                className="w-full bg-[#7F7F7F] text-[#FFFFFF] text-[0.875rem] font-semibold [font-family:Pretendard]"
+                style={{
+                  height: '40px',
+                  borderRadius: 0,
+                  boxShadow: 'inset 0 0 0 1px #A0A0A0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
               >
-                삭제하기
+                삭제
               </button>
             </div>
 
             {/* 상태 변경 */}
             <p
-              className="text-white text-[1.125rem] font-semibold text-center mt-[0.25rem]"
-              style={{ letterSpacing: '-0.025em' }}
+              className="text-[#F6F6F6] text-[1.5rem] font-semibold [font-family:Pretendard] text-center"
+              style={{ letterSpacing: '-0.025em', lineHeight: '32.7px' }}
             >
               상태 변경
             </p>
-            <div className="flex rounded-[0.5rem] overflow-hidden border border-[#A0A0A0]">
+            <div className="flex flex-col" style={{ gap: '12px' }}>
+              <div
+                className="flex overflow-hidden"
+                style={{ boxShadow: 'inset 0 0 0 1px #A0A0A0' }}
+              >
+                <button
+                  type="button"
+                  onClick={() => setClaimStatus('unclaimed')}
+                  className={`flex-1 text-[0.875rem] font-semibold [font-family:Pretendard] transition-colors ${claimStatus === 'unclaimed' ? 'bg-[#7F7F7F] text-white' : 'bg-transparent text-[#A0A0A0]'}`}
+                  style={{
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  미수령 처리
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setClaimStatus('claimed')}
+                  className={`flex-1 text-[0.875rem] font-semibold [font-family:Pretendard] transition-colors ${claimStatus === 'claimed' ? 'bg-[#8A2822] text-white' : 'bg-transparent text-[#A0A0A0]'}`}
+                  style={{
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  수령 처리
+                </button>
+              </div>
               <button
                 type="button"
-                onClick={() => setClaimStatus('unclaimed')}
-                className={`flex-1 h-[3rem] text-[0.9375rem] font-semibold transition-colors ${claimStatus === 'unclaimed' ? 'bg-white/20 text-white' : 'bg-transparent text-[#A0A0A0]'}`}
-                style={{ letterSpacing: '-0.025em' }}
+                onClick={() => {
+                  setItems((prev) =>
+                    prev.map((it) =>
+                      it.id === managingItem.id ? { ...it, status: claimStatus } : it
+                    )
+                  );
+                  setManagingItem(null);
+                  setToast({ visible: true, message: '저장되었습니다', duration: 1500 });
+                }}
+                className="w-full bg-[#8A2822] text-[#FFFFFF] text-[0.875rem] font-semibold [font-family:Pretendard]"
+                style={{
+                  height: '40px',
+                  borderRadius: 0,
+                  boxShadow: 'inset 0 0 0 1px #C43A31',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
               >
-                미수령 처리
-              </button>
-              <button
-                type="button"
-                onClick={() => setClaimStatus('claimed')}
-                className={`flex-1 h-[3rem] text-[0.9375rem] font-semibold transition-colors ${claimStatus === 'claimed' ? 'bg-[#7D2A25] text-white' : 'bg-transparent text-[#A0A0A0]'}`}
-                style={{ letterSpacing: '-0.025em' }}
-              >
-                수령 처리
+                확인
               </button>
             </div>
-            <button
-              type="button"
-              onClick={() => {
-                setItems((prev) =>
-                  prev.map((it) =>
-                    it.id === managingItem.id ? { ...it, status: claimStatus } : it
-                  )
-                );
-                setManagingItem(null);
-                setToast({ visible: true, message: '저장되었습니다', duration: 1500 });
-              }}
-              className="w-full h-[3rem] rounded-[0.5rem] bg-[#7D2A25] border border-[#C43A31] text-white text-[0.9375rem] font-semibold"
-              style={{ letterSpacing: '-0.025em' }}
-            >
-              확인
-            </button>
           </div>
         </div>
       )}

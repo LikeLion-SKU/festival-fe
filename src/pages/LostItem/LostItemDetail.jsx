@@ -26,33 +26,28 @@ const MOCK_DETAIL = {
 };
 
 function ArrowButton({ direction, onClick, disabled }) {
+  const isLeft = direction === 'left';
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      aria-label={direction === 'left' ? '이전 이미지' : '다음 이미지'}
+      aria-label={isLeft ? '이전 이미지' : '다음 이미지'}
       className="rounded-full flex items-center justify-center transition-all active:scale-95 disabled:opacity-30"
       style={{
         width: '40px',
         height: '40px',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        background: 'rgba(168, 163, 148, 0.72)',
-        border: '1.5px solid rgba(255, 255, 255, 0.82)',
+        background: isLeft ? '#ffffff' : '#3a3a3a',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
       }}
     >
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="rgba(235, 233, 226, 0.95)"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        {direction === 'left' ? <path d="M15 18l-6-6 6-6" /> : <path d="M9 18l6-6-6-6" />}
+      {/* 빨간 삼각형 */}
+      <svg width="24" height="24" viewBox="0 0 16 16" fill="none">
+        {isLeft ? (
+          <polygon points="11,2 11,14 3,8" fill="#DA3328" />
+        ) : (
+          <polygon points="5,2 5,14 13,8" fill="#DA3328" />
+        )}
       </svg>
     </button>
   );
@@ -102,24 +97,39 @@ export default function LostItemDetail() {
 
           <div className="absolute inset-0 flex items-center justify-between px-[0.75rem] pointer-events-none">
             <div className="pointer-events-auto">
-              <ArrowButton
-                direction="left"
-                onClick={() => setImgIndex((i) => i - 1)}
-                disabled={imgIndex === 0}
-              />
+              {imgIndex > 0 && (
+                <ArrowButton direction="left" onClick={() => setImgIndex((i) => i - 1)} />
+              )}
             </div>
             <div className="pointer-events-auto">
-              <ArrowButton
-                direction="right"
-                onClick={() => setImgIndex((i) => i + 1)}
-                disabled={imgIndex >= images.length - 1}
-              />
+              {imgIndex < images.length - 1 && (
+                <ArrowButton direction="right" onClick={() => setImgIndex((i) => i + 1)} />
+              )}
             </div>
           </div>
+
+          {/* 도트 인디케이터 */}
+          {images.length > 1 && (
+            <div className="absolute bottom-[0.75rem] left-0 right-0 flex justify-center gap-[0.375rem]">
+              {images.map((_, i) => (
+                <span
+                  key={i}
+                  style={{
+                    width: '7px',
+                    height: '7px',
+                    borderRadius: '50%',
+                    background: i === imgIndex ? '#ffffff' : 'rgba(255,255,255,0.4)',
+                    display: 'inline-block',
+                    transition: 'background 0.2s',
+                  }}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* 정보 */}
-        <div className="mt-[1.5rem] flex flex-col gap-[1.25rem]">
+        <div className="mt-[1.5rem] flex flex-col gap-[1.25rem] pl-[0.5rem]">
           <h2
             className="text-white text-[1.625rem] font-semibold"
             style={{ letterSpacing: '-0.01em' }}

@@ -22,7 +22,7 @@ export default function BackButton({ to, onClick, fixed = true, className }) {
         .join(' ')}
       style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
     >
-      <div className="relative" style={{ width: 44, height: 44 }}>
+      <div className="relative" style={{ width: 48, height: 48 }}>
         <div
           className="absolute inset-0 rounded-full overflow-hidden"
           style={{
