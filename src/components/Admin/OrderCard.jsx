@@ -65,7 +65,10 @@ export default function OrderCard({
         isOpen ? 'gap-2' : 'h-15 justify-center'
       }`}
     >
-      <div className="flex h-7 w-full items-center justify-between" onClick={toggleOpen}>
+      <div /* 주문 카드 접혀있을 때 */
+        className="flex h-7 w-full items-center justify-between"
+        onClick={toggleOpen}
+      >
         <p
           className={`text-[16px] ${isOpen ? 'font-bold' : 'font-semibold'} leading-6.75 tracking-[-0.5px] text-[#222]`}
         >
@@ -98,7 +101,7 @@ export default function OrderCard({
         </div>
       </div>
 
-      {isOpen && (
+      {isOpen /* 주문 카드 폈을때 */ && (
         <>
           <div className="-mx-5 w-[calc(100%+2.5rem)] h-1 bg-[linear-gradient(to_right,#EFEFEF_50%,transparent_50%)] bg-size-[18px_2.5px] bg-repeat-x" />
 
@@ -130,7 +133,7 @@ export default function OrderCard({
                   onClick={() => toggleChecked(idx)}
                 >
                   <div className="flex flex-1 items-center gap-3">
-                    {isCooking && (
+                    {isCooking /* 조리 중 버전이면 체크 박스 */ && (
                       <button
                         type="button"
                         aria-label={checked ? '체크 해제' : '체크'}
@@ -167,7 +170,9 @@ export default function OrderCard({
             <p className="text-[16px] font-semibold text-[#353535]">{formatPrice(totalAmount)}</p>
           </div>
 
-          <div className="flex w-full items-center justify-center gap-2">
+          <div /* 메뉴 상태 변경 버튼들(완료,취소) */
+            className="flex w-full items-center justify-center gap-2"
+          >
             <button
               type="button"
               onClick={() =>
