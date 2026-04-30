@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router';
 
 import InputField from '@/components/Order/CustomerInfo/InputField';
 import OrderButtonBox from '@/components/Order/OrderEntry/OrderButtonBox';
+import Modal from '@/components/common/Modal';
 import OrderHeader from '@/components/common/OrderHeader';
 
 const formatPhone = (digits) => {
@@ -22,6 +23,7 @@ function CustomerInfo() {
   const orderType = state?.orderType ?? 'dine-in';
   const isDineIn = orderType === 'dine-in';
 
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [name, setName] = useState('');
   const [headCount, setHeadCount] = useState('');
   const [tableNumber, setTableNumber] = useState('');
@@ -99,7 +101,31 @@ function CustomerInfo() {
           />
         </div>
       </div>
-      <OrderButtonBox buttonName="주문 요청하기" isActive={isFormValid} onClick={() => {}} />
+      <OrderButtonBox
+        buttonName="주문 요청하기"
+        isActive={isFormValid}
+        onClick={() => setShowConfirmModal(true)}
+      />
+      <Modal
+        isOpen={showConfirmModal}
+        cancelText="뒤로가기"
+        confirmText="요청하기"
+        onCancel={() => setShowConfirmModal(false)}
+        onConfirm={() => {
+          sessionStorage.setItem(
+            'orderCustomerInfo',
+            JSON.stringify({
+              name,
+              phone,
+              orderType,
+              ...(isDineIn && { headCount, tableNumber }),
+            })
+          );
+        }}
+      >
+        <p className="font-medium">주문을 요청하면 되돌릴 수 없습니다.</p>
+        <p className="font-medium">진행하시겠습니까?</p>
+      </Modal>
     </div>
   );
 }

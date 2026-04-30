@@ -6,7 +6,7 @@ function Modal({ isOpen, cancelText, confirmText, onCancel, onConfirm, children 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="bg-white rounded-2xl mx-8 px-8 py-10 flex flex-col items-center gap-5 w-full max-w-sm">
-        <WarningIcon className="[&_path]:fill-[#FFC107]" />
+        <WarningIcon />
         <div className="text-center flex flex-col gap-1">{children}</div>
         <div className="flex gap-3 w-full mt-1">
           <button
