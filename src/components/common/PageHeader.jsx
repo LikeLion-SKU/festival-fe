@@ -4,6 +4,7 @@ export default function PageHeader({
   title,
   to,
   onBack,
+  onTitleClick,
   rightElement,
   top = '6dvh',
   className = '',
@@ -16,7 +17,8 @@ export default function PageHeader({
       <BackButton to={to} onClick={onBack} fixed={false} className="absolute left-[1.25rem]" />
       <h1
         className="text-white text-[1.125rem] font-semibold"
-        style={{ letterSpacing: '-0.025em' }}
+        style={{ letterSpacing: '-0.025em', cursor: onTitleClick ? 'pointer' : 'default' }}
+        onClick={onTitleClick}
       >
         {title}
       </h1>

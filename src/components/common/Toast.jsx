@@ -81,7 +81,10 @@ export default function Toast({
   if (!visible) return null;
 
   return (
-    <div className="absolute top-1/2 left-[1.25rem] right-[1.25rem] -translate-y-1/2 z-[100] h-[11rem] rounded-[0.75rem] bg-[#353535]/40 backdrop-blur-xl border border-[#A0A0A0]/30 flex flex-col items-center justify-center gap-[1rem]">
+    <div
+      className="absolute top-1/2 left-[1.25rem] right-[1.25rem] -translate-y-1/2 z-[100] h-[11rem] flex flex-col items-center justify-center gap-[1rem]"
+      style={{ background: '#353535', boxShadow: 'inset 0 0 0 1px #595959' }}
+    >
       {ICONS[icon]}
       <p className="text-white text-[1.125rem] font-semibold" style={{ letterSpacing: '-0.025em' }}>
         {message}
