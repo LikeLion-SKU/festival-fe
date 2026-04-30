@@ -54,13 +54,13 @@ function OrderPay() {
         />
       </div>
 
-      <div className="flex-1 overflow-y-auto min-h-0 px-5 flex flex-col items-center gap-6 pt-8 pb-36">
+      <div className="flex-1 overflow-y-auto min-h-0 px-5 flex flex-col items-center pt-12 gap-2.5">
         <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 shrink-0">
-          <HeroImage className="w-full h-full" />
+          <HeroImage className="w-full h-full" /> {/* 추후 부스별 사진으로 채워야 함 */}
         </div>
 
-        <div className="text-center">
-          <p className="text-xl font-semibold">
+        <div className="text-center mt-8">
+          <p className="text-xl font-medium">
             아래 계좌로{' '}
             <span className="text-order-button font-bold">{totalPrice.toLocaleString()}원</span>을
             입금 후
@@ -68,12 +68,12 @@ function OrderPay() {
           <p className="text-xl font-bold text-order-button">직원에게 보여주세요!</p>
         </div>
 
-        <div className="w-full border border-gray-300 rounded-xl mt-25 px-5 py-4">
+        <div className="w-full border border-gray-300 rounded-xl mt-20 px-5 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Shadow className="w-10 h-10" />
               <div className="flex flex-col">
-                <span className="text-base font-semibold text-gray-500">{name}</span>
+                <span className="text-base font-medium text-gray-500">{name}</span>
                 <span className="text-sm font-medium text-gray-900">{phone}</span>
               </div>
             </div>
@@ -83,11 +83,11 @@ function OrderPay() {
           </div>
         </div>
 
-        <div className="w-full bg-order-button rounded-xl px-5 py-6">
-          <div className="flex items-center gap-3">
-            <ATM className="w-10 h-10 shrink-0" />
+        <div className="w-full bg-button-red rounded-xl px-5 py-6">
+          <div className="flex items-center gap-4">
+            <ATM className="w-8 h-8 shrink-0" />
             <div className="flex-1 flex flex-col gap-1.5">
-              <span className="text-white text-base font-semibold">{BANK_INFO.bankName}</span>
+              <span className="text-white text-base font-medium">{BANK_INFO.bankName}</span>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <span className="text-white/70 text-sm font-medium">예금주</span>

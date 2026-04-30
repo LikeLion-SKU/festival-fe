@@ -104,7 +104,7 @@ function CustomerInfo() {
       <OrderButtonBox
         buttonName="주문 요청하기"
         isActive={isFormValid}
-        onClick={() => setShowConfirmModal(true)}
+        onClick={() => isFormValid && setShowConfirmModal(true)}
       />
       <Modal
         isOpen={showConfirmModal}
