@@ -4,7 +4,7 @@ import { useNavigate, useOutletContext } from 'react-router';
 import ATM from '@/assets/icons/atm.svg?react';
 import Copy from '@/assets/icons/copy.svg?react';
 import Shadow from '@/assets/icons/shadow.svg?react';
-import OrderButton from '@/components/common/OrderButton';
+import OrderButtonBox from '@/components/Order/OrderEntry/OrderButtonBox';
 import OrderHeader from '@/components/common/OrderHeader';
 import Toast from '@/components/common/Toast';
 
@@ -121,18 +121,12 @@ function OrderPay() {
         className="fixed bottom-32 left-1/2 -translate-x-1/2 z-50"
       />
 
-      <div className="w-full max-w-112.5 fixed bottom-0 left-1/2 -translate-x-1/2 z-50 bg-white shadow-[0px_-1px_7px_-2px_rgba(0,0,0,0.25)] px-7 pt-3.75 pb-4">
-        <OrderButton
-          width="100%"
-          height={48}
-          color="var(--color-order-button)"
-          buttonName="직원 확인 완료"
-          onClick={() => {}}
-        />
-        <p className="text-center text-xs font-semibold text-order-button pt-2">
-          입금자명은 주문자명과 같아야 해요
-        </p>
-      </div>
+      <OrderButtonBox
+        buttonName="직원 확인 완료"
+        isActive={true}
+        onClick={() => {}}
+        note="입금자명은 주문자명과 같아야 해요"
+      />
     </div>
   );
 }
