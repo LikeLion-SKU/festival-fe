@@ -9,12 +9,12 @@ const formatPrice = (n) => `${n.toLocaleString('ko-KR')}원`;
 export default function OrderCard({
   variant = 'waiting',
   tableNumber,
-  peopleCount,
+  numOfPeople,
   orderTime,
   customerName,
-  phone,
-  items = [],
-  totalAmount,
+  customerPhoneNumber,
+  orderItems = [],
+  totalOrderPrice,
   onConfirm,
   onCancel,
   checkedItems: checkedItemsProp,
@@ -32,14 +32,15 @@ export default function OrderCard({
   const checkedItems = isControlled ? checkedItemsProp : internalChecked;
 
   const renderItems = isCooking
-    ? items.flatMap((item) =>
+    ? orderItems.flatMap((item) =>
         Array.from({ length: item.quantity }, () => ({
-          name: item.name,
+          menuName: item.menuName,
           quantity: 1,
-          price: item.quantity > 0 ? item.price / item.quantity : item.price,
+          totalOrderItemPrice:
+            item.quantity > 0 ? item.totalOrderItemPrice / item.quantity : item.totalOrderItemPrice,
         }))
       )
-    : items;
+    : orderItems;
 
   const toggleOpen = () => {
     if (isOpenControlled) onOpenChange?.(!isOpen);
@@ -80,7 +81,7 @@ export default function OrderCard({
               {tableNumber != 0 && (
                 <div className="flex h-7 min-w-8.5 items-center justify-center rounded-[5px] bg-[#F6F6F6] px-2 py-1">
                   <p className="text-[12px] font-medium leading-[1.6] text-[#252525]">
-                    {peopleCount}명
+                    {numOfPeople}명
                   </p>
                 </div>
               )}
@@ -110,10 +111,10 @@ export default function OrderCard({
               <span className="font-bold tracking-[-0.35px]">{customerName}</span>
               {tableNumber != 0 && (
                 <span className="font-semibold tracking-[-0.42px] text-[#FE5F54]">
-                  {peopleCount}명
+                  {numOfPeople}명
                 </span>
               )}
-              <span className="font-semibold">{phone}</span>
+              <span className="font-semibold">{customerPhoneNumber}</span>
             </div>
             <span className="whitespace-nowrap text-[12px] font-medium text-[#7F7F7F]">
               {orderTime} 주문
@@ -147,7 +148,7 @@ export default function OrderCard({
                     <span
                       className={`text-[14px] text-deep-gray font-medium ${strike ? 'line-through' : ''}`}
                     >
-                      {item.name}
+                      {item.menuName}
                     </span>
                     {!isCooking && (
                       <span className="font-medium text-[14px] text-[#A0A0A0]">
@@ -158,7 +159,7 @@ export default function OrderCard({
                   <span
                     className={`font-medium text-[14px] text-[#222] ${strike ? 'line-through' : ''}`}
                   >
-                    {formatPrice(item.price)}
+                    {formatPrice(item.totalOrderItemPrice)}
                   </span>
                 </div>
               );
@@ -167,7 +168,9 @@ export default function OrderCard({
 
           <div className="flex h-15 w-full items-center justify-between">
             <p className="text-[16px] font-semibold tracking-[-0.4px] text-[#353535]">총 금액</p>
-            <p className="text-[16px] font-semibold text-[#353535]">{formatPrice(totalAmount)}</p>
+            <p className="text-[16px] font-semibold text-[#353535]">
+              {formatPrice(totalOrderPrice)}
+            </p>
           </div>
 
           <div /* 메뉴 상태 변경 버튼들(완료,취소) */
