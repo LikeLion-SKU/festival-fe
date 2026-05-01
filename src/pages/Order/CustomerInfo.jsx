@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { useRef, useState } from 'react';
+import { useLocation, useNavigate, useOutletContext } from 'react-router';
 
+import { createOrder } from '@/api/order';
 import InputField from '@/components/Order/CustomerInfo/InputField';
 import OrderButtonBox from '@/components/Order/OrderEntry/OrderButtonBox';
 import Modal from '@/components/common/Modal';
@@ -20,9 +21,12 @@ const getState = (value, isValid) => {
 function CustomerInfo() {
   const navigate = useNavigate();
   const { state } = useLocation();
+  const { boothId } = useOutletContext();
   const orderType = state?.orderType ?? 'dine-in';
   const isDineIn = orderType === 'dine-in';
 
+  const idempotencyKey = useRef(crypto.randomUUID());
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [name, setName] = useState('');
   const [headCount, setHeadCount] = useState('');
@@ -110,18 +114,42 @@ function CustomerInfo() {
         isOpen={showConfirmModal}
         cancelText="뒤로가기"
         confirmText="요청하기"
+        isConfirmDisabled={isSubmitting}
         onCancel={() => setShowConfirmModal(false)}
-        onConfirm={() => {
-          sessionStorage.setItem(
-            'orderCustomerInfo',
-            JSON.stringify({
-              name,
-              phone,
-              orderType,
-              ...(isDineIn && { headCount, tableNumber }),
-            })
-          );
-          navigate('/order/pay');
+        onConfirm={async () => {
+          if (isSubmitting) return;
+          setIsSubmitting(true);
+          const cart = JSON.parse(sessionStorage.getItem('orderCart') || '[]');
+          try {
+            const res = await createOrder(boothId, idempotencyKey.current, {
+              tableNumber: isDineIn ? parseInt(tableNumber) : 0,
+              numOfPeople: isDineIn ? parseInt(headCount) : 1,
+              customerName: name,
+              customerPhoneNumber: phone,
+              totalOrderPrice: cart.reduce((sum, item) => sum + item.price * item.quantity, 0),
+              language: 'KO',
+              orderItems: cart.map((item) => ({
+                boothMenuId: item.boothMenuId,
+                quantity: item.quantity,
+                menuPrice: item.price,
+                totalOrderItemPrice: item.price * item.quantity,
+              })),
+            });
+            sessionStorage.setItem(
+              'orderCustomerInfo',
+              JSON.stringify({
+                name,
+                phone,
+                orderType,
+                ...(isDineIn && { headCount, tableNumber }),
+              })
+            );
+            sessionStorage.setItem('orderResponse', JSON.stringify(res.data));
+            navigate('/order/pay');
+          } catch (error) {
+            console.error('주문 생성 실패:', error);
+            setIsSubmitting(false);
+          }
         }}
       >
         <p className="font-medium">주문을 요청하면 되돌릴 수 없습니다.</p>

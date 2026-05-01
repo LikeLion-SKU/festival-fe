@@ -6,6 +6,7 @@ import BoothHero from '@/assets/images/booth_image.svg?react';
 import Info1 from '@/assets/images/booth_info_1.svg';
 
 const boothData = {
+  boothId: 6,
   boothName: '소프트웨어학과',
   location: '혜인관 앞',
   isOpen: true,
@@ -35,74 +36,35 @@ const boothData = {
 
 const foodData = [
   {
+    boothMenuId: 11,
     image: Noodle,
-    name: '닭발&주먹밥',
-    description: '매콤한 닭발과 든든한 주먹밥 세트',
-    price: 3000,
+    name: '타코야끼',
+    description: '',
+    price: 6000,
     category: 'main',
   },
   {
+    boothMenuId: 12,
     image: Noodle,
-    name: '김치우동',
-    description: '칼칼한 김치가 들어간 따뜻한 우동',
-    price: 5000,
+    name: '야끼소바',
+    description: '',
+    price: 8000,
     category: 'main',
   },
   {
+    boothMenuId: 13,
     image: Noodle,
-    name: '김치전',
-    description: '바삭하게 구운 김치전',
+    name: '블루레몬에이드',
+    description: '',
     price: 3000,
-    category: 'main',
+    category: 'drink',
   },
   {
+    boothMenuId: 14,
     image: Noodle,
-    name: '어묵우동',
-    description: '부드러운 어묵과 우동의 조합',
-    price: 10000,
-    category: 'main',
-  },
-  {
-    image: Noodle,
-    name: '옥수수전',
-    description: '달콤한 옥수수가 들어간 전',
+    name: '자몽에이드',
+    description: '',
     price: 3000,
-    category: 'side',
-  },
-  {
-    image: Noodle,
-    name: '어묵탕',
-    description: '시원하고 깔끔한 어묵탕',
-    price: 10000,
-    category: 'side',
-  },
-  {
-    image: Noodle,
-    name: '주먹밥',
-    description: '한 입 크기로 먹기 좋은 주먹밥',
-    price: 3000,
-    category: 'side',
-  },
-  {
-    image: Noodle,
-    name: '주먹밥',
-    description: '한 입 크기로 먹기 좋은 주먹밥',
-    price: 3000,
-    category: 'side',
-  },
-  {
-    image: Noodle,
-    name: '주먹밥',
-    description: '한 입 크기로 먹기 좋은 주먹밥',
-    price: 3000,
-    category: 'side',
-  },
-  { image: Noodle, name: '슬러시', description: '시원한 음료수', price: 1000, category: 'drink' },
-  {
-    image: Noodle,
-    name: '제로 콜라',
-    description: '시원한 음료수',
-    price: 1000,
     category: 'drink',
   },
 ];
@@ -142,7 +104,13 @@ function Order() {
     const cart = Object.entries(quantities).map(([key, qty]) => {
       const [cat, idx] = key.split('-');
       const item = foodData.filter((i) => i.category === cat)[parseInt(idx)];
-      return { key, name: item.name, price: item.price, quantity: qty };
+      return {
+        key,
+        boothMenuId: item.boothMenuId,
+        name: item.name,
+        price: item.price,
+        quantity: qty,
+      };
     });
     sessionStorage.setItem('orderCart', JSON.stringify(cart));
   }, [quantities]);
@@ -165,6 +133,7 @@ function Order() {
         onRemove: handleRemove,
         onDecrease: handleDecrease,
         onReset: handleReset,
+        boothId: boothData.boothId,
       }}
     />
   );

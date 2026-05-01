@@ -8,21 +8,17 @@ import OrderButtonBox from '@/components/Order/OrderEntry/OrderButtonBox';
 import OrderHeader from '@/components/common/OrderHeader';
 import Toast from '@/components/common/Toast';
 
-const BANK_INFO = {
-  bankName: '카카오뱅크',
-  accountHolder: '김멋사',
-  accountNumber: '111110000000',
-};
-
 function OrderPay() {
   const navigate = useNavigate();
   const { HeroImage } = useOutletContext();
 
   const customerInfo = JSON.parse(sessionStorage.getItem('orderCustomerInfo') || '{}');
+  const orderResponse = JSON.parse(sessionStorage.getItem('orderResponse') || '{}');
   const cart = JSON.parse(sessionStorage.getItem('orderCart') || '[]');
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const { name, phone, orderType } = customerInfo;
+  const { bankName, accountName, accountNumber } = orderResponse;
   const orderTypeLabel = orderType === 'dine-in' ? '매장' : '포장';
 
   const [showToast, setShowToast] = useState(true);
@@ -35,7 +31,7 @@ function OrderPay() {
   }, []);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(BANK_INFO.accountNumber);
+    navigator.clipboard.writeText(accountNumber);
     setShowCopyToast(true);
     clearTimeout(copyTimerRef.current);
     copyTimerRef.current = setTimeout(() => setShowCopyToast(false), 2000);
@@ -56,7 +52,7 @@ function OrderPay() {
 
       <div className="flex-1 overflow-y-auto min-h-0 px-5 flex flex-col items-center pt-12 gap-2.5">
         <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 shrink-0">
-          <HeroImage className="w-full h-full" /> {/* 추후 부스별 사진으로 채워야 함 */}
+          <HeroImage className="w-full h-full" />
         </div>
 
         <div className="text-center mt-8">
@@ -87,14 +83,14 @@ function OrderPay() {
           <div className="flex items-center gap-4">
             <ATM className="w-8 h-8 shrink-0" />
             <div className="flex-1 flex flex-col gap-1.5">
-              <span className="text-white text-base font-medium">{BANK_INFO.bankName}</span>
+              <span className="text-white text-base font-medium">{bankName}</span>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <span className="text-white/70 text-sm font-medium">예금주</span>
-                  <span className="text-white text-sm font-medium">{BANK_INFO.accountHolder}</span>
+                  <span className="text-white text-sm font-medium">{accountName}</span>
                 </div>
                 <div className="flex items-center gap-3.5">
-                  <span className="text-white text-sm font-medium">{BANK_INFO.accountNumber}</span>
+                  <span className="text-white text-sm font-medium">{accountNumber}</span>
                   <button
                     onClick={handleCopy}
                     className="shrink-0 active:opacity-50 transition-opacity duration-100"
