@@ -9,6 +9,7 @@ export const BUILDINGS = [
   { id: 'eunju2', label: '은주2관' },
   { id: 'cheongun', label: '청운관' },
   { id: 'daeil', label: '대일관' },
+  { id: 'hyein', label: '혜인관' },
 ];
 
 /** @type {BoothCardConfig[]} */
