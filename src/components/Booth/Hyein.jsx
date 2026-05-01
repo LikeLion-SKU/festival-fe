@@ -44,12 +44,12 @@ function SideRectWithTicks({ active }) {
  */
 export default function Hyein({ active = false, onClick, className }) {
   const panelBg = active ? BG_ACTIVE : BG_DEFAULT;
+  const wrapperClass = clsx('relative inline-flex flex-col items-center gap-[0.25rem]', className);
 
   const boxClass = clsx(
     'relative box-border flex h-[2.5rem] w-[10.25rem] shrink-0 appearance-none overflow-hidden border-2 border-solid border-[#C43A31] outline-none ring-0 transition-[background-color,box-shadow] duration-200 focus:outline-none focus-visible:outline-none',
     onClick && 'cursor-pointer select-none',
-    active && 'z-30 shadow-[0_0_12px_rgba(196,58,49,0.45)]',
-    className
+    active && 'z-30 shadow-[0_0_12px_rgba(196,58,49,0.45)]'
   );
 
   const labelClass = clsx(
@@ -83,6 +83,17 @@ export default function Hyein({ active = false, onClick, className }) {
     </div>
   );
 
+  const stageBox = (
+    <div
+      className="box-border flex h-[1.25rem] w-[4.5rem] items-center justify-center border-1 border-solid border-[#C43A31]"
+      style={{ backgroundColor: BG_DEFAULT }}
+    >
+      <span className="text-[0.5625rem] font-bold leading-none tracking-[-0.03em] text-[#FF756C] [font-family:Pretendard]">
+        무대
+      </span>
+    </div>
+  );
+
   if (onClick) {
     return (
       <button
@@ -90,17 +101,22 @@ export default function Hyein({ active = false, onClick, className }) {
         onClick={onClick}
         aria-pressed={active}
         aria-label="혜인관"
-        className={boxClass}
-        style={{ backgroundColor: panelBg }}
+        className={wrapperClass}
       >
-        {inner}
+        <div className={boxClass} style={{ backgroundColor: panelBg }}>
+          {inner}
+        </div>
+        {stageBox}
       </button>
     );
   }
 
   return (
-    <div className={boxClass} style={{ backgroundColor: panelBg }}>
-      {inner}
+    <div className={wrapperClass}>
+      <div className={boxClass} style={{ backgroundColor: panelBg }}>
+        {inner}
+      </div>
+      {stageBox}
     </div>
   );
 }
