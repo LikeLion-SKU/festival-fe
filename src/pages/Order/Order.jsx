@@ -119,6 +119,8 @@ function Order() {
     return () => {
       sessionStorage.removeItem('orderQuantities');
       sessionStorage.removeItem('orderCart');
+      sessionStorage.removeItem('orderCustomerInfo');
+      sessionStorage.removeItem('orderResponse');
     };
   }, []);
 

@@ -135,17 +135,11 @@ function CustomerInfo() {
                 totalOrderItemPrice: item.price * item.quantity,
               })),
             });
-            sessionStorage.setItem(
-              'orderCustomerInfo',
-              JSON.stringify({
-                name,
-                phone,
-                orderType,
-                ...(isDineIn && { headCount, tableNumber }),
-              })
-            );
-            sessionStorage.setItem('orderResponse', JSON.stringify(res.data));
-            navigate('/order/pay');
+            sessionStorage.removeItem('orderCustomerInfo');
+            sessionStorage.removeItem('orderResponse');
+            sessionStorage.removeItem('orderQuantities');
+            sessionStorage.removeItem('orderCart');
+            navigate('/order/pay', { state: { orderResponse: res.data, orderType } });
           } catch (error) {
             console.error('주문 생성 실패:', error);
             setIsSubmitting(false);
