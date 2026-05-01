@@ -20,7 +20,7 @@ function SideRectWithTicks({ active }) {
       aria-hidden
     >
       {/* grid 대신 절대좌표로 */}
-      <div className="pointer-events-none absolute inset-x-[2px] inset-y-[2px]">
+      <div className="pointer-events-none absolute inset-x-[2px] inset-y-[0px]">
         {Array.from({ length: TICK_COUNT }).map((_, i) => (
           <span
             key={i}
