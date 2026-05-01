@@ -1,13 +1,12 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { postLogin } from '@/api/login';
 import CheckIcon from '@/assets/icons/admin/check_red_icon.svg?react';
 import WrningIcon from '@/assets/icons/admin/warning_orange_icon.svg?react';
 import DepartmentBox from '@/components/Admin/AdminLogin/DepartmentBox';
 import PasswordBox from '@/components/Admin/AdminLogin/PasswordBox';
 import OrderButton from '@/components/common/OrderButton';
-
-const CORRECT_PASSWORD = 'likelion14';
 
 export default function AdminLogin() {
   const [department, setDepartment] = useState('');
@@ -16,11 +15,14 @@ export default function AdminLogin() {
   const navigate = useNavigate();
   const passwordInputRef = useRef(null);
 
-  const login = () => {
-    if (password === CORRECT_PASSWORD) {
+  const login = async () => {
+    try {
+      await postLogin(department.departmentName, password);
+
       setIsFail(false);
       navigate('/admin/waiting');
-    } else {
+    } catch (error) {
+      console.log('로그인 실패 : ' + error);
       setIsFail(true);
       passwordInputRef.current?.focus();
     }

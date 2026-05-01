@@ -9,7 +9,7 @@ import OrderHeader from '@/components/common/OrderHeader';
 
 function OrderConfirm() {
   const navigate = useNavigate();
-  const { foodData, quantities, onIncrease, onDecrease, onRemove } = useOutletContext();
+  const { boothId, foodData, quantities, onIncrease, onDecrease, onRemove } = useOutletContext();
   const [orderType, setOrderType] = useState('dine-in');
 
   const cart = Object.entries(quantities).map(([key, qty]) => {
@@ -44,7 +44,7 @@ function OrderConfirm() {
       <OrderButtonBox
         buttonName="결제하기"
         isActive={true}
-        onClick={() => navigate('/order/customer-info', { state: { orderType } })}
+        onClick={() => navigate(`/order/${boothId}/customer-info`, { state: { orderType } })}
       />
       <div className="h-22" />
     </div>

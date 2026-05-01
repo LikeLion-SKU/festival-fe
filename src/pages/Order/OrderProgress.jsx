@@ -13,7 +13,7 @@ const CATEGORY_LABEL_MAP = { main: '메인', side: '사이드', drink: '음료' 
 
 function OrderProgress() {
   const navigate = useNavigate();
-  const { boothName, foodData, quantities, onSelect, onIncrease, onDecrease, onReset } =
+  const { boothId, boothName, foodData, quantities, onSelect, onIncrease, onDecrease, onReset } =
     useOutletContext();
 
   const [activeCategory, setActiveCategory] = useState('메인');
@@ -104,7 +104,7 @@ function OrderProgress() {
         buttonName={hasSelection ? `주문하기(${totalCount})` : '주문하기'}
         isActive={hasSelection}
         inactiveColor="var(--color-pink-100)"
-        onClick={() => hasSelection && navigate('/order/confirm')}
+        onClick={() => hasSelection && navigate(`/order/${boothId}/confirm`)}
       />
     </div>
   );

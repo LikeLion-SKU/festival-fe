@@ -129,7 +129,7 @@ export default function LostItemDetail() {
         </div>
 
         {/* 정보 */}
-        <div className="mt-[1.5rem] flex flex-col gap-[1.25rem] pl-[0.5rem]">
+        <div className="mt-[1.5rem] flex flex-col gap-[1.25rem]">
           <h2
             className="text-white text-[1.625rem] font-semibold"
             style={{ letterSpacing: '-0.01em' }}
