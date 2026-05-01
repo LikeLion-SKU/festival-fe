@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { getWaitingMenu } from '@/api/order';
+import { getWaitingMenu, subscribeOrder } from '@/api/order';
 import CheckIcon from '@/assets/icons/admin/check_red_big_icon.svg?react';
 import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
@@ -15,12 +15,33 @@ import OrderCard from '@/components/Admin/OrderCard';
 export default function WaitingMenu() {
   const [modal, setModal] = useState(null);
   const [reason, setReason] = useState(null);
+  const queryClient = useQueryClient();
+
+  const queryKey = ['admin', 'orders', 'waiting'];
 
   const { data: orderData = [] } = useQuery({
-    queryKey: ['admin', 'orders', 'waiting'],
+    queryKey,
     queryFn: getWaitingMenu,
     select: (res) => res?.data ?? [],
   });
+
+  useEffect(() => {
+    const eventSource = subscribeOrder('WAITING');
+
+    eventSource.onmessage = (event) => {
+      const newOrder = JSON.parse(event.data);
+      queryClient.setQueryData(queryKey, (prev) => ({
+        ...(prev ?? {}),
+        data: [...(prev?.data ?? []), newOrder],
+      }));
+    };
+
+    eventSource.onerror = () => {
+      eventSource.close();
+    };
+
+    return () => eventSource.close();
+  }, [queryClient]);
 
   useEffect(() => {
     if (modal !== 'confirmDone') return;
