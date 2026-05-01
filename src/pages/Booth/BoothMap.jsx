@@ -3,7 +3,7 @@ import { useMemo, useRef, useState } from 'react';
 import BoothMap from '@/components/Booth/BoothMap';
 import PageHeader from '@/components/common/PageHeader';
 import SearchInput from '@/components/common/SearchInput';
-import { BOOTH_CARDS, BUILDINGS } from '@/constants/mainDummyData';
+import { BUILDINGS } from '@/constants/mainDummyData';
 
 const BUILDING_BUTTON_ORDER = ['hyein', 'eunju1', 'eunju2', 'cheongun', 'daeil'];
 
@@ -12,16 +12,6 @@ export default function BoothMapPage() {
   const [search, setSearch] = useState('');
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const touchStartY = useRef(0);
-
-  const buildingCards = useMemo(() => {
-    const query = search.trim();
-    return BOOTH_CARDS.filter((card) => {
-      if (card.buildingId !== activeBuildingId) return false;
-      if (!query) return true;
-      const title = Array.isArray(card.title) ? card.title.join(' ') : card.title;
-      return `${title} ${card.subtitle}`.includes(query);
-    });
-  }, [activeBuildingId, search]);
 
   const orderedBuildingButtons = useMemo(() => {
     const map = new Map(BUILDINGS.map((item) => [item.id, item]));
@@ -84,20 +74,6 @@ export default function BoothMapPage() {
           <p className="mt-1 text-xs font-semibold [font-family:Pretendard]">
             {BUILDINGS.find((item) => item.id === activeBuildingId)?.label}
           </p>
-          <ul className="mt-2 max-h-[48dvh] space-y-2 overflow-auto pr-1 text-xs text-white/85 [font-family:Pretendard]">
-            {buildingCards.length ? (
-              buildingCards.map((card) => (
-                <li key={card.id} className="border-b border-white/10 pb-2">
-                  <p className="font-semibold">
-                    {Array.isArray(card.title) ? card.title.join(' ') : card.title}
-                  </p>
-                  <p className="mt-0.5 text-[0.6875rem] text-white/60">{card.subtitle}</p>
-                </li>
-              ))
-            ) : (
-              <li className="py-6 text-center text-white/60">검색 결과가 없습니다.</li>
-            )}
-          </ul>
         </div>
       </div>
     </section>

@@ -1,3 +1,4 @@
+import Daeil from '@/components/Booth/Daeil';
 import Eunju1 from '@/components/Booth/Eunju1';
 import Eunju2 from '@/components/Booth/Eunju2';
 import Hyein from '@/components/Booth/Hyein';
@@ -23,6 +24,9 @@ export default function BoothMap({ activeBuildingId, onSelectBuilding }) {
           active={activeBuildingId === 'eunju2'}
           onClick={() => onSelectBuilding?.('eunju2')}
         />
+      </div>
+      <div className="pointer-events-auto absolute left-[-5%] top-[52%] z-10">
+        <Daeil active={activeBuildingId === 'daeil'} onClick={() => onSelectBuilding?.('daeil')} />
       </div>
     </div>
   );
