@@ -12,6 +12,7 @@ import OrderButtonBox from '@/components/Order/OrderEntry/OrderButtonBox';
 
 function OrderEntry() {
   const {
+    boothId,
     boothName,
     location,
     isOpen,
@@ -52,7 +53,7 @@ function OrderEntry() {
         className="relative z-1 "
         buttonName={buttonName}
         isActive={isOpen}
-        onClick={() => navigate('/order/progress')}
+        onClick={() => navigate(`/order/${boothId}/progress`)}
       />
     </>
   );

@@ -139,7 +139,7 @@ function CustomerInfo() {
             sessionStorage.removeItem('orderResponse');
             sessionStorage.removeItem('orderQuantities');
             sessionStorage.removeItem('orderCart');
-            navigate('/order/pay', { state: { orderResponse: res.data, orderType } });
+            navigate(`/order/${boothId}/pay`, { state: { orderResponse: res.data, orderType } });
           } catch (error) {
             console.error('주문 생성 실패:', error);
             setIsSubmitting(false);

@@ -7,7 +7,7 @@ import CopyBlack from '@/assets/icons/copy_black.svg?react';
 function OrderInfo() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { onReset } = useOutletContext();
+  const { onReset, boothId } = useOutletContext();
 
   const { orderResponse, orderType } = state || {};
   const {
@@ -101,7 +101,7 @@ function OrderInfo() {
         <button
           onClick={() => {
             onReset();
-            navigate('/order');
+            navigate(`/order/${boothId}`);
           }}
           className="flex-1 h-12 bg-gray-200 rounded-lg text-base font-medium text-gray-500 active:opacity-80 transition-opacity duration-100"
         >

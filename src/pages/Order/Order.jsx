@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Outlet } from 'react-router';
+import { Outlet, useParams } from 'react-router';
 
 import Noodle from '@/assets/icons/noodle.svg';
 import BoothHero from '@/assets/images/booth_image.svg?react';
 import Info1 from '@/assets/images/booth_info_1.svg';
 
 const boothData = {
-  boothId: 6,
   boothName: '소프트웨어학과',
   location: '혜인관 앞',
   isOpen: true,
@@ -70,6 +69,7 @@ const foodData = [
 ];
 
 function Order() {
+  const { boothId } = useParams();
   const [quantities, setQuantities] = useState(() => {
     const saved = sessionStorage.getItem('orderQuantities');
     return saved ? JSON.parse(saved) : {};
@@ -135,7 +135,7 @@ function Order() {
         onRemove: handleRemove,
         onDecrease: handleDecrease,
         onReset: handleReset,
-        boothId: boothData.boothId,
+        boothId,
       }}
     />
   );

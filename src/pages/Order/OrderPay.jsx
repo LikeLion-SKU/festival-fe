@@ -10,7 +10,7 @@ import Toast from '@/components/common/Toast';
 
 function OrderPay() {
   const navigate = useNavigate();
-  const { HeroImage } = useOutletContext();
+  const { HeroImage, boothId } = useOutletContext();
   const { state } = useLocation();
 
   const { orderResponse, orderType } = state || {};
@@ -119,7 +119,9 @@ function OrderPay() {
         buttonName="직원 확인 완료"
         isActive={true}
         note="입금자명은 주문자명과 같아야 해요"
-        onClick={() => navigate('/order/complete', { state: { orderResponse, orderType } })}
+        onClick={() =>
+          navigate(`/order/${boothId}/complete`, { state: { orderResponse, orderType } })
+        }
       />
     </div>
   );

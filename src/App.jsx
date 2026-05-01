@@ -79,10 +79,10 @@ const router = createBrowserRouter([
       { path: '/menu', lazy: page(() => import('@/pages/Menu')) },
       { path: '/made-by', lazy: page(() => import('@/pages/MadeBy')) },
       {
-        path: '/order',
+        path: '/order/:boothId',
         Component: Order,
         children: [
-          { index: true, lazy: page(() => import('@/pages/Order/OrderEntry')) }, // order 접속 시 자동으로 OrderEntry부터 기본으로
+          { index: true, lazy: page(() => import('@/pages/Order/OrderEntry')) },
           { path: 'progress', lazy: page(() => import('@/pages/Order/OrderProgress')) },
           { path: 'confirm', lazy: page(() => import('@/pages/Order/OrderConfirm')) },
           { path: 'customer-info', lazy: page(() => import('@/pages/Order/CustomerInfo')) },
