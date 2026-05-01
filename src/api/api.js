@@ -4,25 +4,8 @@ import axios from 'axios';
 const PUBLIC_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const PRIVATE_API_BASE_URL = import.meta.env.VITE_APP_API_URL || PUBLIC_API_BASE_URL;
 const REQUEST_TIMEOUT = 10000; // 10초
-const REFRESH_ENDPOINT = '/auths/refresh';
+const REFRESH_ENDPOINT = '/auth/refresh';
 const LOGIN_PATH = '/admin/login';
-
-// ─── 토큰 관리 헬퍼 ─────────────────────────────────
-const TokenManager = {
-  getAccessToken: () => localStorage.getItem('accessToken'),
-  getRefreshToken: () => localStorage.getItem('refreshToken'),
-  setAccessToken: (token) => {
-    if (token) localStorage.setItem('accessToken', token);
-  },
-  setTokens: ({ accessToken, refreshToken }) => {
-    if (accessToken) localStorage.setItem('accessToken', accessToken);
-    if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
-  },
-  clear: () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-  },
-};
 
 // ─── Axios 인스턴스 생성 유틸 ────────────────────────
 const createApiInstance = (baseURL, options = {}) =>
@@ -37,37 +20,23 @@ const createApiInstance = (baseURL, options = {}) =>
   });
 
 /** 토큰이 필요 없는 기본 API 인스턴스 */
-const publicApi = createApiInstance(PUBLIC_API_BASE_URL);
+const publicApi = createApiInstance(PUBLIC_API_BASE_URL, { withCredentials: true });
 
-/** 토큰이 필요한 인증 API 인스턴스 */
-const privateApi = createApiInstance(PRIVATE_API_BASE_URL);
+/** 토큰이 필요한 인증 API 인스턴스 (쿠키로 토큰 자동 전송) */
+const privateApi = createApiInstance(PRIVATE_API_BASE_URL, { withCredentials: true });
 
 // ─── 강제 로그아웃 처리 ────────────────────────────
 const forceLogout = () => {
-  TokenManager.clear();
   window.location.href = LOGIN_PATH;
 };
 
-// ─── privateApi: 요청 인터셉터 (토큰 자동 첨부) ─────
-privateApi.interceptors.request.use(
-  (config) => {
-    const token = TokenManager.getAccessToken();
-    if (token) {
-      if (!config.headers) config.headers = {};
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// ─── privateApi: 응답 인터셉터 (토큰 갱신 + 재요청) ─
+// ─── privateApi: 응답 인터셉터 (401 시 쿠키 기반 리프레시 + 재요청) ─
 let isRefreshing = false;
 let pendingRequests = []; // 갱신 중 대기하는 요청 큐
 
-const processQueue = (error, token = null) => {
+const processQueue = (error) => {
   pendingRequests.forEach(({ resolve, reject }) => {
-    error ? reject(error) : resolve(token);
+    error ? reject(error) : resolve();
   });
   pendingRequests = [];
 };
@@ -85,21 +54,11 @@ privateApi.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    const refreshToken = TokenManager.getRefreshToken();
-    if (!refreshToken) {
-      forceLogout();
-      return Promise.reject(error);
-    }
-
     // 이미 리프레시 중이면 큐에 넣고 대기
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
         pendingRequests.push({ resolve, reject });
-      }).then((newToken) => {
-        if (!originalRequest.headers) originalRequest.headers = {};
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
-        return privateApi(originalRequest);
-      });
+      }).then(() => privateApi(originalRequest));
     }
 
     // 리프레시 최초 진입
@@ -107,46 +66,13 @@ privateApi.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      // publicApi로 리프레시 호출 (인터셉터 재귀 방지)
-      // Authorization 헤더에 refreshToken 전송
-      const res = await publicApi.post(
-        REFRESH_ENDPOINT,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${refreshToken}`,
-          },
-        }
-      );
+      // 쿠키에 담긴 refreshToken이 자동 전송됨 → 서버가 Set-Cookie로 새 accessToken 발급
+      await publicApi.post(REFRESH_ENDPOINT);
 
-      // 서버 응답 포맷에 맞게 수정하세요.
-      // 예) { success, code, message, data: "<newAccessToken>" }
-      // 또는 { accessToken, refreshToken }
-      const payload = res?.data;
-      const newAccessToken =
-        typeof payload?.data === 'string'
-          ? payload.data //서버에서 주는 토큰이 { success: true, data: "eyJhbG..." }이런 식일 떄
-          : payload?.data?.accessToken || payload?.accessToken;
-      //{ success: true, data: { accessToken: "...", refreshToken: "..." } }이거거나
-      //{ accessToken: "...", refreshToken: "..." } data자체가 없을 때
-      const newRefreshToken = payload?.data?.refreshToken || payload?.refreshToken;
-
-      if (!newAccessToken) {
-        throw new Error('리프레시 응답에 토큰이 없습니다.');
-      }
-
-      TokenManager.setTokens({
-        accessToken: newAccessToken,
-        refreshToken: newRefreshToken,
-      });
-
-      processQueue(null, newAccessToken);
-
-      if (!originalRequest.headers) originalRequest.headers = {};
-      originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+      processQueue(null);
       return privateApi(originalRequest);
     } catch (refreshError) {
-      processQueue(refreshError, null);
+      processQueue(refreshError);
       forceLogout();
       return Promise.reject(refreshError);
     } finally {
@@ -188,7 +114,7 @@ const withRetry = (fn, retries = 2, delay = 1000) => {
 
 // ─── 통합 서비스 객체 ───────────────────────────────
 export const APIService = {
-  // 공용 API (토큰 불필요)
+  // 공용 API (인증 불필요)
   public: {
     get: (url, config = {}) => unwrap(publicApi.get(url, config)),
     post: (url, data = {}, config = {}) => unwrap(publicApi.post(url, data, config)),
@@ -196,7 +122,7 @@ export const APIService = {
     patch: (url, data = {}, config = {}) => unwrap(publicApi.patch(url, data, config)),
     delete: (url, config = {}) => unwrap(publicApi.delete(url, config)),
   },
-  // 인증 API (토큰 자동 첨부 + 401 시 자동 갱신)
+  // 인증 API (쿠키 자동 전송 + 401 시 자동 갱신)
   private: {
     get: (url, config = {}) => unwrap(privateApi.get(url, config)),
     post: (url, data = {}, config = {}) => unwrap(privateApi.post(url, data, config)),
@@ -214,8 +140,8 @@ export const APIService = {
   },
 };
 
-// 토큰 관리자와 인스턴스를 직접 써야 할 경우 대비 export
-export { publicApi, privateApi, TokenManager };
+// 인스턴스를 직접 써야 할 경우 대비 export
+export { publicApi, privateApi };
 
 // 기본 export (인스턴스 직접 접근용)
 export default { public: publicApi, private: privateApi };
