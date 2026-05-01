@@ -8,11 +8,10 @@ import CookActiveIcon from '@/assets/icons/admin/cook_red_icon.svg';
 import DoneIcon from '@/assets/icons/admin/done_gray_icon.svg';
 import DoneActiveIcon from '@/assets/icons/admin/done_red_icon.svg';
 import ProductIcon from '@/assets/icons/admin/product_gray_icon.svg';
+import ProductActiveIcon from '@/assets/icons/admin/product_red_icon.svg';
 import WaitIcon from '@/assets/icons/admin/wait_gray_icon.svg';
 import WaitActiveIcon from '@/assets/icons/admin/wait_red_icon.svg';
 import NavButton from '@/components/Admin/NavButton';
-
-//import ProductActiveIcon from '@/assets/icons/admin/product_red_icon.svg';
 
 const NAV_ITEMS = [
   { key: 'wait', name: '대기', icon: WaitIcon, activeIcon: WaitActiveIcon, goto: '/admin/waiting' },
@@ -41,7 +40,7 @@ const NAV_ITEMS = [
     key: 'menu',
     name: '메뉴',
     icon: ProductIcon,
-    activeIcon: 'ProductActiveIcon',
+    activeIcon: ProductActiveIcon,
     goto: '/admin/menu',
   },
 ];

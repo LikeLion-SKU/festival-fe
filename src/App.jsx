@@ -63,6 +63,7 @@ const router = createBrowserRouter([
                   { path: 'cooking', lazy: page(() => import('@/pages/admin/CookingMenu')) },
                   { path: 'complete', lazy: page(() => import('@/pages/admin/CompleteMenu')) },
                   { path: 'cancel', lazy: page(() => import('@/pages/admin/CancelMenu')) },
+                  { path: 'menu', lazy: page(() => import('@/pages/admin/ManagementMenu')) },
                 ],
               },
             ],
