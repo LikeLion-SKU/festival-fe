@@ -1,6 +1,14 @@
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
 
-function Modal({ isOpen, cancelText, confirmText, onCancel, onConfirm, children }) {
+function Modal({
+  isOpen,
+  cancelText,
+  confirmText,
+  onCancel,
+  onConfirm,
+  isConfirmDisabled,
+  children,
+}) {
   if (!isOpen) return null;
 
   return (
@@ -17,7 +25,8 @@ function Modal({ isOpen, cancelText, confirmText, onCancel, onConfirm, children 
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 py-3 rounded-xl bg-order-button text-white font-medium text-sm"
+            disabled={isConfirmDisabled}
+            className="flex-1 py-3 rounded-xl bg-order-button text-white font-medium text-sm disabled:opacity-50"
           >
             {confirmText}
           </button>
