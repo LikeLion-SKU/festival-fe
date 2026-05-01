@@ -1,6 +1,6 @@
 import EmailIcon from '@/assets/icons/email.svg';
 import GithubIcon from '@/assets/icons/github.svg';
-import InstagramIcon from '@/assets/icons/instagram.svg';
+import InstagramIcon from '@/assets/icons/instagram.svg?react';
 import LiklionLogo from '@/assets/icons/liklion-logo.svg';
 
 export default function Footer() {
@@ -16,7 +16,7 @@ export default function Footer() {
       </p>
       <div className="flex items-center gap-[0.35rem] pt-[0.5rem]">
         <img src={EmailIcon} alt="email" className="h-[0.75rem] w-[0.75rem]" />
-        <img src={InstagramIcon} alt="instagram" className="h-[0.75rem] w-[0.75rem]" />
+        <InstagramIcon aria-hidden="true" className="h-[0.75rem] w-[0.75rem] text-white" />
         <img src={GithubIcon} alt="github" className="h-[0.75rem] w-[0.75rem]" />
       </div>
       <p className="text-[0.375rem] font-thin leading-none text-white/65 [font-family:Pretendard]">
