@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router';
+import { useLocation, useNavigate, useOutletContext } from 'react-router';
 
 import ATM from '@/assets/icons/atm.svg?react';
 import Copy from '@/assets/icons/copy.svg?react';
@@ -8,21 +8,20 @@ import OrderButtonBox from '@/components/Order/OrderEntry/OrderButtonBox';
 import OrderHeader from '@/components/common/OrderHeader';
 import Toast from '@/components/common/Toast';
 
-const BANK_INFO = {
-  bankName: '카카오뱅크',
-  accountHolder: '김멋사',
-  accountNumber: '111110000000',
-};
-
 function OrderPay() {
   const navigate = useNavigate();
-  const { HeroImage } = useOutletContext();
+  const { HeroImage, boothId } = useOutletContext();
+  const { state } = useLocation();
 
-  const customerInfo = JSON.parse(sessionStorage.getItem('orderCustomerInfo') || '{}');
-  const cart = JSON.parse(sessionStorage.getItem('orderCart') || '[]');
-  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
-  const { name, phone, orderType } = customerInfo;
+  const { orderResponse, orderType } = state || {};
+  const {
+    customerName,
+    customerPhoneNumber,
+    bankName,
+    accountName,
+    accountNumber,
+    totalOrderPrice,
+  } = orderResponse || {};
   const orderTypeLabel = orderType === 'dine-in' ? '매장' : '포장';
 
   const [showToast, setShowToast] = useState(true);
@@ -35,7 +34,7 @@ function OrderPay() {
   }, []);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(BANK_INFO.accountNumber);
+    navigator.clipboard.writeText(accountNumber);
     setShowCopyToast(true);
     clearTimeout(copyTimerRef.current);
     copyTimerRef.current = setTimeout(() => setShowCopyToast(false), 2000);
@@ -44,26 +43,21 @@ function OrderPay() {
   return (
     <div className="flex flex-col h-full bg-white">
       <div className="shrink-0">
-        <OrderHeader
-          title="결제하기"
-          showBackButton
-          onBack={() => {
-            sessionStorage.removeItem('orderCustomerInfo');
-            navigate(-1);
-          }}
-        />
+        <OrderHeader title="결제하기" showBackButton onBack={() => navigate(-1)} />
       </div>
 
       <div className="flex-1 overflow-y-auto min-h-0 px-5 flex flex-col items-center pt-12 gap-2.5">
         <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 shrink-0">
-          <HeroImage className="w-full h-full" /> {/* 추후 부스별 사진으로 채워야 함 */}
+          <HeroImage className="w-full h-full" />
         </div>
 
         <div className="text-center mt-8">
           <p className="text-xl font-medium">
             아래 계좌로{' '}
-            <span className="text-order-button font-bold">{totalPrice.toLocaleString()}원</span>을
-            입금 후
+            <span className="text-order-button font-bold">
+              {totalOrderPrice?.toLocaleString()}원
+            </span>
+            을 입금 후
           </p>
           <p className="text-xl font-bold text-order-button">직원에게 보여주세요!</p>
         </div>
@@ -73,8 +67,8 @@ function OrderPay() {
             <div className="flex items-center gap-3">
               <Shadow className="w-10 h-10" />
               <div className="flex flex-col">
-                <span className="text-base font-medium text-gray-500">{name}</span>
-                <span className="text-sm font-medium text-gray-900">{phone}</span>
+                <span className="text-base font-medium text-gray-500">{customerName}</span>
+                <span className="text-sm font-medium text-gray-900">{customerPhoneNumber}</span>
               </div>
             </div>
             <div className="px-5 py-1.5 bg-gray-100 rounded-md">
@@ -87,14 +81,14 @@ function OrderPay() {
           <div className="flex items-center gap-4">
             <ATM className="w-8 h-8 shrink-0" />
             <div className="flex-1 flex flex-col gap-1.5">
-              <span className="text-white text-base font-medium">{BANK_INFO.bankName}</span>
+              <span className="text-white text-base font-medium">{bankName}</span>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <span className="text-white/70 text-sm font-medium">예금주</span>
-                  <span className="text-white text-sm font-medium">{BANK_INFO.accountHolder}</span>
+                  <span className="text-white text-sm font-medium">{accountName}</span>
                 </div>
                 <div className="flex items-center gap-3.5">
-                  <span className="text-white text-sm font-medium">{BANK_INFO.accountNumber}</span>
+                  <span className="text-white text-sm font-medium">{accountNumber}</span>
                   <button
                     onClick={handleCopy}
                     className="shrink-0 active:opacity-50 transition-opacity duration-100"
@@ -125,7 +119,9 @@ function OrderPay() {
         buttonName="직원 확인 완료"
         isActive={true}
         note="입금자명은 주문자명과 같아야 해요"
-        onClick={() => navigate('/order/complete')}
+        onClick={() =>
+          navigate(`/order/${boothId}/complete`, { state: { orderResponse, orderType } })
+        }
       />
     </div>
   );
