@@ -3,27 +3,24 @@ import { useParams } from 'react-router';
 
 import { getLostItemDetail } from '@/api/lostItem';
 import backgroundImg from '@/assets/images/about-fire2.svg';
-import airpodImg from '@/assets/images/airpod.png';
 import PageHeader from '@/components/common/PageHeader';
 
-const KO_DAY_MAP = ['일', '월', '화', '수', '목', '금', '토'];
-
-function formatDate(dateTimeStr) {
-  const date = new Date(dateTimeStr);
-  if (isNaN(date)) return '-';
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const dayNum = String(date.getDate()).padStart(2, '0');
-  const day = KO_DAY_MAP[date.getDay()];
-  return `${month}.${dayNum} ${day}`;
-}
-
-const MOCK_DETAIL = {
-  id: 1,
-  name: '에어팟 Airpods',
-  foundAt: '2025-05-14T10:00:00',
-  foundLocation: '유담관 앞',
-  imageUrls: [airpodImg, airpodImg],
+const KO_DAY_MAP = {
+  MONDAY: '월',
+  TUESDAY: '화',
+  WEDNESDAY: '수',
+  THURSDAY: '목',
+  FRIDAY: '금',
+  SATURDAY: '토',
+  SUNDAY: '일',
 };
+
+function formatDate(foundDate, dayOfWeek) {
+  if (!foundDate) return '-';
+  const [, month, day] = foundDate.split('-');
+  const dow = KO_DAY_MAP[dayOfWeek] ?? '';
+  return `${month}.${day} ${dow}`;
+}
 
 function ArrowButton({ direction, onClick, disabled }) {
   const isLeft = direction === 'left';
@@ -55,13 +52,13 @@ function ArrowButton({ direction, onClick, disabled }) {
 
 export default function LostItemDetail() {
   const { id } = useParams();
-  const [item, setItem] = useState(MOCK_DETAIL);
+  const [item, setItem] = useState(null);
   const [imgIndex, setImgIndex] = useState(0);
 
   useEffect(() => {
     getLostItemDetail(id)
-      .then((res) => setItem(res.data ?? MOCK_DETAIL))
-      .catch(() => setItem(MOCK_DETAIL));
+      .then((res) => setItem(res.data))
+      .catch(() => setItem(null));
   }, [id]);
 
   const images = item?.imageUrls ?? [];
@@ -134,7 +131,7 @@ export default function LostItemDetail() {
             className="text-white text-[1.625rem] font-semibold"
             style={{ letterSpacing: '-0.01em' }}
           >
-            {item.name}
+            {item?.name}
           </h2>
 
           <div className="flex flex-col gap-[0.75rem]">
@@ -149,7 +146,7 @@ export default function LostItemDetail() {
                 className="text-white text-[0.9375rem] font-semibold"
                 style={{ letterSpacing: '-0.025em', lineHeight: '160%' }}
               >
-                {formatDate(item.foundAt)}
+                {formatDate(item?.foundDate, item?.dayOfWeek)}
               </span>
             </div>
             <div className="flex items-center gap-[1rem]">
@@ -163,9 +160,25 @@ export default function LostItemDetail() {
                 className="text-white text-[0.9375rem] font-semibold"
                 style={{ letterSpacing: '-0.025em', lineHeight: '160%' }}
               >
-                {item.foundLocation}
+                {item?.foundPlace}
               </span>
             </div>
+            {item?.returned && (
+              <div className="flex items-center gap-[1rem]">
+                <span
+                  className="text-[#A0A0A0] text-[0.9375rem] font-semibold w-[1.75rem] shrink-0"
+                  style={{ letterSpacing: '-0.025em', lineHeight: '160%' }}
+                >
+                  상태
+                </span>
+                <span
+                  className="text-[#C43A31] text-[0.9375rem] font-semibold"
+                  style={{ letterSpacing: '-0.025em', lineHeight: '160%' }}
+                >
+                  수령완료
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>

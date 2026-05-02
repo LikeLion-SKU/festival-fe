@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
 
 import HatIcon from '@/assets/icons/hat.svg';
 import ZeroIcon from '@/assets/icons/main/0.svg';
@@ -8,7 +7,6 @@ import ThreeIcon from '@/assets/icons/main/3.svg';
 import FiveIcon from '@/assets/icons/main/5.svg';
 import HyphenIcon from '@/assets/icons/main/hypen.svg';
 import SpotIcon from '@/assets/icons/main/spot.svg';
-import MenuButton from '@/components/common/Button/MenuButton';
 
 function DateDot() {
   return (
@@ -27,7 +25,6 @@ function DateDot() {
 }
 
 export default function Intro() {
-  const navigate = useNavigate();
   const videoRef = useRef(null);
   const hasStoppedRef = useRef(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
@@ -95,7 +92,7 @@ export default function Intro() {
         className="pointer-events-none absolute inset-x-0 bottom-[0rem] z-[1] h-[58rem]"
         style={{
           background:
-            'linear-gradient(180deg, rgba(0,0,0,0.05) 0%,rgba(0,0,0,0.05) 85%, rgba(18,18,18,0.5) 90%, rgba(18,18,18,0.5) 95%, rgba(18,18,18,0.7) 97%, rgba(0,0,0,1) 100%)',
+            'linear-gradient(180deg, rgba(0,0,0,0.05) 0%,rgba(0,0,0,0.05) 85%, rgba(18,18,18,0.5) 90%, rgba(18,18,18,0.5) 95%, rgba(18,18,18,0.7) 97%, rgba(18,18,18,1) 100%)',
         }}
       />
       <div className="relative z-[10] flex flex-1 flex-col items-center justify-between">
@@ -123,7 +120,6 @@ export default function Intro() {
             </div>
           </div>
         </div>
-        <MenuButton className="shrink-0" onClick={() => navigate('/menu')} />
       </div>
     </section>
   );
