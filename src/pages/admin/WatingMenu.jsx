@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+
+import { getWaitingMenu, subscribeOrder } from '@/api/order';
 import CheckIcon from '@/assets/icons/admin/check_red_big_icon.svg?react';
 import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
@@ -8,11 +11,37 @@ import CancelGuideModal from '@/components/Admin/CancelGuideModal';
 import CancelReasonModal from '@/components/Admin/CancelReasonModal';
 import OrderCancelModal from '@/components/Admin/OrderCancelModal';
 import OrderCard from '@/components/Admin/OrderCard';
-import { orderData } from '@/constants/orderDummyData';
 
 export default function WaitingMenu() {
   const [modal, setModal] = useState(null);
   const [reason, setReason] = useState(null);
+  const queryClient = useQueryClient();
+
+  const queryKey = ['admin', 'orders', 'waiting'];
+
+  const { data: orderData = [] } = useQuery({
+    queryKey,
+    queryFn: getWaitingMenu,
+    select: (res) => res?.data ?? [],
+  });
+
+  useEffect(() => {
+    const eventSource = subscribeOrder('WAITING');
+
+    eventSource.onmessage = (event) => {
+      const newOrder = JSON.parse(event.data);
+      queryClient.setQueryData(queryKey, (prev) => ({
+        ...(prev ?? {}),
+        data: [...(prev?.data ?? []), newOrder],
+      }));
+    };
+
+    eventSource.onerror = () => {
+      eventSource.close();
+    };
+
+    return () => eventSource.close();
+  }, [queryClient]);
 
   useEffect(() => {
     if (modal !== 'confirmDone') return;
@@ -38,14 +67,14 @@ export default function WaitingMenu() {
         <div className="flex flex-col w-full gap-2 overflow-auto no-scrollbar py-7 px-5">
           {orderData.map((data) => (
             <OrderCard
-              key={data.id}
+              key={data.orderId}
               tableNumber={data.tableNumber}
-              peopleCount={data.peopleCount}
+              numOfPeople={data.numOfPeople}
               orderTime={data.orderTime}
               customerName={data.customerName}
-              phone={data.phone}
-              items={data.items}
-              totalAmount={data.totalAmount}
+              customerPhoneNumber={data.customerPhoneNumber}
+              orderItems={data.orderItems}
+              totalOrderPrice={data.totalOrderPrice}
               onConfirm={() => setModal('confirm')}
               onCancel={() => setModal('cancelReason')}
             />

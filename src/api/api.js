@@ -1,8 +1,10 @@
 import axios from 'axios';
 
 // ─── 환경 변수 및 상수 ──────────────────────────────
-const PUBLIC_API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const PRIVATE_API_BASE_URL = import.meta.env.VITE_APP_API_URL || PUBLIC_API_BASE_URL;
+// 모든 요청을 vite 프록시('/api')로 보내 same-origin으로 만들어 쿠키가 자동 전송되도록 함.
+// 프록시 타겟은 vite.config.js에서 VITE_APP_API_URL로 설정.
+const PUBLIC_API_BASE_URL = '/api';
+const PRIVATE_API_BASE_URL = '/api';
 const REQUEST_TIMEOUT = 10000; // 10초
 const REFRESH_ENDPOINT = '/auth/refresh';
 const LOGIN_PATH = '/admin/login';
