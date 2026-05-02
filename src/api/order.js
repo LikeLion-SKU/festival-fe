@@ -51,3 +51,15 @@ export const patchServedMenu = async (orderItemUnitId, isServed) => {
 
   return res;
 };
+
+export const getCompleteMenu = async () => {
+  const res = await APIService.private.get('/orders/completed');
+
+  return res;
+};
+
+export const getSales = async (date) => {
+  const res = await APIService.private.get('/orders/sales', { params: { date: date } });
+
+  return res;
+};

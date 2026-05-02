@@ -1,6 +1,9 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+
+import { getCompleteMenu, getSales, patchChangeOrderStatus, subscribeOrder } from '@/api/order';
 import ClapIcon from '@/assets/icons/admin/clap_icon.svg?react';
 import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
@@ -8,10 +11,12 @@ import CompletedOrderCard from '@/components/Admin/AdminComplete/CompletedOrderC
 import BottomSheet from '@/components/Admin/BottomSheet';
 import MenuFilterBox from '@/components/Admin/MenuFilterBox';
 import OrderReturnModal from '@/components/Admin/OrderReturnModal';
-import { completedOrderData } from '@/constants/completedOrderDummyData';
 
 const ORDERED_DATES = ['5/13', '5/14', '5/15'];
-const TODAY = '5/15';
+const TODAY = (() => {
+  const now = new Date();
+  return `${now.getMonth() + 1}/${now.getDate()}`;
+})();
 const FILTERS = [
   { key: 'all', label: '전체' },
   { key: '5/13', label: '5/13' },
@@ -21,22 +26,96 @@ const FILTERS = [
 
 const isPastDate = (date) => ORDERED_DATES.indexOf(date) < ORDERED_DATES.indexOf(TODAY);
 
+const orderItemsToItems = (orderItems = []) =>
+  orderItems.map((i) => ({
+    name: i.menuName,
+    quantity: i.quantity,
+    price: i.totalOrderItemPrice,
+  }));
+
+const toApiDate = (md) => {
+  if (!md || md === 'all') return undefined;
+  const [m, d] = md.split('/');
+  return `${new Date().getFullYear()}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+};
+
+const formatSales = (n) => {
+  if (!n || n <= 0) return '0원';
+  const man = Math.floor(n / 10000);
+  const cheon = Math.floor((n % 10000) / 1000);
+  const baek = Math.floor((n % 1000) / 100);
+  const rest = n % 100;
+  const parts = [];
+  if (man) parts.push(`${man}만`);
+  if (cheon) parts.push(`${cheon}천`);
+  if (baek) parts.push(`${baek}백`);
+  if (rest) parts.push(`${rest}`);
+  return `${parts.join(' ')} 원`;
+};
+
 export default function CompleteMenu() {
   const [modal, setModal] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [dateFilter, setDateFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [sales, setSales] = useState(null);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { notifyOrderStatus, clearCount } = useOutletContext() ?? {};
 
-  const filtered = completedOrderData
-    .filter((d) => dateFilter === 'all' || d.completedDate === dateFilter)
+  useEffect(() => {
+    clearCount?.('complete');
+  }, [clearCount]);
+
+  const queryKey = ['admin', 'orders', 'completed'];
+
+  const { data: orderData = [] } = useQuery({
+    queryKey,
+    queryFn: getCompleteMenu,
+    select: (res) => res?.data ?? [],
+  });
+
+  useEffect(() => {
+    const eventSource = subscribeOrder('COMPLETED');
+
+    const handleCompletedOrder = (event) => {
+      const newOrder = JSON.parse(event.data);
+      queryClient.setQueryData(queryKey, (prev) => ({
+        ...(prev ?? {}),
+        data: [...(prev?.data ?? []), newOrder],
+      }));
+    };
+
+    const handleNotification = (event) => {
+      const { orderStatus } = JSON.parse(event.data);
+      notifyOrderStatus?.(orderStatus);
+    };
+
+    eventSource.addEventListener('completedOrderEvent', handleCompletedOrder);
+    eventSource.addEventListener('orderNotification', handleNotification);
+
+    eventSource.onerror = () => {
+      if (eventSource.readyState === EventSource.CLOSED) {
+        eventSource.close();
+      }
+    };
+
+    return () => {
+      eventSource.removeEventListener('completedOrderEvent', handleCompletedOrder);
+      eventSource.removeEventListener('orderNotification', handleNotification);
+      eventSource.close();
+    };
+  }, [queryClient, notifyOrderStatus]);
+
+  const filtered = orderData
+    .filter((d) => dateFilter === 'all' || d.orderDate === dateFilter)
     .filter((d) => {
       if (!searchQuery.trim()) return true;
       const q = searchQuery.trim().toLowerCase();
       return (
         d.customerName.toLowerCase().includes(q) ||
         String(d.tableNumber).includes(q) ||
-        d.phone.includes(q)
+        d.customerPhoneNumber.includes(q)
       );
     });
 
@@ -46,17 +125,36 @@ export default function CompleteMenu() {
   };
 
   const handleUndoClick = (order) => {
-    setSelectedOrderId(order.id);
-    if (isPastDate(order.completedDate)) {
+    setSelectedOrderId(order.orderId);
+    if (isPastDate(order.orderDate)) {
       setModal('pastDate');
     } else {
       setModal('undoConfirm');
     }
   };
 
-  const handleUndoConfirm = (selectedOrderId) => {
-    setModal('undoDone');
-    console.log(selectedOrderId + '삭제');
+  const handleRevenueClick = async () => {
+    try {
+      const res = await getSales(toApiDate(dateFilter));
+      setSales(res?.data?.sales ?? 0);
+      setModal('total');
+    } catch (error) {
+      console.log('매출 조회 실패: ' + error);
+    }
+  };
+
+  const handleUndoConfirm = async (orderId) => {
+    if (!orderId) return;
+    try {
+      await patchChangeOrderStatus(orderId, 'COOKING');
+      queryClient.setQueryData(queryKey, (prev) => ({
+        ...(prev ?? {}),
+        data: (prev?.data ?? []).filter((o) => o.orderId !== orderId),
+      }));
+      setModal('undoDone');
+    } catch (error) {
+      console.log('조리중으로 되돌리기 실패: ' + error);
+    }
   };
 
   return (
@@ -70,23 +168,23 @@ export default function CompleteMenu() {
         searchQuery={searchQuery}
         onSearchQueryChange={setSearchQuery}
         showRevenueButton
-        onRevenueClick={() => setModal('total')}
+        onRevenueClick={handleRevenueClick}
       />
 
       {filtered.length > 0 ? (
         <div className="flex flex-col w-full gap-2 overflow-auto no-scrollbar px-5 py-5">
           {filtered.map((data) => (
             <CompletedOrderCard
-              key={data.id}
+              key={data.orderId}
               tableNumber={data.tableNumber}
-              peopleCount={data.peopleCount}
+              peopleCount={data.numOfPeople}
               orderTime={data.orderTime}
               completeTime={data.completeTime}
               customerName={data.customerName}
-              phone={data.phone}
-              items={data.items}
-              totalAmount={data.totalAmount}
-              completedDate={data.completedDate}
+              phone={data.customerPhoneNumber}
+              items={orderItemsToItems(data.orderItems)}
+              totalAmount={data.totalOrderPrice}
+              completedDate={data.orderDate}
               onUndo={() => handleUndoClick(data)}
             />
           ))}
@@ -152,9 +250,11 @@ export default function CompleteMenu() {
       >
         <div className="flex flex-col items-center pt-7.75">
           <ClapIcon />
-          <p className="font-semibold text-[1.25rem] mt-7">오늘은</p>
+          <p className="font-semibold text-[1.25rem] mt-7">
+            {dateFilter === 'all' ? '축제기간 동안' : `${dateFilter}에는`}
+          </p>
           <p className="font-semibold text-[1.25rem]">
-            <span className="text-[#FE5F54] font-bold">100만 원</span> 벌었어요!
+            <span className="text-[#FE5F54] font-bold">총 {formatSales(sales ?? 0)}</span> 벌었어요!
           </p>
           <p className="font-semibold text-[14px] text-[#FFBBB8] mt-2">
             수고한 내자신..기특하ㄷr...
