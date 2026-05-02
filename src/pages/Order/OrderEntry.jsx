@@ -26,11 +26,23 @@ function OrderEntry() {
     onLangChange,
   } = useOutletContext();
 
-  const [isNight, setIsNight] = useState(true);
+  const hasDay = dayMenus?.length > 0;
+  const hasNight = nightMenus?.length > 0;
+  const canToggle = hasDay && hasNight;
+
+  const [isNight, setIsNight] = useState(() => hasNight);
   const TimeImage = isNight ? MoonIcon : SunIcon;
   const ToggleIcon = isNight ? NightToggle : MorningToggle;
   const word = isNight ? '밤' : '낮';
   const navigate = useNavigate();
+
+  const activeMenus = canToggle
+    ? isNight
+      ? nightMenus
+      : dayMenus
+    : hasNight
+      ? nightMenus
+      : dayMenus;
 
   return (
     <>
@@ -45,10 +57,11 @@ function OrderEntry() {
       <MenuSection
         word={word}
         isNight={isNight}
+        canToggle={canToggle}
         onToggle={() => setIsNight((prev) => !prev)}
         Image={TimeImage}
         Icon={ToggleIcon}
-        menus={isNight ? nightMenus : dayMenus}
+        menus={activeMenus}
       />
       <div className="h-28" />
       <OrderButtonBox
