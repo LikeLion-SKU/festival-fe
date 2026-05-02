@@ -19,10 +19,20 @@ export const subscribeOrder = (sseSubscribeType) => {
 };
 
 export const patchChangeOrderStatus = async (orderId, orderStatus) => {
-  const res = APIService.public.patch(
+  const res = APIService.private.patch(
     `/orders/${orderId}/status`,
     {},
     { params: { orderStatus: orderStatus } }
+  );
+
+  return res;
+};
+
+export const patchCanCelOrder = async (orderId, orderCancelReason) => {
+  const res = APIService.private.patch(
+    `/orders/${orderId}/cancel`,
+    {},
+    { params: { orderCancelReason: orderCancelReason } }
   );
 
   return res;

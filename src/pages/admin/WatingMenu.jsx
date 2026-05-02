@@ -3,7 +3,12 @@ import { useOutletContext } from 'react-router-dom';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { getWaitingMenu, patchChangeOrderStatus, subscribeOrder } from '@/api/order';
+import {
+  getWaitingMenu,
+  patchCanCelOrder,
+  patchChangeOrderStatus,
+  subscribeOrder,
+} from '@/api/order';
 import CheckIcon from '@/assets/icons/admin/check_red_big_icon.svg?react';
 import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
@@ -90,9 +95,18 @@ export default function WaitingMenu() {
     }
   };
 
-  const handleCancelSubmit = () => {
+  const handleCancelSubmit = async () => {
     if (!reason) return;
-    setModal('cancelGuide');
+    try {
+      await patchCanCelOrder(selectedOrderId, reason);
+      queryClient.setQueryData(queryKey, (prev) => ({
+        ...(prev ?? {}),
+        data: (prev?.data ?? []).filter((order) => order.orderId !== selectedOrderId),
+      }));
+      setModal('cancelGuide');
+    } catch (error) {
+      console.log('주문 취소 실패:' + error);
+    }
   };
 
   return (
