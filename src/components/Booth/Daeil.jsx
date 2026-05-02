@@ -10,17 +10,17 @@ const SIDE_RECT_CLASS =
 
 function SideRectWithTicks() {
   const tick = '#C43A31';
-  const TICK_COUNT = 8;
+  const TICK_COUNT = 5;
 
   return (
     <div className={SIDE_RECT_CLASS} style={{ borderColor: STROKE }} aria-hidden>
-      <div className="pointer-events-none absolute inset-x-[2px] inset-y-[0px]">
+      <div className="pointer-events-none absolute inset-x-[7px] inset-y-[0px]">
         {Array.from({ length: TICK_COUNT }).map((_, i) => (
           <span
             key={i}
             className="absolute bottom-0 block w-px rounded-[1px]"
             style={{
-              left: `${((i + 0.5) / TICK_COUNT) * 100}%`,
+              left: `${((i + 0.1) / TICK_COUNT) * 100}%`,
               transform: 'translateX(-50%)',
               height: '0.3125rem',
               backgroundColor: tick,
@@ -34,7 +34,6 @@ function SideRectWithTicks() {
 
 /**
  * 대일관 (부스 지도용)
- * 은주1관과 동일 구조/스타일
  * @param {{ active?: boolean; onClick?: () => void; className?: string }} props
  */
 export default function Daeil({ active = false, onClick, className }) {
@@ -56,16 +55,22 @@ export default function Daeil({ active = false, onClick, className }) {
     <div className="flex h-full w-full flex-col px-[0px] pb-[1px] pt-[5px]">
       <div className="flex shrink-0 justify-center">
         <span
-          className={clsx(
-            labelClass,
-            '-translate-x-[-3.1rem] -translate-y-[-0.12rem] rotate-[180deg]'
-          )}
+          className={clsx(labelClass, '-translate-x-[4.2rem] translate-y-[6px] rotate-[88deg]')}
         >
           대일관
         </span>
       </div>
       <div className="mt-auto flex w-full translate-y-[3px] items-end justify-center">
-        <SideRectWithTicks />
+        <div className="flex shrink-0 items-start gap-[3px]" aria-hidden>
+          <div
+            className="box-border -mt-[16px] h-[0.25rem] w-[0.95rem] shrink-0 -translate-x-[-29px] border-1 border-solid rotate-[0deg] bg-[#121212]"
+            style={{ borderColor: STROKE }}
+          />
+          <div
+            className="box-border -mt-[10px] ml-[5px] h-[0.25rem] w-[1.5rem] shrink-0 translate-x-[-3px] border-1 border-solid rotate-[180deg] bg-[#121212]"
+            style={{ borderColor: STROKE }}
+          />
+        </div>
         <div
           className="z-10 -mx-[2px] box-border flex h-[1.25rem] w-[3rem] shrink-0 items-end justify-center border-2 border-solid bg-[#121212] pb-[1px]"
           style={{ borderColor: STROKE }}

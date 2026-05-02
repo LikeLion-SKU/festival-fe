@@ -20,7 +20,7 @@ export default function BoothMapPage() {
 
   return (
     <section className="relative min-h-dvh overflow-hidden bg-[#121212] text-white">
-      <div className="mx-auto flex w-full max-w-[450px] flex-col px-4 pb-[8.5rem] pt-[max(3.25rem,calc(env(safe-area-inset-top)+0.5rem))]">
+      <div className="mx-auto flex w-full max-w-[450px] flex-col px-4 pb-[11.5rem] pt-[max(3.25rem,calc(env(safe-area-inset-top)+0.5rem))]">
         <div className="relative min-h-[2.75rem]">
           <PageHeader title="부스 안내" to="/" fixed={false} top="0rem" />
         </div>
@@ -40,8 +40,8 @@ export default function BoothMapPage() {
 
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center">
         <div
-          className={`pointer-events-auto h-[24rem] w-full max-w-[450px] rounded-t-[1.25rem] border border-white/15 bg-[#161616] px-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] pt-2 transition-transform duration-300 ${
-            sheetExpanded ? 'translate-y-[0%]' : 'translate-y-[40%]'
+          className={`pointer-events-auto h-[28rem] w-full max-w-[450px] rounded-t-[1.25rem] border border-white/15 bg-[#161616] px-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] pt-2 transition-transform duration-300 ${
+            sheetExpanded ? 'translate-y-[0%]' : 'translate-y-[70%]'
           }`}
           onTouchStart={(e) => {
             touchStartY.current = e.touches[0].clientY;
