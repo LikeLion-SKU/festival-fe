@@ -1,8 +1,13 @@
+import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import SkuLogo from '@/assets/icons/sku-logo.svg';
 import AboutFire2 from '@/assets/images/about-fire2.svg';
 import AboutFire from '@/assets/images/about-fire.svg';
+import {
+  MAIN_SECTION_ICON_SCROLL_FADE,
+  useScrollDrivenOpacity,
+} from '@/hooks/useScrollDrivenOpacity';
 
 const CAST_ROWS = [
   { role: 'PROJECT LEADER', names: 'Yoon Heejun, Lim Dahyun' },
@@ -13,6 +18,9 @@ const CAST_ROWS = [
 
 export default function About() {
   const navigate = useNavigate();
+  const heroBlockRef = useRef(null);
+  const heroOpacity = useScrollDrivenOpacity(heroBlockRef, MAIN_SECTION_ICON_SCROLL_FADE);
+
   return (
     <section
       id="about"
@@ -38,7 +46,11 @@ export default function About() {
             'linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0.35) 70%, rgba(0,0,0,0.15) 90%,rgba(0,0,0,0) 100%)',
         }}
       />
-      <div className="relative z-10 flex flex-col items-center pt-[0.5rem] text-center text-white">
+      <div
+        ref={heroBlockRef}
+        style={{ opacity: heroOpacity, willChange: 'opacity' }}
+        className="relative z-10 flex flex-col items-center pt-[0.5rem] text-center text-white"
+      >
         <p className="text-[1.25rem] leading-[1.2] text-[#fefefe] [font-family:Sekuya] [text-shadow:1px_1px_0px_rgba(0,0,0,0.11)]">
           ABOUT
         </p>
@@ -61,7 +73,9 @@ export default function About() {
             여러분들께 도움이 되는 페이지가 되길 바라며, 즐거운 축제 즐기시길 바랍니다 !
           </p>
         </div>
-        <div className="mt-[6rem] -mx-[1rem] w-[calc(100%+2rem)] text-[#C43A31]">
+      </div>
+      <div className="relative z-10 mt-[6rem] flex w-full flex-col items-center text-center text-white">
+        <div className="-mx-[1rem] w-[calc(100%+2rem)] text-[#C43A31]">
           <p className="text-center text-[1.125rem] leading-[1.2] [font-family:Sekuya]">CAST</p>
           <div className="mt-[3rem] space-y-[2rem]">
             {CAST_ROWS.map((row) => (

@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import HorseIcon from '@/assets/icons/horse.svg';
 import FireBg from '@/assets/images/fire1.svg';
 import FireBg2 from '@/assets/images/fire2.svg';
 import Singer1 from '@/assets/images/singer1.png';
 import Banner from '@/components/main/Banner';
+import {
+  MAIN_SECTION_ICON_SCROLL_FADE,
+  useScrollDrivenOpacity,
+} from '@/hooks/useScrollDrivenOpacity';
 
 const DAY_BANNERS = {
   day2: [
@@ -31,6 +35,8 @@ const DAY_BANNERS = {
 
 export default function Timetable() {
   const [selectedDay, setSelectedDay] = useState('day2');
+  const iconBlockRef = useRef(null);
+  const iconOpacity = useScrollDrivenOpacity(iconBlockRef, MAIN_SECTION_ICON_SCROLL_FADE);
 
   const dayButtons = [
     { id: 'day2', label: 'DAY 2', date: '5월 14일 (목)' },
@@ -49,7 +55,11 @@ export default function Timetable() {
         backgroundBlendMode: 'normal, normal, hard-light, normal, normal',
       }}
     >
-      <div className="flex flex-col items-center gap-[0.25rem]">
+      <div
+        ref={iconBlockRef}
+        style={{ opacity: iconOpacity, willChange: 'opacity' }}
+        className="flex flex-col items-center gap-[0.25rem]"
+      >
         <img src={HorseIcon} alt="" aria-hidden="true" className="h-[2.5rem] w-[2.4375rem]" />
         <p className="text-center text-[1rem] leading-[3.2] text-[#fefefe] [font-family:Sekuya] [text-shadow:1px_1px_0px_rgba(0,0,0,0.11)]">
           TIMETABLE
