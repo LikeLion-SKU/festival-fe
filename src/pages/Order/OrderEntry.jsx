@@ -35,7 +35,8 @@ function OrderEntry() {
   const hasNight = nightMenus?.length > 0;
   const canToggle = hasDay && hasNight;
 
-  const [isNight, setIsNight] = useState(() => hasNight);
+  const [userToggle, setUserToggle] = useState(null);
+  const isNight = userToggle !== null ? userToggle : hasNight;
   const TimeImage = isNight ? MoonIcon : SunIcon;
   const ToggleIcon = isNight ? NightToggle : MorningToggle;
   const word = isNight ? '밤' : '낮';
@@ -71,7 +72,7 @@ function OrderEntry() {
         word={word}
         isNight={isNight}
         canToggle={canToggle}
-        onToggle={() => setIsNight((prev) => !prev)}
+        onToggle={() => setUserToggle((prev) => !(prev !== null ? prev : hasNight))}
         Image={TimeImage}
         Icon={ToggleIcon}
         menus={activeMenus}
