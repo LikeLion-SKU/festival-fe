@@ -37,3 +37,17 @@ export const patchCanCelOrder = async (orderId, orderCancelReason) => {
 
   return res;
 };
+
+export const getCookingMenu = async () => {
+  const res = await APIService.private.get('/orders/cooking');
+
+  return res;
+};
+
+export const patchServedMenu = async (orderItemUnitId, isServed) => {
+  const res = await APIService.private.patch(`/order-item-units/${orderItemUnitId}`, {
+    isServed,
+  });
+
+  return res;
+};
