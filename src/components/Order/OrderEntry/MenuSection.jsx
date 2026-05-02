@@ -19,7 +19,9 @@ function MenuSection({ word, isNight, onToggle, Image, Icon, menus }) {
             className="w-1/2 h-10 px-4 py-1 flex justify-between items-center overflow-hidden"
           >
             <div className="text-Main-Grayscale-700 text-xs font-medium">{menu.name}</div>
-            <div className="text-Main-Grayscale-700 text-xs font-medium">{menu.price}</div>
+            <div className="text-Main-Grayscale-700 text-xs font-medium">
+              {typeof menu.price === 'number' ? `${menu.price.toLocaleString()}원` : menu.price}
+            </div>
           </div>
         ))}
       </div>

@@ -12,7 +12,7 @@ const LANGUAGES = [
   { code: 'KO', flag: KoFlag },
 ];
 
-function BoothImageSection({ Image }) {
+function BoothImageSection({ thumbnailUrl }) {
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedLang, setSelectedLang] = useState(sessionStorage.getItem('language') || 'KO');
@@ -40,9 +40,12 @@ function BoothImageSection({ Image }) {
   return (
     <div className="relative h-75 w-full">
       <div className="absolute bottom-0 w-full overflow-hidden">
-        <Image className="w-full blur translate-y-4 -translate-x-0.7" />
+        <img src={thumbnailUrl} className="w-full object-cover blur translate-y-4" />
       </div>
-      <Image className="w-49 h-49 absolute top-37 left-7 z-10 rounded-lg" />
+      <img
+        src={thumbnailUrl}
+        className="w-49 h-49 absolute top-37 left-7 z-10 rounded-lg object-cover"
+      />
 
       <div className="absolute top-12 right-5 z-20 flex items-center gap-2.5">
         {/* 언어 선택 pill */}

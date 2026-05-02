@@ -17,11 +17,12 @@ function OrderEntry() {
     location,
     isOpen,
     content,
-    HeroImage,
+    thumbnailUrl,
     images,
     buttonName,
     nightMenus,
     dayMenus,
+    orderAvailable,
   } = useOutletContext();
 
   const [isNight, setIsNight] = useState(true);
@@ -32,7 +33,7 @@ function OrderEntry() {
 
   return (
     <>
-      <BoothImageSection Image={HeroImage} />
+      <BoothImageSection thumbnailUrl={thumbnailUrl} />
       <BoothInfoSection
         boothName={boothName}
         location={location}
@@ -52,7 +53,7 @@ function OrderEntry() {
       <OrderButtonBox
         className="relative z-1 "
         buttonName={buttonName}
-        isActive={isOpen}
+        isActive={orderAvailable}
         onClick={() => navigate(`/order/${boothId}/progress`)}
       />
     </>
