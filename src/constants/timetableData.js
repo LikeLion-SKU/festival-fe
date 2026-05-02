@@ -1,21 +1,3 @@
-/**
- * 타임테이블 배너 — DAY·id별로 수정
- *
- * - artist
- * - team
- * - time
- * - variant
- *
- * @typedef {{
- *   id: number;
- *   artist: string;
- *   team?: string;
- *   time: string;
- *   variant: 1 | 2;
- * }} TimetableBannerRow
- */
-
-/** @type {Record<'day2' | 'day3', TimetableBannerRow[]>} */
 export const TIMETABLE_DAY_BANNERS = {
   day2: [
     { id: 1, artist: 'House of SKU', team: '실용무용전공', time: '17:00 ★ ~ 17:05', variant: 1 },

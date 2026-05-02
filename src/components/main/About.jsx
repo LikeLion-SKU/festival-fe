@@ -4,11 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import SkuLogo from '@/assets/icons/sku-logo.svg';
 import AboutFire2 from '@/assets/images/about-fire2.svg';
 import AboutFire from '@/assets/images/about-fire.svg';
-import CastCreditsAnimation from '@/components/main/CastCreditsAnimation';
+import CastCreditsAnimation from '@/components/animation/CastCreditsAnimation';
 import {
   MAIN_SECTION_ICON_SCROLL_FADE,
   useScrollDrivenOpacity,
-} from '@/hooks/useScrollDrivenOpacity';
+} from '@/components/animation/useScrollDrivenOpacity';
 
 const CAST_ROWS = [
   { role: 'PROJECT LEADER', names: 'Yoon Heejun, Lim Dahyun' },

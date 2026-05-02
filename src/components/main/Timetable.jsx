@@ -4,12 +4,12 @@ import HorseIcon from '@/assets/icons/horse.svg';
 import FireBg from '@/assets/images/fire1.svg';
 import FireBg2 from '@/assets/images/fire2.svg';
 import Singer1 from '@/assets/images/singer1.png';
-import Banner from '@/components/main/Banner';
-import { TIMETABLE_DAY_BANNERS } from '@/constants/timetableData';
 import {
   MAIN_SECTION_ICON_SCROLL_FADE,
   useScrollDrivenOpacity,
-} from '@/hooks/useScrollDrivenOpacity';
+} from '@/components/animation/useScrollDrivenOpacity';
+import Banner from '@/components/main/Banner';
+import { TIMETABLE_DAY_BANNERS } from '@/constants/timetableData';
 
 export default function Timetable() {
   const [selectedDay, setSelectedDay] = useState('day2');

@@ -7,11 +7,11 @@ import HorseIcon from '@/assets/icons/horse.svg';
 import BoothPaper from '@/assets/images/booth-paper.svg';
 import DesertBg from '@/assets/images/desert.svg';
 import FenceBg from '@/assets/images/fence.svg';
-import { BOOTH_CARDS, BUILDINGS } from '@/constants/mainDummyData';
 import {
   MAIN_SECTION_ICON_SCROLL_FADE,
   useScrollDrivenOpacity,
-} from '@/hooks/useScrollDrivenOpacity';
+} from '@/components/animation/useScrollDrivenOpacity';
+import { BOOTH_CARDS, BUILDINGS } from '@/constants/mainDummyData';
 
 const MAIN_BOOTH_CARDS_PER_BUILDING = 4;
 

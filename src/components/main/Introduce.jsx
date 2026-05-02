@@ -5,7 +5,7 @@ import {
   MAIN_SECTION_BODY_SCROLL_FADE,
   MAIN_SECTION_ICON_SCROLL_FADE,
   useScrollDrivenOpacity,
-} from '@/hooks/useScrollDrivenOpacity';
+} from '@/components/animation/useScrollDrivenOpacity';
 
 const INTRODUCE_LINES = [
   '‘Blooming’이라는 단어는',

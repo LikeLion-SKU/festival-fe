@@ -6,7 +6,7 @@ import {
   MAIN_SECTION_BODY_SCROLL_FADE,
   MAIN_SECTION_ICON_SCROLL_FADE,
   useScrollDrivenOpacity,
-} from '@/hooks/useScrollDrivenOpacity';
+} from '@/components/animation/useScrollDrivenOpacity';
 
 const AED_ROWS = [
   ['북악관', '로비 내'],
