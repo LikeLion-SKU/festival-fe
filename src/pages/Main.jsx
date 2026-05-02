@@ -1,3 +1,6 @@
+import { useNavigate } from 'react-router';
+
+import MenuButton from '@/components/common/Button/MenuButton';
 import About from '@/components/main/About.jsx';
 import Booth from '@/components/main/Booth.jsx';
 import Intro from '@/components/main/Intro.jsx';
@@ -8,6 +11,8 @@ import Timetable from '@/components/main/Timetable.jsx';
 import Footer from '@/layouts/Footer.jsx';
 
 export default function Main() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-dvh bg-[#121212]">
       <div className="mx-auto w-full max-w-[450px] min-h-dvh">
@@ -19,6 +24,10 @@ export default function Main() {
         <Safety />
         <About />
         <Footer />
+      </div>
+
+      <div className="fixed z-50 left-1/2 -translate-x-1/2" style={{ bottom: '2.75rem' }}>
+        <MenuButton onClick={() => navigate('/menu')} />
       </div>
     </div>
   );
