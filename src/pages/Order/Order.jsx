@@ -43,13 +43,18 @@ const foodData = [
 function Order() {
   const { boothId } = useParams();
   const [boothInfo, setBoothInfo] = useState(null);
+  const [lang, setLang] = useState(sessionStorage.getItem('language') || 'KO');
   const [quantities, setQuantities] = useState(() => {
     const saved = sessionStorage.getItem('orderQuantities');
     return saved ? JSON.parse(saved) : {};
   });
 
+  const handleLangChange = (code) => {
+    sessionStorage.setItem('language', code);
+    setLang(code);
+  };
+
   useEffect(() => {
-    const lang = sessionStorage.getItem('language') || 'KO';
     getBoothInfo(boothId, lang)
       .then((res) => {
         const data = res.data;
@@ -57,7 +62,7 @@ function Order() {
         sessionStorage.setItem('departmentName', data.departmentName);
       })
       .catch(console.error);
-  }, [boothId]);
+  }, [boothId, lang]);
 
   const handleReset = () => {
     setQuantities({});
@@ -129,6 +134,7 @@ function Order() {
         onRemove: handleRemove,
         onDecrease: handleDecrease,
         onReset: handleReset,
+        onLangChange: handleLangChange,
       }}
     />
   );

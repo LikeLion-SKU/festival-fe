@@ -23,6 +23,7 @@ function OrderEntry() {
     nightMenus,
     dayMenus,
     orderAvailable,
+    onLangChange,
   } = useOutletContext();
 
   const [isNight, setIsNight] = useState(true);
@@ -33,7 +34,7 @@ function OrderEntry() {
 
   return (
     <>
-      <BoothImageSection thumbnailUrl={thumbnailUrl} />
+      <BoothImageSection thumbnailUrl={thumbnailUrl} onLangChange={onLangChange} />
       <BoothInfoSection
         boothName={boothName}
         location={location}

@@ -12,7 +12,7 @@ const LANGUAGES = [
   { code: 'KO', flag: KoFlag },
 ];
 
-function BoothImageSection({ thumbnailUrl }) {
+function BoothImageSection({ thumbnailUrl, onLangChange }) {
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedLang, setSelectedLang] = useState(sessionStorage.getItem('language') || 'KO');
@@ -21,9 +21,9 @@ function BoothImageSection({ thumbnailUrl }) {
   const currentLang = LANGUAGES.find((l) => l.code === selectedLang);
 
   const handleLangSelect = (code) => {
-    sessionStorage.setItem('language', code);
     setSelectedLang(code);
     setIsExpanded(false);
+    onLangChange(code);
   };
 
   useEffect(() => {
