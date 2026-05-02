@@ -1,6 +1,11 @@
 import BottomSheet from '@/components/Admin/BottomSheet';
 
-const CANCEL_REASONS = ['재료 소진', '주문 실수', '고객 요청', '기타'];
+const CANCEL_REASONS = [
+  { label: '재료 소진', value: 'OUT_OF_STOCK' },
+  { label: '주문 실수', value: 'ORDER_MISTAKE' },
+  { label: '고객 요청', value: 'CUSTOMER_REQUEST' },
+  { label: '기타', value: 'ETC' },
+];
 
 export default function CancelReasonModal({
   open,
@@ -22,18 +27,18 @@ export default function CancelReasonModal({
           주문 취소 사유를 골라주세요.
         </p>
         <div className="mt-7.75 flex flex-col items-center gap-1">
-          {CANCEL_REASONS.map((r) => {
-            const selected = reason === r;
+          {CANCEL_REASONS.map(({ label, value }) => {
+            const selected = reason === value;
             return (
               <button
-                key={r}
+                key={value}
                 type="button"
-                onClick={() => onReasonChange?.(r)}
+                onClick={() => onReasonChange?.(value)}
                 className={`w-25 px-2 py-0.5 text-[20px] font-medium leading-[1.6] ${
                   selected ? 'border-y-2 border-[#FE5F54] text-[#FE5F54]' : 'text-[#C9C9C9]'
                 }`}
               >
-                {r}
+                {label}
               </button>
             );
           })}

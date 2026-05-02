@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { getWaitingMenu, subscribeOrder } from '@/api/order';
+import {
+  getWaitingMenu,
+  patchCanCelOrder,
+  patchChangeOrderStatus,
+  subscribeOrder,
+} from '@/api/order';
 import CheckIcon from '@/assets/icons/admin/check_red_big_icon.svg?react';
 import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
@@ -15,7 +21,13 @@ import OrderCard from '@/components/Admin/OrderCard';
 export default function WaitingMenu() {
   const [modal, setModal] = useState(null);
   const [reason, setReason] = useState(null);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
   const queryClient = useQueryClient();
+  const { notifyOrderStatus, clearCount } = useOutletContext() ?? {};
+
+  useEffect(() => {
+    clearCount?.('wait');
+  }, [clearCount]);
 
   const queryKey = ['admin', 'orders', 'waiting'];
 
@@ -28,7 +40,7 @@ export default function WaitingMenu() {
   useEffect(() => {
     const eventSource = subscribeOrder('WAITING');
 
-    eventSource.onmessage = (event) => {
+    const handleWaitingOrder = (event) => {
       const newOrder = JSON.parse(event.data);
       queryClient.setQueryData(queryKey, (prev) => ({
         ...(prev ?? {}),
@@ -36,12 +48,26 @@ export default function WaitingMenu() {
       }));
     };
 
-    eventSource.onerror = () => {
-      eventSource.close();
+    const handleNotification = (event) => {
+      const { orderStatus } = JSON.parse(event.data);
+      notifyOrderStatus?.(orderStatus);
     };
 
-    return () => eventSource.close();
-  }, [queryClient]);
+    eventSource.addEventListener('waitingOrderEvent', handleWaitingOrder);
+    eventSource.addEventListener('orderNotification', handleNotification);
+
+    eventSource.onerror = () => {
+      if (eventSource.readyState === EventSource.CLOSED) {
+        eventSource.close();
+      }
+    };
+
+    return () => {
+      eventSource.removeEventListener('waitingOrderEvent', handleWaitingOrder);
+      eventSource.removeEventListener('orderNotification', handleNotification);
+      eventSource.close();
+    };
+  }, [queryClient, notifyOrderStatus]);
 
   useEffect(() => {
     if (modal !== 'confirmDone') return;
@@ -52,13 +78,35 @@ export default function WaitingMenu() {
   const closeModal = () => {
     setModal(null);
     setReason(null);
+    setSelectedOrderId(null);
   };
 
-  const handleConfirm = () => setModal('confirmDone');
+  const handleConfirm = async () => {
+    if (!selectedOrderId) return;
+    try {
+      await patchChangeOrderStatus(selectedOrderId, 'COOKING');
+      queryClient.setQueryData(queryKey, (prev) => ({
+        ...(prev ?? {}),
+        data: (prev?.data ?? []).filter((order) => order.orderId !== selectedOrderId),
+      }));
+      setModal('confirmDone');
+    } catch (error) {
+      console.log('조리중 으로 변경 실패 : ' + error);
+    }
+  };
 
-  const handleCancelSubmit = () => {
+  const handleCancelSubmit = async () => {
     if (!reason) return;
-    setModal('cancelGuide');
+    try {
+      await patchCanCelOrder(selectedOrderId, reason);
+      queryClient.setQueryData(queryKey, (prev) => ({
+        ...(prev ?? {}),
+        data: (prev?.data ?? []).filter((order) => order.orderId !== selectedOrderId),
+      }));
+      setModal('cancelGuide');
+    } catch (error) {
+      console.log('주문 취소 실패:' + error);
+    }
   };
 
   return (
@@ -75,8 +123,14 @@ export default function WaitingMenu() {
               customerPhoneNumber={data.customerPhoneNumber}
               orderItems={data.orderItems}
               totalOrderPrice={data.totalOrderPrice}
-              onConfirm={() => setModal('confirm')}
-              onCancel={() => setModal('cancelReason')}
+              onConfirm={() => {
+                setSelectedOrderId(data.orderId);
+                setModal('confirm');
+              }}
+              onCancel={() => {
+                setSelectedOrderId(data.orderId);
+                setModal('cancelReason');
+              }}
             />
           ))}
         </div>
