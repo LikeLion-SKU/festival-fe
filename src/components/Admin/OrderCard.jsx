@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import CheckGrayIcon from '@/assets/icons/check_gray_icon.svg?react';
-import CheckWhiteIcon from '@/assets/icons/check_white_icon.svg?react';
+import CheckWhiteIcon from '@/assets/icons/check_white_Icon.svg?react';
 import OpenButton from '@/components/Admin/OpenButton';
 
 const formatPrice = (n) => `${n.toLocaleString('ko-KR')}원`;
