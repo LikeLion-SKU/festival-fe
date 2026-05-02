@@ -12,7 +12,7 @@ function MenuSection({ word, isNight, onToggle, Image, Icon, menus }) {
         </div>
       </div>
       <div className="w-full h-0.5 bg-gray-200 mt-3" />
-      <div className="w-full inline-flex flex-wrap mt-2 bg-white">
+      <div className="w-full inline-flex flex-wrap mt-2 ">
         {menus.map((menu, index) => (
           <div
             key={index}

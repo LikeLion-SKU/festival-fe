@@ -1,5 +1,6 @@
 import Garbage from '@/assets/icons/garbage.svg?react';
 import Minus from '@/assets/icons/minus.svg?react';
+import Noodle from '@/assets/icons/noodle.svg';
 import Plus from '@/assets/icons/plus.svg?react';
 
 const CATEGORY_LABELS = { main: '메인', side: '사이드', drink: '음료' };
@@ -14,10 +15,6 @@ function MenuSection({
   onIncrease,
   onDecrease,
 }) {
-  const handleSelect = onSelect;
-  const handleIncrease = onIncrease;
-  const handleDecrease = onDecrease;
-
   const grouped = CATEGORY_ORDER.reduce((acc, cat) => {
     acc[cat] = foodData.filter((item) => item.category === cat);
     return acc;
@@ -41,30 +38,48 @@ function MenuSection({
               grouped[cat].map((item, index) => {
                 const key = `${cat}-${index}`;
                 const qty = quantities[key];
+                const isSoldOut = item.soldOut === true;
+
                 return (
                   <div
                     key={index}
-                    className={`px-3 rounded-lg ${qty ? 'bg-gray-100 py-5' : 'py-2'}`}
-                    onClick={() => !qty && handleSelect(key)}
+                    className={`px-3 rounded-lg ${
+                      isSoldOut
+                        ? 'bg-disable-gray py-5 cursor-default'
+                        : qty
+                          ? 'bg-gray-100 py-5 cursor-pointer'
+                          : 'py-2 cursor-pointer'
+                    }`}
+                    onClick={() => !qty && !isSoldOut && onSelect(key)}
                   >
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <div className="flex items-center gap-5">
-                        <img src={item.image} className="w-10 h-10 rounded-lg object-cover" />
+                        <img
+                          src={item.iconImageUrl || item.image || Noodle}
+                          className={`w-10 h-10 rounded-lg object-cover ${isSoldOut ? 'opacity-50' : ''}`}
+                        />
                         <div className="flex flex-col flex-1 gap-2">
-                          <div className="text-black-1000 font-medium">{item.name}</div>
+                          <div
+                            className={`font-medium ${isSoldOut ? 'text-gray-500' : 'text-black-1000'}`}
+                          >
+                            {item.name}
+                            {isSoldOut && <span>(품절)</span>}
+                          </div>
                           <div className="text-xs text-gray-400">{item.description}</div>
                         </div>
                       </div>
-                      <div className="text-black-1000 text-sm font-medium">
+                      <div
+                        className={`text-sm font-medium shrink-0 ${isSoldOut ? 'text-gray-500' : 'text-black-1000'}`}
+                      >
                         {item.price.toLocaleString()}원
                       </div>
                     </div>
-                    {qty && (
+                    {qty && !isSoldOut && (
                       <div className="flex justify-end items-center gap-2 mt-3">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDecrease(key);
+                            onDecrease(key);
                           }}
                           className="w-7 h-7 rounded-full bg-white shadow flex items-center justify-center text-gray-400"
                         >
@@ -78,7 +93,7 @@ function MenuSection({
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleIncrease(key);
+                            onIncrease(key);
                           }}
                           className="w-7 h-7 rounded-full bg-white shadow flex items-center justify-center text-gray-400"
                         >
@@ -96,4 +111,5 @@ function MenuSection({
     </div>
   );
 }
+
 export default MenuSection;

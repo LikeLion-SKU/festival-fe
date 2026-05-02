@@ -10,7 +10,7 @@ const boothData = {
   location: '혜인관 앞',
   isOpen: true,
   content:
-    '저희 부스에서는 솜사탕, 음료수, 핫도그를 판매합니다. 저희 부스에서는 솜사탕, 음료수, 핫도그를 판매합니다. 저희 부스에서는 솜사탕, 음료수, 핫도그를 판매합니다. 저희 부스에서는 솜사탕, 음료수, 핫도그를 판매합니다.',
+    '저희 부스에서는 솜사탕, 음료수, 핫도그를 판매합니다. 저희 부스에서는 솜사탕, 음료수, 핫도그를 판매합니다. 저희 부스에서는 솜사탕, 음료수, 핫도그를 판매합니다. 저희 부스에서는 솜사탕, 음료수, 핫도그를 판매합니다.저희 부스에서는 솜사탕, 음료수, 핫도그를 판매합니다.저희 부스에서는 솜사탕, 음료수, 핫도그를 판매합니다.저희 부스에서는 솜사탕, 음료수, 핫도그를 판매합니다.저희 부스에서는 솜사탕, 음료수, 핫도그를 판매합니다.저희 부스에서는 솜사탕, 음료수, 핫도그를 판매합니다.저희 부스에서는 솜사탕, 음료수, 핫도그를 판매합니다.저희 부스에서는 솜사탕, 음료수, 핫도그를 판매합니다. 저희 부스에서는 솜사탕, 음료수, 핫도그를 판매합니다.',
   HeroImage: BoothHero,
   images: [Info1, Info1, Info1],
   buttonName: '주문하러 가기',
@@ -54,7 +54,7 @@ const foodData = [
     boothMenuId: 13,
     image: Noodle,
     name: '블루레몬에이드',
-    description: '',
+    description: '시원',
     price: 3000,
     category: 'drink',
   },
@@ -62,9 +62,10 @@ const foodData = [
     boothMenuId: 14,
     image: Noodle,
     name: '자몽에이드',
-    description: '',
+    description: '시원',
     price: 3000,
     category: 'drink',
+    soldOut: true,
   },
 ];
 

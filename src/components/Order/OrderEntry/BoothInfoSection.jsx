@@ -1,4 +1,12 @@
+import { useState } from 'react';
+
+const CONTENT_LIMIT = 150;
+
 function BoothInfoSection({ boothName, location, isOpen, content, images }) {
+  const [expanded, setExpanded] = useState(false);
+  const isLong = content?.length > CONTENT_LIMIT;
+  const displayText = isLong && !expanded ? content.slice(0, CONTENT_LIMIT) : content;
+
   return (
     <div className="relative px-7 mt-18">
       <div className="relative flex justify-between items-center">
@@ -21,7 +29,25 @@ function BoothInfoSection({ boothName, location, isOpen, content, images }) {
         <div className="w-7 h-5 font-semibold text-text-gray">위치</div>
         <div className="w-16 h-5 font-semibold text-deep-gray">{location}</div>
       </div>
-      <div className="relative mt-6 text-sm text-deep-gray">{content}</div>
+      <div className="relative mt-6 text-sm text-deep-gray">
+        {displayText}
+        {isLong && !expanded && (
+          <button
+            onClick={() => setExpanded(true)}
+            className="ml-1 text-sm font-semibold text-deep-gray"
+          >
+            ..더보기
+          </button>
+        )}
+        {isLong && expanded && (
+          <button
+            onClick={() => setExpanded(false)}
+            className="ml-1 text-sm font-semibold text-deep-gray"
+          >
+            접기
+          </button>
+        )}
+      </div>
       <div className="flex gap-1 mt-6 overflow-hidden">
         {images.map((src, index) => (
           <img className="w-27.5 h-28" key={index} src={src} />
