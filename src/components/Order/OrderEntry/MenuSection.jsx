@@ -17,12 +17,9 @@ function MenuSection({ word, isNight, canToggle, onToggle, Image, Icon, menus })
       <div className="w-full h-0.5 bg-gray-200 mt-3" />
       <div className="w-full inline-flex flex-wrap mt-2 ">
         {menus.map((menu, index) => (
-          <div
-            key={index}
-            className="w-1/2 h-10 px-4 py-1 flex justify-between items-center overflow-hidden"
-          >
-            <div className="text-Main-Grayscale-700 text-xs font-medium">{menu.name}</div>
-            <div className="text-Main-Grayscale-700 text-xs font-medium">
+          <div key={index} className="w-1/2 px-4 py-1 flex justify-between items-start gap-2">
+            <div className="text-Main-Grayscale-700 text-xs font-medium min-w-0">{menu.name}</div>
+            <div className="text-Main-Grayscale-700 text-xs font-medium shrink-0 whitespace-nowrap">
               {typeof menu.price === 'number' ? `${menu.price.toLocaleString()}원` : menu.price}
             </div>
           </div>
