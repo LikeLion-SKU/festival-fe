@@ -1,1 +1,65 @@
 @import 'tailwindcss';
+
+@font-face {
+  font-family: 'Sekuya';
+  src: url('/fonts/Sekuya-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
+  font-weight: 45 920;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Jaro';
+  src: url('/fonts/Jaro-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@layer utilities {
+  /* 스크롤바 숨기기 */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+body {
+  font-family: 'Pretendard', sans-serif;
+}
+
+@theme {
+  --color-button-red: #ff756c;
+  --color-button-red-bg: #ffbbb8;
+  --color-button-gray: #868686;
+  --color-button-gray-bg: #efefef;
+  --color-text-gray: #a0a0a0;
+  --color-deep-gray: #595959;
+  --color-order-button: #fe5f54;
+  --color-disable-gray: #c9c9c9;
+  --color-text-orange: #f77f00;
+  --color-text-blue: #00229b;
+  --color-gray-02: #f5f5f5;
+  --color-black-1000: #101010;
+  --color-pink-100: #ffbbb8;
+  --color-light-gray: #a8a8a8;
+  --color-gray-bg: #f6f6f6;
+  --color-light-pink: #ffdddb;
+  --color-warn-orange: #ff9500;
+  --color-order-button-active: #c43a31;
+  --color-gray-500: #7f7f7f;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}

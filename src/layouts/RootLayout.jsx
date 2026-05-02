@@ -1,26 +1,24 @@
 import { useState } from 'react';
-import { useLocation, useNavigation } from 'react-router';
+import { useNavigation } from 'react-router';
 import { Outlet, ScrollRestoration } from 'react-router';
 
 //import Navbar from "../commons/navbar";
 // import Header from "../commons/Header";
 
 export default function RootLayout() {
-  const { pathname } = useLocation();
   const navigation = useNavigation();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const hasToken = !!localStorage.getItem('accessToken');
-  const hideNav = !hasToken && pathname === '/';
   const isLoading = navigation.state === 'loading';
 
   return (
-    <main>
+    <main className="flex h-full flex-col">
       {isLoading && <LoadingBar />}
       {/* <Header /> */}
-      <Outlet context={{ onModalChange: setIsModalOpen }} />
+      <div className="min-h-0 flex-1">
+        <Outlet context={{ onModalChange: setIsModalOpen, isModalOpen: isModalOpen }} />
+      </div>
       <ScrollRestoration />
-      {!isModalOpen && !hideNav && <Navbar />}
     </main>
   );
 }

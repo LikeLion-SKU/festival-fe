@@ -5,7 +5,7 @@ export default function ProtectedRoute() {
   const context = useOutletContext();
 
   if (!token) {
-    return <Navigate to="/" replace />;
+    //return <Navigate to="/" replace />;
   }
 
   return <Outlet context={context} />;
