@@ -103,6 +103,7 @@ export default function About() {
           </button>
           <button
             type="button"
+            onClick={() => navigate('/booth-map')}
             className="h-[3rem] w-full border border-[rgba(255,255,255,0.2)] bg-[rgba(34,34,34,0.72)] text-[1rem] font-semibold leading-none text-white [font-family:Pretendard]"
           >
             부스 보러가기
