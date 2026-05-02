@@ -54,7 +54,7 @@ const foodData = [
     boothMenuId: 13,
     image: Noodle,
     name: '블루레몬에이드',
-    description: '',
+    description: '시원',
     price: 3000,
     category: 'drink',
   },
@@ -62,9 +62,10 @@ const foodData = [
     boothMenuId: 14,
     image: Noodle,
     name: '자몽에이드',
-    description: '',
+    description: '시원',
     price: 3000,
     category: 'drink',
+    soldOut: true,
   },
 ];
 
