@@ -144,7 +144,6 @@ function LineupCardFace({ item }) {
 export default function Lineup() {
   const leftNavIds = useMemo(() => LINEUP_DAY_GROUPS[0].items.map((it) => it.id), []);
   const rightNavIds = useMemo(() => LINEUP_DAY_GROUPS[1].items.map((it) => it.id), []);
-  const fullAutoNavIds = useMemo(() => [...leftNavIds, ...rightNavIds], [leftNavIds, rightNavIds]);
   const itemById = useMemo(() => {
     const m = new Map();
     for (const g of LINEUP_DAY_GROUPS) {
@@ -163,11 +162,12 @@ export default function Lineup() {
     cursorRight: 0,
   }));
 
+  /** 버튼 혹은 스와이프 전에는 DAY 2 안에서만 자동 순환 — 버튼 없이 DAY 3으로 넘어가지 않음 */
   const navIds = laneNav.arrowOrSwipeUsed
     ? laneNav.activeLane === 'left'
       ? leftNavIds
       : rightNavIds
-    : fullAutoNavIds;
+    : leftNavIds;
   const centerCursor = laneNav.arrowOrSwipeUsed
     ? laneNav.activeLane === 'left'
       ? laneNav.cursorLeft
@@ -309,22 +309,27 @@ export default function Lineup() {
       if (Date.now() < suppressAutoRotateUntilRef.current) return;
       setLaneNav((s) => {
         if (!s.arrowOrSwipeUsed) {
-          const n = fullAutoNavIds.length;
+          const n = leftNavIds.length;
           return {
             ...s,
             fullAutoCursor: (s.fullAutoCursor + 1) % n,
           };
         }
+        if (s.activeLane === 'left') {
+          return {
+            ...s,
+            cursorLeft: (s.cursorLeft + 1) % leftNavIds.length,
+          };
+        }
         return {
           ...s,
-          activeLane: 'right',
           cursorRight: (s.cursorRight + 1) % rightNavIds.length,
         };
       });
     }, LINEUP_AUTO_ROTATE_INTERVAL_MS);
 
     return () => clearInterval(id);
-  }, [hasManyCards, reduceMotion, rightNavIds.length, fullAutoNavIds.length]);
+  }, [hasManyCards, reduceMotion, leftNavIds.length, rightNavIds.length]);
 
   const onCarouselDragEnd = (_, info) => {
     if (reduceMotion || !hasManyCards) return;
