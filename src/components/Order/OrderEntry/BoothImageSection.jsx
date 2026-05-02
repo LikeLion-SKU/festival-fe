@@ -5,6 +5,7 @@ import HomeShadow from '@/assets/icons/home_shadow.svg?react';
 import EnFlag from '@/assets/images/en.svg';
 import KoFlag from '@/assets/images/ko.svg';
 import ZhFlag from '@/assets/images/zh.svg';
+import Skeleton from '@/components/common/Skeleton';
 
 const LANGUAGES = [
   { code: 'ZH', flag: ZhFlag },
@@ -12,7 +13,7 @@ const LANGUAGES = [
   { code: 'KO', flag: KoFlag },
 ];
 
-function BoothImageSection({ thumbnailUrl, onLangChange }) {
+function BoothImageSection({ thumbnailUrl, onLangChange, isLoading }) {
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedLang, setSelectedLang] = useState(sessionStorage.getItem('language') || 'KO');
@@ -39,13 +40,21 @@ function BoothImageSection({ thumbnailUrl, onLangChange }) {
 
   return (
     <div className="relative h-75 w-full">
-      <div className="absolute bottom-0 w-full overflow-hidden">
-        <img src={thumbnailUrl} className="w-full object-cover blur translate-y-4" />
+      <div className="absolute inset-0 overflow-hidden">
+        {isLoading ? (
+          <Skeleton className="w-full h-full rounded-none" />
+        ) : (
+          <img src={thumbnailUrl} className="w-full object-cover blur translate-y-4" />
+        )}
       </div>
-      <img
-        src={thumbnailUrl}
-        className="w-49 h-49 absolute top-37 left-7 z-10 rounded-lg object-cover"
-      />
+      {isLoading ? (
+        <Skeleton className="w-49 h-49 absolute top-37 left-7 z-10 rounded-lg" />
+      ) : (
+        <img
+          src={thumbnailUrl}
+          className="w-49 h-49 absolute top-37 left-7 z-10 rounded-lg object-cover"
+        />
+      )}
 
       <div className="absolute top-12 right-5 z-20 flex items-center gap-2.5">
         {/* 언어 선택 pill */}

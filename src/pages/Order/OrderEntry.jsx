@@ -24,6 +24,7 @@ function OrderEntry() {
     dayMenus,
     orderAvailable,
     onLangChange,
+    isLoading,
   } = useOutletContext();
 
   const hasDay = dayMenus?.length > 0;
@@ -46,13 +47,18 @@ function OrderEntry() {
 
   return (
     <>
-      <BoothImageSection thumbnailUrl={thumbnailUrl} onLangChange={onLangChange} />
+      <BoothImageSection
+        thumbnailUrl={thumbnailUrl}
+        onLangChange={onLangChange}
+        isLoading={isLoading}
+      />
       <BoothInfoSection
         boothName={boothName}
         location={location}
         isOpen={isOpen}
         content={content}
         images={images}
+        isLoading={isLoading}
       />
       <MenuSection
         word={word}
