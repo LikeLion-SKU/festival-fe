@@ -63,3 +63,9 @@ export const getSales = async (date) => {
 
   return res;
 };
+
+export const getCancelMenu = async () => {
+  const res = await APIService.private.get('/orders/canceled');
+
+  return res;
+};

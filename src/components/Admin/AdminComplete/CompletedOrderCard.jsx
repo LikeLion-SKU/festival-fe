@@ -2,6 +2,16 @@ import ReturnIcon from '@/assets/icons/admin/return_icon.svg?react';
 
 const formatPrice = (n) => `${n.toLocaleString('ko-KR')}원`;
 
+// 받침 없거나 ㄹ 받침이면 "로", 그 외 받침이면 "으로"
+const reasonParticle = (str) => {
+  if (!str) return '으로';
+  const last = str[str.length - 1];
+  const code = last.charCodeAt(0);
+  if (code < 0xac00 || code > 0xd7a3) return '으로';
+  const final = (code - 0xac00) % 28;
+  return final === 0 || final === 8 ? '로' : '으로';
+};
+
 export default function CompletedOrderCard({
   tableNumber,
   peopleCount,
@@ -41,7 +51,8 @@ export default function CompletedOrderCard({
         {cancelReason && (
           <div className="flex w-full items-center">
             <p className="text-[14px] font-semibold tracking-[-0.35px] text-deep-gray">
-              <span className="text-[#FF756C]">{cancelReason}</span>으로 인한 취소
+              <span className="text-[#FF756C]">{cancelReason}</span>
+              {reasonParticle(cancelReason)} 인한 취소
             </p>
           </div>
         )}
