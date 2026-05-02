@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import clsx from 'clsx';
@@ -8,6 +8,10 @@ import BoothPaper from '@/assets/images/booth-paper.svg';
 import DesertBg from '@/assets/images/desert.svg';
 import FenceBg from '@/assets/images/fence.svg';
 import { BOOTH_CARDS, BUILDINGS } from '@/constants/mainDummyData';
+import {
+  MAIN_SECTION_ICON_SCROLL_FADE,
+  useScrollDrivenOpacity,
+} from '@/hooks/useScrollDrivenOpacity';
 
 const MAIN_BOOTH_CARDS_PER_BUILDING = 4;
 
@@ -90,6 +94,8 @@ function BoothCard({ image, subtitle, title }) {
 export default function Booth() {
   const navigate = useNavigate();
   const [activeBuildingId, setActiveBuildingId] = useState(BUILDINGS[0].id);
+  const iconBlockRef = useRef(null);
+  const iconOpacity = useScrollDrivenOpacity(iconBlockRef, MAIN_SECTION_ICON_SCROLL_FADE);
 
   const visibleCards = useMemo(
     () =>
@@ -112,7 +118,11 @@ export default function Booth() {
 
       <div className="relative z-10 mx-auto flex w-full flex-col items-center gap-4">
         <div className="flex flex-col items-center gap-6">
-          <div className="flex flex-col items-center gap-4">
+          <div
+            ref={iconBlockRef}
+            style={{ opacity: iconOpacity, willChange: 'opacity' }}
+            className="flex flex-col items-center gap-4"
+          >
             <img src={HorseIcon} alt="" aria-hidden="true" className="h-[2.5rem] w-[2.4375rem]" />
             <p className="text-center text-[1rem] leading-[1.3] text-[#fefefe] [font-family:Sekuya] [text-shadow:1px_1px_0px_rgba(0,0,0,0.11)]">
               BOOTH

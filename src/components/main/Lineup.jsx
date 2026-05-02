@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import HorseIcon from '@/assets/icons/horse.svg';
 import FenceBg from '@/assets/images/fence.svg';
@@ -7,6 +7,10 @@ import HorseRed from '@/assets/images/horse-red.svg';
 import LineupCardBg from '@/assets/images/lineup-card.svg';
 import LineupStarBg from '@/assets/images/lineup-star.svg';
 import Singer2 from '@/assets/images/singer2.png';
+import {
+  MAIN_SECTION_ICON_SCROLL_FADE,
+  useScrollDrivenOpacity,
+} from '@/hooks/useScrollDrivenOpacity';
 
 const LINEUP_ITEMS = [
   {
@@ -148,6 +152,8 @@ function LineupCard({ item, position = 'center' }) {
 export default function Lineup() {
   const [centerIndex, setCenterIndex] = useState(0);
   const [activeNavButton, setActiveNavButton] = useState(null);
+  const iconBlockRef = useRef(null);
+  const iconOpacity = useScrollDrivenOpacity(iconBlockRef, MAIN_SECTION_ICON_SCROLL_FADE);
   const visibleCards = getVisibleLineupItems(LINEUP_ITEMS, centerIndex);
   const hasManyCards = LINEUP_ITEMS.length > 1;
 
@@ -195,7 +201,11 @@ export default function Lineup() {
         aria-hidden="true"
         className="pointer-events-none absolute left-1/2 top-[19rem] z-[2] w-[28.125rem] max-w-none -translate-x-1/2 object-cover"
       />
-      <div className="relative z-10 flex flex-col items-center gap-[0.25rem]">
+      <div
+        ref={iconBlockRef}
+        style={{ opacity: iconOpacity, willChange: 'opacity' }}
+        className="relative z-10 flex flex-col items-center gap-[0.25rem]"
+      >
         <img src={HorseIcon} alt="" aria-hidden="true" className="h-[2.5rem] w-[2.4375rem]" />
         <p className="text-center text-[1rem] leading-[3.2] text-[#fefefe] [font-family:Sekuya] [text-shadow:1px_1px_0px_rgba(0,0,0,0.11)]">
           LINEUP
