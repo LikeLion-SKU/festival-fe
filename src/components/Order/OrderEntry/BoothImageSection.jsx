@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
+import Back from '@/assets/icons/back.svg?react';
 import HomeShadow from '@/assets/icons/home_shadow.svg?react';
 import EnFlag from '@/assets/images/en.svg';
 import KoFlag from '@/assets/images/ko.svg';
@@ -13,7 +14,7 @@ const LANGUAGES = [
   { code: 'KO', flag: KoFlag },
 ];
 
-function BoothImageSection({ thumbnailUrl, onLangChange, isLoading }) {
+function BoothImageSection({ thumbnailUrl, onLangChange, isLoading, isQR }) {
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedLang, setSelectedLang] = useState(sessionStorage.getItem('language') || 'KO');
@@ -54,6 +55,15 @@ function BoothImageSection({ thumbnailUrl, onLangChange, isLoading }) {
           src={thumbnailUrl}
           className="w-49 h-49 absolute top-37 left-7 z-10 rounded-lg object-cover"
         />
+      )}
+
+      {!isQR && (
+        <button
+          onClick={() => navigate(-1)}
+          className="absolute top-12 left-5 z-20 w-12 h-12 bg-white rounded-[35px] shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] overflow-hidden flex items-center justify-center"
+        >
+          <Back />
+        </button>
       )}
 
       <div className="absolute top-12 right-5 z-20 flex items-center gap-2.5">
