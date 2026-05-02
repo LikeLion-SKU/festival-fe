@@ -9,6 +9,8 @@ import DesertBg from '@/assets/images/desert.svg';
 import FenceBg from '@/assets/images/fence.svg';
 import { BOOTH_CARDS, BUILDINGS } from '@/constants/mainDummyData';
 
+const MAIN_BOOTH_CARDS_PER_BUILDING = 4;
+
 function getTitleLines(title) {
   if (!Array.isArray(title)) {
     return [String(title).slice(0, 10)];
@@ -90,7 +92,11 @@ export default function Booth() {
   const [activeBuildingId, setActiveBuildingId] = useState(BUILDINGS[0].id);
 
   const visibleCards = useMemo(
-    () => BOOTH_CARDS.filter((card) => card.buildingId === activeBuildingId),
+    () =>
+      BOOTH_CARDS.filter((card) => card.buildingId === activeBuildingId).slice(
+        0,
+        MAIN_BOOTH_CARDS_PER_BUILDING
+      ),
     [activeBuildingId]
   );
 
