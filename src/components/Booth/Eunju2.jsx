@@ -70,7 +70,7 @@ export default function Eunju2({ active = false, onClick, className }) {
   );
 
   const shellClass = clsx(
-    'relative box-border h-[2.15rem] w-[10rem] shrink-0 rotate-[100deg] border-2 border-solid border-[#C43A31] transition-[background-color,box-shadow,transform] duration-200',
+    'relative box-border h-[2.35rem] w-[11rem] shrink-0 rotate-[100deg] border-2 border-solid border-[#C43A31] transition-[background-color,box-shadow,transform] duration-200',
     onClick && 'cursor-pointer select-none',
     active && 'z-30 shadow-[0_0_12px_rgba(196,58,49,0.45)]',
     className
