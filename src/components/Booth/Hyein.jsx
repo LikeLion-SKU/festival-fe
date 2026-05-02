@@ -1,11 +1,13 @@
 import clsx from 'clsx';
 
+import Square from '@/components/Booth/Square';
+
 import AedIcon from '../../assets/icons/aed.svg?react';
 
 const BG_DEFAULT = '#121212';
 const BG_ACTIVE = '#C43A31';
 
-/** 60×12px → rem — 테두리 항상 #C43A31 유지 */
+/** 클릭했을 때 색상 변하는 부분 */
 const SIDE_RECT_CLASS =
   'relative box-border flex h-[0.75rem] w-[3.75rem] shrink-0 border-2 border-solid border-[#C43A31] bg-[#121212]';
 
@@ -39,11 +41,12 @@ function SideRectWithTicks({ active }) {
 }
 
 /**
- * 혜인관 (부스 지도용)
- * @param {{ active?: boolean; onClick?: () => void; className?: string }} props
+ * 혜인관 건물
+ * @param {{ active?: boolean; onClick?: () => void; className?: string; hasBuildingSelection?: boolean }} props
  */
-export default function Hyein({ active = false, onClick, className }) {
+export default function Hyein({ active = false, onClick, className, hasBuildingSelection }) {
   const panelBg = active ? BG_ACTIVE : BG_DEFAULT;
+  const markerFill = active ? '#FF756C' : (hasBuildingSelection ?? true) ? '#FFDDDB' : '#FF958F';
   const wrapperClass = clsx('relative inline-flex flex-col items-center gap-[0.25rem]', className);
 
   const boxClass = clsx(
@@ -94,6 +97,20 @@ export default function Hyein({ active = false, onClick, className }) {
     </div>
   );
 
+  const stageRow = (
+    <div className="flex items-center justify-center gap-[6px]">
+      <div className="flex -translate-y-[5px] items-center gap-[4px]" aria-hidden>
+        <Square color={markerFill} />
+        <Square color={markerFill} />
+      </div>
+      {stageBox}
+      <div className="flex -translate-y-[5px] items-center gap-[4px]" aria-hidden>
+        <Square color={markerFill} />
+        <Square color={markerFill} />
+      </div>
+    </div>
+  );
+
   if (onClick) {
     return (
       <button
@@ -106,7 +123,7 @@ export default function Hyein({ active = false, onClick, className }) {
         <div className={boxClass} style={{ backgroundColor: panelBg }}>
           {inner}
         </div>
-        {stageBox}
+        {stageRow}
       </button>
     );
   }
@@ -116,7 +133,7 @@ export default function Hyein({ active = false, onClick, className }) {
       <div className={boxClass} style={{ backgroundColor: panelBg }}>
         {inner}
       </div>
-      {stageBox}
+      {stageRow}
     </div>
   );
 }

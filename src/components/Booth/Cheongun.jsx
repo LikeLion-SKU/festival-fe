@@ -1,21 +1,24 @@
 import clsx from 'clsx';
 
+import Square from '@/components/Booth/Square';
+
 import AedIcon from '../../assets/icons/aed.svg?react';
 
 const BG_DEFAULT = '#121212';
 const BG_ACTIVE = '#C43A31';
-/** 우측 하단 모서리만 비스듬히 깎임 */
+/** 우측 하단 모서리만 깍음 -> 일반적인 직사각형은 구현이 어려워서 폴리곤 다각형으로 대체함*/
 const CORNER_NOTCH = 'polygon(0 0, 100% 0, 100% 66%, 88% 100%, 0 100%)';
 
 const SIDE_RECT_CLASS =
   'relative box-border flex h-[0.75rem] w-[3.05rem] shrink-0 border-2 border-solid border-[#C43A31] bg-[#121212]';
 
 /**
- * 청운관 (부스 지도용) — 혜인관과 동일 칩 구조 + AED
- * @param {{ active?: boolean; onClick?: () => void; className?: string }} props
+ * 청운관 (부스 지도용) — AED 아이콘 있음
+ * @param {{ active?: boolean; onClick?: () => void; className?: string; hasBuildingSelection?: boolean }} props
  */
-export default function Cheongun({ active = false, onClick, className }) {
+export default function Cheongun({ active = false, onClick, className, hasBuildingSelection }) {
   const panelBg = active ? BG_ACTIVE : BG_DEFAULT;
+  const markerFill = active ? '#FF756C' : (hasBuildingSelection ?? true) ? '#FFDDDB' : '#FF958F';
   const wrapperClass = clsx(
     'relative inline-flex flex-col items-center gap-[0.25rem] rotate-[-72deg]',
     className
@@ -44,7 +47,7 @@ export default function Cheongun({ active = false, onClick, className }) {
           청운관
         </span>
       </div>
-      {/* 중앙·사이드 각각 absolute → 너비·flex 영향 분리 */}
+      {/* 중앙이랑 사이드 직사각형 분리했음 */}
       <div className="relative mt-auto h-[1.35rem] w-full shrink-0 translate-y-[3px]">
         <div
           className="absolute bottom-0 left-[calc(50%+00px)] z-10 flex h-[1.25rem] w-[1.5rem] -translate-x-1/2 items-end justify-center border-2 border-solid bg-[#121212] pb-[1px]"
@@ -80,6 +83,26 @@ export default function Cheongun({ active = false, onClick, className }) {
     </div>
   );
 
+  const markerRow = (
+    <div
+      className="flex items-center justify-center gap-[6px] translate-x-[-8px] translate-y-[4px]"
+      aria-hidden
+    >
+      <span className="inline-flex -rotate-[0deg]">
+        <Square color={markerFill} />
+      </span>
+      <span className="inline-flex rotate-[0deg]">
+        <Square color={markerFill} />
+      </span>
+      <span className="inline-flex -rotate-[0deg]">
+        <Square color={markerFill} />
+      </span>
+      <span className="inline-flex rotate-[0deg]">
+        <Square color={markerFill} />
+      </span>
+    </div>
+  );
+
   if (onClick) {
     return (
       <button
@@ -104,6 +127,7 @@ export default function Cheongun({ active = false, onClick, className }) {
             {inner}
           </div>
         </div>
+        {markerRow}
       </button>
     );
   }
@@ -118,6 +142,7 @@ export default function Cheongun({ active = false, onClick, className }) {
           {inner}
         </div>
       </div>
+      {markerRow}
     </div>
   );
 }

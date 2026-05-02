@@ -4,13 +4,13 @@ const STROKE = '#C43A31';
 
 /** @typedef {{ x1: number; y1: number; x2: number; y2: number }} LineSegment */
 
-/** 왼쪽 변 기본값 — 끝점만 바꾸면 길이·기울기 조절 */
+/** 왼쪽 변 기본값 */
 const DEFAULT_LEFT_EDGE = { x1: 2, y1: 75, x2: 22, y2: 10 };
 
 /** 오른쪽 변 기본값 */
 const DEFAULT_RIGHT_EDGE = { x1: 65, y1: 78, x2: 50, y2: 10 };
 
-/** 가운데 짧은 실선 4개 — 세그먼트·간격 모두 짧게(7+4씩) */
+/** 가운데 짧은 실선 4개  */
 const DEFAULT_CENTER_SEGMENTS = [
   { x1: 34, y1: 55, x2: 34, y2: 49 },
   { x1: 34, y1: 44, x2: 34, y2: 38 },
@@ -19,7 +19,7 @@ const DEFAULT_CENTER_SEGMENTS = [
 ];
 
 /**
- * 폭풍의 언덕 (부스 지도용, 장식 전용 — 비클릭·선택 없음)
+ * 폭풍의 언덕 (인터렉션 요소는 없음!)
  * @param {{
  *   className?: string;
  *   leftLine?: LineSegment;

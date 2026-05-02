@@ -1,5 +1,7 @@
 import clsx from 'clsx';
 
+import Square from '@/components/Booth/Square';
+
 const BG_DEFAULT = '#121212';
 const BG_ACTIVE = '#C43A31';
 const STROKE = '#C43A31';
@@ -33,16 +35,20 @@ function SideRectWithTicks() {
 }
 
 /**
- * 은주1관 (부스 지도용)
+ * 은주1관 건물
  * 혜인관과 동일 구조 + 본체 기울기/위치 변경 + 우측 상단 삼각형 파임
- * @param {{ active?: boolean; onClick?: () => void; className?: string }} props
+ * @param {{ active?: boolean; onClick?: () => void; className?: string; hasBuildingSelection?: boolean }} props
  */
-export default function Eunju1({ active = false, onClick, className }) {
+export default function Eunju1({ active = false, onClick, className, hasBuildingSelection }) {
   const panelBg = active ? BG_ACTIVE : BG_DEFAULT;
-  const wrapperClass = clsx('relative inline-flex flex-col items-center gap-[0.25rem]', className);
+  const markerFill = active ? '#FF756C' : (hasBuildingSelection ?? true) ? '#FFDDDB' : '#FF958F';
+  const wrapperClass = clsx('relative inline-flex flex-col items-center', className);
+
+  const buildingShellClass =
+    'inline-flex flex-col items-center gap-[0.25rem] rotate-[170deg] translate-x-[3.2rem] -translate-y-[-7.8rem]';
 
   const boxClass = clsx(
-    'relative box-border flex h-[2.5rem] w-[10.25rem] shrink-0 rotate-[170deg] translate-x-[3.2rem] -translate-y-[-7.8rem] appearance-none overflow-hidden border-2 border-solid border-[#C43A31] outline-none ring-0 transition-[background-color,box-shadow] duration-200 focus:outline-none focus-visible:outline-none',
+    'relative box-border flex h-[2.5rem] w-[10.25rem] shrink-0 appearance-none overflow-hidden border-2 border-solid border-[#C43A31] outline-none ring-0 transition-[background-color,box-shadow] duration-200 focus:outline-none focus-visible:outline-none',
     onClick && 'cursor-pointer select-none',
     active && 'z-30 shadow-[0_0_12px_rgba(196,58,49,0.45)]'
   );
@@ -97,6 +103,17 @@ export default function Eunju1({ active = false, onClick, className }) {
     </svg>
   );
 
+  const markerRow = (
+    <div
+      className="flex translate-x-[12px] translate-y-[3px] items-center justify-center gap-[6px]"
+      aria-hidden
+    >
+      {Array.from({ length: 8 }).map((_, i) => (
+        <Square key={i} color={markerFill} />
+      ))}
+    </div>
+  );
+
   if (onClick) {
     return (
       <button
@@ -106,12 +123,19 @@ export default function Eunju1({ active = false, onClick, className }) {
         aria-label="은주1관"
         className={wrapperClass}
       >
-        <div
-          className={boxClass}
-          style={{ backgroundColor: panelBg, clipPath: CORNER_NOTCH, WebkitClipPath: CORNER_NOTCH }}
-        >
-          {notchStroke}
-          {inner}
+        <div className={buildingShellClass}>
+          <div
+            className={boxClass}
+            style={{
+              backgroundColor: panelBg,
+              clipPath: CORNER_NOTCH,
+              WebkitClipPath: CORNER_NOTCH,
+            }}
+          >
+            {notchStroke}
+            {inner}
+          </div>
+          {markerRow}
         </div>
       </button>
     );
@@ -119,12 +143,15 @@ export default function Eunju1({ active = false, onClick, className }) {
 
   return (
     <div className={wrapperClass}>
-      <div
-        className={boxClass}
-        style={{ backgroundColor: panelBg, clipPath: CORNER_NOTCH, WebkitClipPath: CORNER_NOTCH }}
-      >
-        {notchStroke}
-        {inner}
+      <div className={buildingShellClass}>
+        <div
+          className={boxClass}
+          style={{ backgroundColor: panelBg, clipPath: CORNER_NOTCH, WebkitClipPath: CORNER_NOTCH }}
+        >
+          {notchStroke}
+          {inner}
+        </div>
+        {markerRow}
       </div>
     </div>
   );

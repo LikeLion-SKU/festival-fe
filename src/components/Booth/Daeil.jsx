@@ -1,5 +1,7 @@
 import clsx from 'clsx';
 
+import Square from '@/components/Booth/Square';
+
 const BG_DEFAULT = '#121212';
 const BG_ACTIVE = '#C43A31';
 const STROKE = '#C43A31';
@@ -33,15 +35,19 @@ function SideRectWithTicks() {
 }
 
 /**
- * 대일관 (부스 지도용)
- * @param {{ active?: boolean; onClick?: () => void; className?: string }} props
+ * 대일관 건물
+ * @param {{ active?: boolean; onClick?: () => void; className?: string; hasBuildingSelection?: boolean }} props
  */
-export default function Daeil({ active = false, onClick, className }) {
+export default function Daeil({ active = false, onClick, className, hasBuildingSelection }) {
   const panelBg = active ? BG_ACTIVE : BG_DEFAULT;
-  const wrapperClass = clsx('relative inline-flex flex-col items-center gap-[0.25rem]', className);
+  const markerFill = active ? '#FF756C' : (hasBuildingSelection ?? true) ? '#FFDDDB' : '#FF958F';
+  const wrapperClass = clsx(
+    'relative inline-flex flex-col items-center gap-[0.25rem] rotate-[265deg]',
+    className
+  );
 
   const frameClass = clsx(
-    'relative box-border h-[2.5rem] w-[10.25rem] shrink-0 rotate-[265deg] bg-[#C43A31] p-[2px] outline-none ring-0 transition-[box-shadow] duration-200',
+    'relative box-border h-[2.5rem] w-[10.25rem] shrink-0 bg-[#C43A31] p-[2px] outline-none ring-0 transition-[box-shadow] duration-200',
     onClick && 'cursor-pointer select-none',
     active && 'z-30 shadow-[0_0_12px_rgba(196,58,49,0.45)]'
   );
@@ -83,6 +89,17 @@ export default function Daeil({ active = false, onClick, className }) {
     </div>
   );
 
+  const markerRow = (
+    <div
+      className="flex translate-x-[5px] translate-y-[5px] items-center justify-center gap-[6px]"
+      aria-hidden
+    >
+      {Array.from({ length: 8 }).map((_, i) => (
+        <Square key={i} color={markerFill} />
+      ))}
+    </div>
+  );
+
   if (onClick) {
     return (
       <button
@@ -107,6 +124,7 @@ export default function Daeil({ active = false, onClick, className }) {
             {inner}
           </div>
         </div>
+        {markerRow}
       </button>
     );
   }
@@ -121,6 +139,7 @@ export default function Daeil({ active = false, onClick, className }) {
           {inner}
         </div>
       </div>
+      {markerRow}
     </div>
   );
 }

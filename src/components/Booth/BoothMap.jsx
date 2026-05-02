@@ -65,30 +65,35 @@ export default function BoothMap({ activeBuildingId, onSelectBuilding }) {
               <div className="pointer-events-auto absolute left-1/2 top-[8%] -translate-x-1/2">
                 <Hyein
                   active={activeBuildingId === 'hyein'}
+                  hasBuildingSelection={activeBuildingId != null}
                   onClick={() => onSelectBuilding?.('hyein')}
                 />
               </div>
               <div className="pointer-events-auto absolute left-[7%] top-[17%]">
                 <Cheongun
                   active={activeBuildingId === 'cheongun'}
+                  hasBuildingSelection={activeBuildingId != null}
                   onClick={() => onSelectBuilding?.('cheongun')}
                 />
               </div>
               <div className="pointer-events-auto absolute left-[24%] top-[32%]">
                 <Eunju1
                   active={activeBuildingId === 'eunju1'}
+                  hasBuildingSelection={activeBuildingId != null}
                   onClick={() => onSelectBuilding?.('eunju1')}
                 />
               </div>
               <div className="pointer-events-auto absolute left-[57%] top-[31%]">
                 <Eunju2
                   active={activeBuildingId === 'eunju2'}
+                  hasBuildingSelection={activeBuildingId != null}
                   onClick={() => onSelectBuilding?.('eunju2')}
                 />
               </div>
               <div className="pointer-events-auto absolute left-[-7%] top-[49%]">
                 <Daeil
                   active={activeBuildingId === 'daeil'}
+                  hasBuildingSelection={activeBuildingId != null}
                   onClick={() => onSelectBuilding?.('daeil')}
                 />
               </div>

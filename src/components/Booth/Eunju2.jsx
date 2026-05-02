@@ -1,5 +1,7 @@
 import clsx from 'clsx';
 
+import Square from '@/components/Booth/Square';
+
 const BG_DEFAULT = '#121212';
 const BG_ACTIVE = '#C43A31';
 const STROKE = '#C43A31';
@@ -59,21 +61,37 @@ function TopLongRect() {
 }
 
 /**
- * 은주2관 (부스 지도용)
- * @param {{ active?: boolean; onClick?: () => void; className?: string }} props
+ * 은주2관 건물
+ * @param {{ active?: boolean; onClick?: () => void; className?: string; hasBuildingSelection?: boolean }} props
  */
-export default function Eunju2({ active = false, onClick, className }) {
+export default function Eunju2({ active = false, onClick, className, hasBuildingSelection }) {
   const panelBg = active ? BG_ACTIVE : BG_DEFAULT;
+  const markerFill = active ? '#FF756C' : (hasBuildingSelection ?? true) ? '#FFDDDB' : '#FF958F';
   const labelClass = clsx(
     'text-[0.4925rem] font-semibold leading-none tracking-[-0.03em] [font-family:Pretendard]',
     active ? 'text-white' : 'text-[#E66A5C]'
   );
 
-  const shellClass = clsx(
-    'relative box-border h-[2.35rem] w-[11rem] shrink-0 rotate-[100deg] border-2 border-solid border-[#C43A31] transition-[background-color,box-shadow,transform] duration-200',
+  const shellFrameClass = clsx(
+    'relative box-border h-[2.35rem] w-[11rem] shrink-0 border-2 border-solid border-[#C43A31] transition-[background-color,box-shadow,transform] duration-200',
     onClick && 'cursor-pointer select-none',
-    active && 'z-30 shadow-[0_0_12px_rgba(196,58,49,0.45)]',
+    active && 'z-30 shadow-[0_0_12px_rgba(196,58,49,0.45)]'
+  );
+
+  const buildingShellClass = clsx(
+    'inline-flex flex-col items-center gap-[0.25rem] rotate-[100deg]',
     className
+  );
+
+  const markerRow = (
+    <div
+      className="pointer-events-none flex translate-x-[0px] translate-y-[3px] items-center justify-center gap-[6px]"
+      aria-hidden
+    >
+      {Array.from({ length: 10 }).map((_, i) => (
+        <Square key={i} color={markerFill} />
+      ))}
+    </div>
   );
 
   if (onClick) {
@@ -83,45 +101,55 @@ export default function Eunju2({ active = false, onClick, className }) {
         onClick={onClick}
         aria-pressed={active}
         aria-label="은주2관"
-        className={shellClass}
-        style={{ backgroundColor: panelBg, borderColor: STROKE }}
+        className="relative border-0 bg-transparent p-0"
       >
-        <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-[-215%] -translate-y-1/2 rotate-[-90deg]">
-          <span className={labelClass}>은주2관</span>
-        </div>
-        <div className="pointer-events-none absolute left-[1.80rem] top-[55%] -translate-y-1/3 rotate-[90deg]">
-          <LeftSideRect />
-        </div>
-        <div className="pointer-events-none absolute left-[3.87rem] top-[68%] -translate-y-1/3 rotate-[0deg]">
-          <MiddleRect />
-        </div>
-        <div className="pointer-events-none absolute left-[-0.3rem] top-[37%] -translate-y-1/3 rotate-[90deg]">
-          <TopLongRect />
-        </div>
-        <div className="pointer-events-none absolute left-[7.15rem] top-[72%] -translate-y-1/3 rotate-[90deg]">
-          <LeftSideRect height="2.0rem" tickCount={4} />
+        <div className={buildingShellClass}>
+          <div
+            className={shellFrameClass}
+            style={{ backgroundColor: panelBg, borderColor: STROKE }}
+          >
+            <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-[-215%] -translate-y-1/2 rotate-[-90deg]">
+              <span className={labelClass}>은주2관</span>
+            </div>
+            <div className="pointer-events-none absolute left-[1.80rem] top-[55%] -translate-y-1/3 rotate-[90deg]">
+              <LeftSideRect />
+            </div>
+            <div className="pointer-events-none absolute left-[3.87rem] top-[68%] -translate-y-1/3 rotate-[0deg]">
+              <MiddleRect />
+            </div>
+            <div className="pointer-events-none absolute left-[-0.3rem] top-[37%] -translate-y-1/3 rotate-[90deg]">
+              <TopLongRect />
+            </div>
+            <div className="pointer-events-none absolute left-[7.15rem] top-[72%] -translate-y-1/3 rotate-[90deg]">
+              <LeftSideRect height="2.0rem" tickCount={4} />
+            </div>
+          </div>
+          {markerRow}
         </div>
       </button>
     );
   }
 
   return (
-    <div className={shellClass} style={{ backgroundColor: panelBg, borderColor: STROKE }}>
-      <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rotate-[10deg]">
-        <span className={labelClass}>은주2관</span>
+    <div className={buildingShellClass}>
+      <div className={shellFrameClass} style={{ backgroundColor: panelBg, borderColor: STROKE }}>
+        <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rotate-[10deg]">
+          <span className={labelClass}>은주2관</span>
+        </div>
+        <div className="pointer-events-none absolute left-[0.22rem] top-1/2 -translate-y-1/2 rotate-[-100deg]">
+          <LeftSideRect />
+        </div>
+        <div className="pointer-events-none absolute left-[1.22rem] top-[69%] -translate-y-1/2 rotate-[-100deg]">
+          <MiddleRect />
+        </div>
+        <div className="pointer-events-none absolute left-[1.75rem] top-[28%] -translate-y-1/2 rotate-[-100deg]">
+          <TopLongRect />
+        </div>
+        <div className="pointer-events-none absolute left-[0.22rem] top-[82%] -translate-y-1/2 rotate-[-100deg]">
+          <LeftSideRect height="2.3rem" tickCount={2} />
+        </div>
       </div>
-      <div className="pointer-events-none absolute left-[0.22rem] top-1/2 -translate-y-1/2 rotate-[-100deg]">
-        <LeftSideRect />
-      </div>
-      <div className="pointer-events-none absolute left-[1.22rem] top-[69%] -translate-y-1/2 rotate-[-100deg]">
-        <MiddleRect />
-      </div>
-      <div className="pointer-events-none absolute left-[1.75rem] top-[28%] -translate-y-1/2 rotate-[-100deg]">
-        <TopLongRect />
-      </div>
-      <div className="pointer-events-none absolute left-[0.22rem] top-[82%] -translate-y-1/2 rotate-[-100deg]">
-        <LeftSideRect height="2.3rem" tickCount={2} />
-      </div>
+      {markerRow}
     </div>
   );
 }

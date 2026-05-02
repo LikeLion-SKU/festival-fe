@@ -8,8 +8,9 @@ import { BUILDINGS } from '@/constants/mainDummyData';
 
 const BUILDING_BUTTON_ORDER = ['hyein', 'eunju1', 'eunju2', 'cheongun', 'daeil'];
 
+/*헤더 + 검색바 + 부스 안내 지도 + 하단 모달창 */
 export default function BoothMapPage() {
-  const [activeBuildingId, setActiveBuildingId] = useState(BUILDINGS[0].id);
+  const [activeBuildingId, setActiveBuildingId] = useState(null);
   const [search, setSearch] = useState('');
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const touchStartY = useRef(0);
@@ -82,7 +83,7 @@ export default function BoothMapPage() {
             })}
           </div>
           <p className="mt-1 text-xs font-semibold [font-family:Pretendard]">
-            {BUILDINGS.find((item) => item.id === activeBuildingId)?.label}
+            {activeBuildingId ? BUILDINGS.find((item) => item.id === activeBuildingId)?.label : ''}
           </p>
         </div>
       </div>
