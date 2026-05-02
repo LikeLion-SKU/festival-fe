@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 
+import backgroundImg from '@/assets/images/about-fire2.svg';
 import BoothMap from '@/components/Booth/BoothMap';
 import PageHeader from '@/components/common/PageHeader';
 import SearchInput from '@/components/common/SearchInput';
@@ -19,7 +20,16 @@ export default function BoothMapPage() {
   }, []);
 
   return (
-    <section className="relative min-h-dvh overflow-hidden bg-[#121212] text-white">
+    <section
+      className="relative min-h-dvh overflow-hidden text-white"
+      style={{
+        backgroundImage: `url(${backgroundImg})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundColor: '#121212',
+      }}
+    >
       <div className="mx-auto flex w-full max-w-[450px] flex-col px-4 pb-[11.5rem] pt-[max(3.25rem,calc(env(safe-area-inset-top)+0.5rem))]">
         <div className="relative min-h-[2.75rem]">
           <PageHeader title="부스 안내" to="/" fixed={false} top="0rem" />
