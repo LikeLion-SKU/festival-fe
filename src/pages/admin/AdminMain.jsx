@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 
 import CancelIcon from '@/assets/icons/admin/cancel_gray_icon.svg';
@@ -45,6 +45,18 @@ const NAV_ITEMS = [
   },
 ];
 
+const STATUS_TO_KEY = {
+  WAITING: 'wait',
+  COOKING: 'cook',
+  COMPLETED: 'complete',
+  COMPLETE: 'complete',
+  DONE: 'complete',
+  CANCELED: 'cancel',
+  CANCELLED: 'cancel',
+};
+
+const INITIAL_COUNTS = { wait: 0, cook: 0, complete: 0, cancel: 0 };
+
 export default function AdminMain() {
   const context = useOutletContext();
   const { setHeaderConfig } = useOutletContext();
@@ -53,11 +65,37 @@ export default function AdminMain() {
 
   const selected = NAV_ITEMS.find((item) => location.pathname.startsWith(item.goto))?.key ?? 'wait';
 
+  const [counts, setCounts] = useState(INITIAL_COUNTS);
+  const selectedRef = useRef(selected);
+
+  useEffect(() => {
+    selectedRef.current = selected;
+  }, [selected]);
+
   useEffect(() => {
     setHeaderConfig({
       title: '주문 관리',
     });
   }, [setHeaderConfig]);
+
+  // 자식 페이지에서 SSE orderNotification 수신 시 호출
+  const notifyOrderStatus = useCallback((orderStatus) => {
+    const key = STATUS_TO_KEY[orderStatus];
+    if (!key) return;
+    if (key === selectedRef.current) return;
+    setCounts((prev) => ({ ...prev, [key]: prev[key] + 1 }));
+  }, []);
+
+  // 자식 페이지가 mount될 때 호출하여 본인 탭 카운트를 0으로 비움
+  const clearCount = useCallback((key) => {
+    if (!key) return;
+    setCounts((prev) => (prev[key] ? { ...prev, [key]: 0 } : prev));
+  }, []);
+
+  const childContext = useMemo(
+    () => ({ ...context, notifyOrderStatus, clearCount }),
+    [context, notifyOrderStatus, clearCount]
+  );
 
   const moveToMenu = (item) => {
     navigate(item.goto);
@@ -73,12 +111,13 @@ export default function AdminMain() {
             activeIconUrl={item.activeIcon}
             name={item.name}
             isActive={selected === item.key}
+            count={counts[item.key] ?? 0}
             onClick={() => moveToMenu(item)}
           />
         ))}
       </nav>
       <div className="flex-1 overflow-auto">
-        <Outlet context={context} />
+        <Outlet context={childContext} />
       </div>
     </div>
   );

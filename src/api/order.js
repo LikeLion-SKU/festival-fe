@@ -17,3 +17,23 @@ export const subscribeOrder = (sseSubscribeType) => {
   const url = `/api/orders/subscribe?sseSubscribeType=${encodeURIComponent(sseSubscribeType)}`;
   return new EventSource(url, { withCredentials: true });
 };
+
+export const patchChangeOrderStatus = async (orderId, orderStatus) => {
+  const res = APIService.private.patch(
+    `/orders/${orderId}/status`,
+    {},
+    { params: { orderStatus: orderStatus } }
+  );
+
+  return res;
+};
+
+export const patchCanCelOrder = async (orderId, orderCancelReason) => {
+  const res = APIService.private.patch(
+    `/orders/${orderId}/cancel`,
+    {},
+    { params: { orderCancelReason: orderCancelReason } }
+  );
+
+  return res;
+};
