@@ -14,6 +14,7 @@ function OrderEntry() {
   const {
     boothId,
     boothName,
+    departmentName,
     location,
     isOpen,
     content,
@@ -54,6 +55,7 @@ function OrderEntry() {
       />
       <BoothInfoSection
         boothName={boothName}
+        departmentName={departmentName}
         location={location}
         isOpen={isOpen}
         content={content}

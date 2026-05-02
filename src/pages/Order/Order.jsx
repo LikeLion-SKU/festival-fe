@@ -121,6 +121,7 @@ function Order() {
       context={{
         boothId,
         boothName: boothInfo?.boothName ?? '',
+        departmentName: boothInfo?.departmentName ?? '',
         location: boothInfo?.locationDetail ?? '',
         isOpen: boothInfo?.open ?? false,
         content: boothInfo?.description ?? '',

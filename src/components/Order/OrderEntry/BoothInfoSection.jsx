@@ -4,7 +4,15 @@ import Skeleton from '@/components/common/Skeleton';
 
 const CONTENT_LIMIT = 150;
 
-function BoothInfoSection({ boothName, location, isOpen, content, images, isLoading }) {
+function BoothInfoSection({
+  boothName,
+  departmentName,
+  location,
+  isOpen,
+  content,
+  images,
+  isLoading,
+}) {
   const [expanded, setExpanded] = useState(false);
   const isLong = content?.length > CONTENT_LIMIT;
   const displayText = isLong && !expanded ? content.slice(0, CONTENT_LIMIT) : content;
@@ -34,14 +42,22 @@ function BoothInfoSection({ boothName, location, isOpen, content, images, isLoad
         )}
       </div>
       <div className="relative flex mt-2.5 gap-3">
-        <div className="w-7 h-5 font-semibold text-text-gray">위치</div>
+        <div className="w-7 h-5 font-medium text-text-gray">학과</div>
         {isLoading ? (
           <Skeleton className="w-24 h-5" />
         ) : (
-          <div className="w-16 h-5 font-semibold text-deep-gray">{location}</div>
+          <div className="h-5 font-medium text-deep-gray">{departmentName}</div>
         )}
       </div>
-      <div className="relative mt-6 text-sm text-deep-gray">
+      <div className="relative flex mt-1.5 gap-3">
+        <div className="w-7 h-5 font-medium text-text-gray">위치</div>
+        {isLoading ? (
+          <Skeleton className="w-24 h-5" />
+        ) : (
+          <div className="h-5 font-medium text-deep-gray">{location}</div>
+        )}
+      </div>
+      <div className="relative mt-6 text-sm font-normal text-deep-gray">
         {isLoading ? (
           <div className="flex flex-col gap-2">
             <Skeleton className="h-4 w-full" />
