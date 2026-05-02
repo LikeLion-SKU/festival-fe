@@ -24,18 +24,18 @@ const LINEUP_TEXT_GLOBAL_OFFSET_Y = '2.2rem';
 const LINEUP_TEXT_GLOBAL_TILT = -4;
 
 const LINEUP_AUTO_ROTATE_INTERVAL_MS = 5200;
-/** 버튼·스와이프 후 자동 재생은 이 간격만큼 건너뜀 — 직후 자동 전진이 역방향 조작과 겹치지 않게 */
+/** 버튼 혹은 스와이프 후 자동 재생은 이 간격만큼 건너뜀 — 직후 자동 전진이 역방향 조작과 겹치지 않게 함*/
 const LINEUP_AUTO_ROTATE_PAUSE_AFTER_MANUAL_MS = LINEUP_AUTO_ROTATE_INTERVAL_MS;
 const LINEUP_SWIPE_OFFSET_PX = 52;
 const LINEUP_SWIPE_VELOCITY_MIN = 380;
 /** 스냅 복귀 시 반대 방향 velocity 오판 방지 — 속도만으로 넘길 때 남은 변위 방향과 일치해야 함 */
 const LINEUP_SWIPE_AXIS_EPS_PX = 8;
-/** 네비 버튼 조작 직후 carousel dragEnd 오판 무시(ms) */
+
 const LINEUP_IGNORE_DRAG_AFTER_NAV_MS = 480;
 
 /**
- * id 순서 링에서 중앙 인덱스 기준 좌·중·우 슬롯.
- * swapSideNeighbors: true면 무대 좌·우 pose에 매핑되는 이웃만 바꿔 같은 cursor 증가 방향으로 반시계 느낌.
+ * id 순서 기준으로 카드 배치
+ * 왼쪽/오른쪽 버튼 클릭 시 방향 전환
  */
 function slotsFromIdRing(navIds, centerCursor, itemById, swapSideNeighbors = false) {
   const n = navIds.length;
@@ -67,7 +67,7 @@ function slotsFromIdRing(navIds, centerCursor, itemById, swapSideNeighbors = fal
 }
 
 /**
- * DOM 형제 순서를 item.id 기준으로 고정해 매 스텝마다 재정렬되지 않게 함.
+ * DOM 순서를 item.id 기준으로 고정해 매 스텝마다 재정렬되지 않게 함.
  */
 function sortSlotsStable(slots) {
   return [...slots].sort((a, b) => a.item.id - b.item.id);
@@ -153,9 +153,9 @@ export default function Lineup() {
   }, []);
 
   const [laneNav, setLaneNav] = useState(() => ({
-    /** 화살표·스와이프 등 수동 조작 후에는 좌/우 레인만 사용 */
+    /** 버튼 혹은 스와이프 등 수동 조작 후에는 좌/우 동작만 */
     arrowOrSwipeUsed: false,
-    /** 화살표 미사용 시 1→…→6 전체 순환 */
+    /** 뱌튼 미사용 시 1→2→3 전체 순환 */
     fullAutoCursor: 0,
     activeLane: 'left',
     cursorLeft: 0,
@@ -214,8 +214,7 @@ export default function Lineup() {
   const stableSlots = sortSlotsStable(visible);
 
   /**
-   * 무대·카드 너비 모두 rem 기준(px)이라 디자인 상수(336×312)와 어긋날 수 있음.
-   * 중앙 카드 왼쪽 = stage/2 - card/2 가 되도록 설계 좌표 대비 평행 이동량 계산.
+   * 중앙 카드 왼쪽 좌표 대비 평행 이동량 계산
    */
   useLayoutEffect(() => {
     const stageEl = stageRef.current;
