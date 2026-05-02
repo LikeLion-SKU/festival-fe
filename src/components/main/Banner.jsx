@@ -8,7 +8,7 @@ const BANNER_BACKGROUNDS = {
 
 export default function Banner({
   artist,
-  team = '경영학부 밴드',
+  team = '',
   time = '18:00 ~ 18:30',
   variant = 1,
   reverse = false,
@@ -31,6 +31,7 @@ export default function Banner({
 }) {
   const bannerImage = BANNER_BACKGROUNDS[variant] ?? WhiteBanner1;
   const timeSegments = time.split('★');
+  const showTeam = Boolean(team?.trim());
 
   return (
     <div className="relative w-full max-w-[22rem]">
@@ -46,8 +47,9 @@ export default function Banner({
             reverse ? 'items-end pr-[4.45rem] text-right' : 'pl-[4.45rem]'
           }`}
         >
-          <p
-            className={`text-[0.7rem] font-medium leading-none tracking-[-0.01em] text-[#545454]
+          {showTeam ? (
+            <p
+              className={`text-[0.7rem] font-medium leading-none tracking-[-0.01em] text-[#545454]
           ${
             variant === 1 || (variant === 2 && useVariant1TextLayoutForVariant2)
               ? reverse
@@ -59,11 +61,12 @@ export default function Banner({
                   : 'ml-[1.3rem] origin-left -rotate-[3deg]'
                 : ''
           }`}
-          >
-            {team}
-          </p>
+            >
+              {team.trim()}
+            </p>
+          ) : null}
           <p
-            className={`mt-[0.3rem] text-[1.85rem] font-black leading-none tracking-[0.02rem] text-[#cf3a23] ${
+            className={`${showTeam ? 'mt-[0.3rem]' : ''} text-[1.85rem] font-black leading-none tracking-[0.02rem] text-[#cf3a23] ${
               variant === 1 || (variant === 2 && useVariant1TextLayoutForVariant2)
                 ? reverse
                   ? 'mr-[3rem] origin-right rotate-[4.3deg]'

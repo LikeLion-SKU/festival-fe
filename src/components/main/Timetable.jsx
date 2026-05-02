@@ -5,33 +5,11 @@ import FireBg from '@/assets/images/fire1.svg';
 import FireBg2 from '@/assets/images/fire2.svg';
 import Singer1 from '@/assets/images/singer1.png';
 import Banner from '@/components/main/Banner';
+import { TIMETABLE_DAY_BANNERS } from '@/constants/timetableData';
 import {
   MAIN_SECTION_ICON_SCROLL_FADE,
   useScrollDrivenOpacity,
 } from '@/hooks/useScrollDrivenOpacity';
-
-const DAY_BANNERS = {
-  day2: [
-    { id: 1, artist: '세븐틴', time: '18:00 ★ ~ 18:30', variant: 1 },
-    { id: 2, artist: '지드래곤', time: '18:00 ★ ~ 18:30', variant: 2 },
-    { id: 3, artist: '엔하이픈', time: '18:00 ★ ~ 18:30', variant: 1 },
-    { id: 4, artist: '아이유', time: '18:00 ★ ~ 18:30', variant: 2 },
-    { id: 5, artist: '블랙핑크', time: '18:00 ★ ~ 18:30', variant: 1 },
-    { id: 6, artist: '방탄소년단', time: '18:00 ★ ~ 18:30', variant: 2 },
-    { id: 7, artist: '투어스', time: '18:00 ★ ~ 18:30', variant: 1 },
-    { id: 8, artist: '데이식스', time: '18:00 ★ ~ 18:30', variant: 2 },
-  ],
-  day3: [
-    { id: 1, artist: '윤희준', time: '18:00 ★ ~ 18:30', variant: 1 },
-    { id: 2, artist: '임다현', time: '18:00 ★ ~ 18:30', variant: 2 },
-    { id: 3, artist: '정영진', time: '18:00 ★ ~ 18:30', variant: 1 },
-    { id: 4, artist: '최운조', time: '18:00 ★ ~ 18:30', variant: 2 },
-    { id: 5, artist: '김정현', time: '18:00 ★ ~ 18:30', variant: 1 },
-    { id: 6, artist: '금시언', time: '18:00 ★ ~ 18:30', variant: 2 },
-    { id: 7, artist: '김나경', time: '18:00 ★ ~ 18:30', variant: 1 },
-    { id: 8, artist: '신채린', time: '18:00 ★ ~ 18:30', variant: 2 },
-  ],
-};
 
 export default function Timetable() {
   const [selectedDay, setSelectedDay] = useState('day2');
@@ -93,7 +71,7 @@ export default function Timetable() {
       </div>
 
       <div className="mx-auto mt-[1.5rem] flex w-full max-w-[24rem] flex-col gap-[0.05rem]">
-        {(DAY_BANNERS[selectedDay] ?? []).map((banner, index) => {
+        {(TIMETABLE_DAY_BANNERS[selectedDay] ?? []).map((banner, index) => {
           const isVariant2 = banner.variant === 2;
           const isVariant1 = banner.variant === 1;
           const isRightAligned = index % 2 === 1;
@@ -113,6 +91,7 @@ export default function Timetable() {
             >
               <Banner
                 artist={banner.artist}
+                team={banner.team ?? ''}
                 time={banner.time}
                 variant={banner.variant}
                 reverse={isRightAligned}
