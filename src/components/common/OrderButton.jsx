@@ -1,4 +1,4 @@
-import CheckIcon from '@/assets/icons/check_white_icon.svg?react';
+import CheckIcon from '@/assets/icons/check_white_Icon.svg?react';
 
 export default function OrderButton({
   width,
