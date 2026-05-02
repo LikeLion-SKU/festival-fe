@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import clsx from 'clsx';
@@ -14,6 +14,21 @@ import {
 } from '@/hooks/useScrollDrivenOpacity';
 
 const MAIN_BOOTH_CARDS_PER_BUILDING = 4;
+
+function getBoothCardCenterTransform(index) {
+  switch (index) {
+    case 0:
+      return 'translate3d(58%, 55%, 0) rotate(8deg) scale(0.84)';
+    case 1:
+      return 'translate3d(-58%, 55%, 0) rotate(-8deg) scale(0.84)';
+    case 2:
+      return 'translate3d(58%, -55%, 0) rotate(5deg) scale(0.88)';
+    case 3:
+      return 'translate3d(-58%, -55%, 0) rotate(-5deg) scale(0.88)';
+    default:
+      return 'translate3d(0, 55%, 0) scale(0.86)';
+  }
+}
 
 function getTitleLines(title) {
   if (!Array.isArray(title)) {
@@ -95,7 +110,22 @@ export default function Booth() {
   const navigate = useNavigate();
   const [activeBuildingId, setActiveBuildingId] = useState(BUILDINGS[0].id);
   const iconBlockRef = useRef(null);
+  const cardsGridRef = useRef(null);
+  const hasCardsGridEnteredRef = useRef(false);
+  const settleTimerRef = useRef(null);
+  const [isCardsSettled, setIsCardsSettled] = useState(false);
   const iconOpacity = useScrollDrivenOpacity(iconBlockRef, MAIN_SECTION_ICON_SCROLL_FADE);
+
+  const runCardsEntrance = useCallback(() => {
+    if (settleTimerRef.current) {
+      window.clearTimeout(settleTimerRef.current);
+    }
+    setIsCardsSettled(false);
+    settleTimerRef.current = window.setTimeout(() => {
+      setIsCardsSettled(true);
+      settleTimerRef.current = null;
+    }, 180);
+  }, []);
 
   const visibleCards = useMemo(
     () =>
@@ -106,11 +136,49 @@ export default function Booth() {
     [activeBuildingId]
   );
 
+  useEffect(() => {
+    const grid = cardsGridRef.current;
+    if (!grid) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting || hasCardsGridEnteredRef.current) return;
+          hasCardsGridEnteredRef.current = true;
+          runCardsEntrance();
+          observer.disconnect();
+        });
+      },
+      { threshold: 0.2, rootMargin: '0px 0px -10% 0px' }
+    );
+
+    observer.observe(grid);
+    return () => observer.disconnect();
+  }, [runCardsEntrance]);
+
+  useEffect(
+    () => () => {
+      if (settleTimerRef.current) window.clearTimeout(settleTimerRef.current);
+    },
+    []
+  );
+
   return (
     <section
       id="booth"
       className="relative min-h-[46rem] overflow-hidden bg-[#141414] px-[1.5rem] pb-[9.0rem] pt-[2.5rem]"
     >
+      <style>{`
+        @keyframes booth-card-scatter {
+          from {
+            transform: var(--booth-from-transform);
+          }
+          to {
+            transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+          }
+        }
+      `}</style>
+
       <div className="pointer-events-none absolute left-1/2 top-[-29rem] z-0 flex w-[28.125rem] max-w-none -translate-x-1/2 flex-col">
         <img src={FenceBg} alt="" aria-hidden="true" className="w-full object-cover" />
         <img src={DesertBg} alt="" aria-hidden="true" className="-mt-[20rem] w-full object-cover" />
@@ -142,7 +210,10 @@ export default function Booth() {
                   type="button"
                   role="tab"
                   aria-selected={active}
-                  onClick={() => setActiveBuildingId(b.id)}
+                  onClick={() => {
+                    setActiveBuildingId(b.id);
+                    if (hasCardsGridEnteredRef.current) runCardsEntrance();
+                  }}
                   className={clsx(
                     'h-9 w-[clamp(2.2rem,14.5vw,3.5rem)] min-w-0 border border-solid border-white px-1 text-center text-[clamp(0.62rem,2.65vw,0.75rem)] tracking-[-0.01875rem] whitespace-nowrap transition-colors sm:px-3',
                     active
@@ -157,14 +228,22 @@ export default function Booth() {
           </div>
         </div>
 
-        <div className="grid w-full grid-cols-2 gap-x-4 gap-y-4">
-          {visibleCards.map((card) => (
-            <BoothCard
+        <div ref={cardsGridRef} className="grid w-full grid-cols-2 gap-x-4 gap-y-4">
+          {visibleCards.map((card, index) => (
+            <div
               key={card.id}
-              image={card.image}
-              subtitle={card.subtitle}
-              title={card.title}
-            />
+              style={{
+                '--booth-from-transform': getBoothCardCenterTransform(index),
+                willChange: 'transform, opacity',
+                transform: isCardsSettled ? undefined : getBoothCardCenterTransform(index),
+                animation: isCardsSettled
+                  ? `booth-card-scatter 1200ms cubic-bezier(0.16,0.84,0.22,1) ${index * 30}ms both`
+                  : 'none',
+              }}
+              className="transform-gpu opacity-100"
+            >
+              <BoothCard image={card.image} subtitle={card.subtitle} title={card.title} />
+            </div>
           ))}
         </div>
 

@@ -10,43 +10,42 @@ import BoothImagePlaceholder from '@/assets/images/booth_image.svg';
 /** @type {Record<string, Omit<BoothDepartmentRow, 'id'>[]>} */
 const RAW_DEPARTMENTS_BY_BUILDING = {
   cheongun: [
-    { department: '융합대', locationDetail: '청운관 내' },
-    { department: '스텍', locationDetail: '청운관 내' },
-    { department: '중어', locationDetail: '청운관 내' },
-    { department: '일어', locationDetail: '청운관 내' },
-    { department: '도공', locationDetail: '청운관 내' },
+    { department: '융합대', locationDetail: '청운관 앞' },
+    { department: '스포츠앤테크놀리지학과', locationDetail: '청운관 앞' },
+    { department: '중어전공', locationDetail: '청운관 앞' },
+    { department: '일어전공', locationDetail: '청운관 앞' },
+    { department: '도시공학과', locationDetail: '청운관 앞' },
   ],
   daeil: [
-    { department: '나화생', locationDetail: '대일관 내' },
-    { department: '토목', locationDetail: '대일관 내' },
-    { department: '전컴', locationDetail: '대일관 내' },
-    { department: '금공', locationDetail: '대일관 내' },
-    { department: '물공', locationDetail: '대일관 내' },
-    { department: '이공대', locationDetail: '대일관 내' },
+    { department: '나노화학생명공학과', locationDetail: '대일관 앞' },
+    { department: '토목건축공학과', locationDetail: '대일관 앞' },
+    { department: '전자컴퓨터공학과', locationDetail: '대일관 앞' },
+    { department: '금융정보공학과', locationDetail: '대일관 앞' },
+    { department: '물류시스템공학과', locationDetail: '대일관 앞' },
+    { department: '이공대', locationDetail: '대일관 앞' },
   ],
   eunju1: [
-    { department: '소웨', locationDetail: '은주1관 내' },
-    { department: '미융1', locationDetail: '은주1관 내' },
-    { department: '미융2', locationDetail: '은주1관 내' },
-    { department: '공공', locationDetail: '은주1관 내' },
-    { department: '경영', locationDetail: '은주1관 내' },
-    { department: '아동', locationDetail: '은주1관 내' },
+    { department: '소프트웨어학과', locationDetail: '은주1관 앞' },
+    { department: '미래융합대학1', locationDetail: '은주1관 앞' },
+    { department: '미래융합대학2', locationDetail: '은주1관 앞' },
+    { department: '공공인재학부', locationDetail: '은주1관 앞' },
+    { department: '경영학부', locationDetail: '은주1관 앞' },
+    { department: '아동청소년학과', locationDetail: '은주1관 앞' },
   ],
   eunju2: [
-    { department: '예술대', locationDetail: '은주2관 내' },
-    { department: '영화', locationDetail: '은주2관 내' },
-    { department: '디자인', locationDetail: '은주2관 내' },
-    { department: '실음', locationDetail: '은주2관 내' },
-    { department: '미예', locationDetail: '은주2관 내 (A)' },
-    { department: '미예', locationDetail: '은주2관 내 (B)' },
-    { department: '광홍영', locationDetail: '은주2관 내' },
-    { department: '사과대', locationDetail: '은주2관 내' },
-    { department: '군사', locationDetail: '은주2관 내' },
+    { department: '예술대', locationDetail: '은주2관 앞' },
+    { department: '영화영상학과', locationDetail: '은주2관 앞' },
+    { department: '디자인학부', locationDetail: '은주2관 앞' },
+    { department: '실용음악학부', locationDetail: '은주2관 앞' },
+    { department: '미용예술학부', locationDetail: '은주2관 앞' },
+    { department: '광고홍보영상학과', locationDetail: '은주2관 앞' },
+    { department: '사과대', locationDetail: '은주2관 앞' },
+    { department: '군사학과', locationDetail: '은주2관 앞' },
   ],
   hyein: [
-    { department: '총동연', locationDetail: '혜인관 내' },
-    { department: '신문사', locationDetail: '혜인관 내' },
-    { department: '총학', locationDetail: '혜인관 내' },
+    { department: '총동아리연합회', locationDetail: '혜인관 앞' },
+    { department: '신문사', locationDetail: '혜인관 앞' },
+    { department: '총학생회', locationDetail: '혜인관 앞' },
   ],
 };
 
@@ -92,6 +91,9 @@ export const BOOTH_CARDS_FROM_BUILDINGS = Object.keys(RAW_DEPARTMENTS_BY_BUILDIN
       buildingId,
       image: BoothImagePlaceholder,
       subtitle: row.locationDetail,
-      title: row.department,
+      title:
+        row.department === '스포츠앤테크놀리지학과'
+          ? ['스포츠앤', '테크놀리지학과']
+          : row.department,
     }))
 );
