@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import clsx from 'clsx';
 
@@ -85,6 +86,7 @@ function BoothCard({ image, subtitle, title }) {
 }
 
 export default function Booth() {
+  const navigate = useNavigate();
   const [activeBuildingId, setActiveBuildingId] = useState(BUILDINGS[0].id);
 
   const visibleCards = useMemo(
@@ -152,6 +154,7 @@ export default function Booth() {
 
         <button
           type="button"
+          onClick={() => navigate('/booth-map')}
           className="mt-4 flex h-[3.25rem] w-full shrink-0 items-center justify-center border border-solid border-white bg-[rgba(255,255,255,0.15)] px-4 py-[0.875rem] text-base font-semibold leading-6 tracking-[-0.025rem] text-white shadow-[1px_1px_0px_rgba(0,0,0,0.12)]"
         >
           한눈에 보기

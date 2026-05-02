@@ -10,7 +10,7 @@ import Toast from '@/components/common/Toast';
 
 function OrderPay() {
   const navigate = useNavigate();
-  const { HeroImage, boothId } = useOutletContext();
+  const { thumbnailUrl, boothId } = useOutletContext();
   const { state } = useLocation();
 
   const { orderResponse, orderType } = state || {};
@@ -48,7 +48,7 @@ function OrderPay() {
 
       <div className="flex-1 overflow-y-auto min-h-0 px-5 flex flex-col items-center pt-12 gap-2.5">
         <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 shrink-0">
-          <HeroImage className="w-full h-full" />
+          <img src={thumbnailUrl} className="w-full h-full object-cover" />
         </div>
 
         <div className="text-center mt-8">

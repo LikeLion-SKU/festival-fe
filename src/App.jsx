@@ -36,6 +36,7 @@ const router = createBrowserRouter([
             lazy: page(() => import('@/pages/LostItem/LostItemEdit')),
           },
           { path: '/lost-items/:id', lazy: page(() => import('@/pages/LostItem/LostItemDetail')) },
+          { path: '/booth-map', lazy: page(() => import('@/pages/Booth/BoothMap')) },
         ],
       },
     ],

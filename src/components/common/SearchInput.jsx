@@ -1,12 +1,12 @@
 export default function SearchInput({ placeholder, value, onChange }) {
   return (
-    <div className="flex items-center justify-between px-[1.25rem] h-[3.25rem] border border-[#A0A0A0]/40 bg-[#353535]/20">
+    <div className="box-border flex h-[3.25rem] w-full items-center justify-between overflow-hidden border border-[#A0A0A0]/40 bg-[#353535]/20 px-[1.25rem]">
       <input
         type="text"
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="flex-1 bg-transparent text-white text-[0.875rem] font-semibold placeholder:text-[#A0A0A0] outline-none"
+        className="min-w-0 flex-1 bg-transparent text-[0.875rem] font-semibold text-white placeholder:text-[#A0A0A0] outline-none"
         style={{ letterSpacing: '-0.025em', lineHeight: '1.25rem' }}
       />
       <svg

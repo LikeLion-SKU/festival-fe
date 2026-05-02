@@ -148,7 +148,7 @@ export default function Menu() {
                 </span>
               </Link>
 
-              <Link to="/#booth" className={`${MENU_ROW_BTN} ${MENU_ROW_BTN_ACTIVE}`}>
+              <Link to="/booth-map" className={`${MENU_ROW_BTN} ${MENU_ROW_BTN_ACTIVE}`}>
                 <span className="flex flex-1 items-center justify-center gap-[0.625rem]">
                   <MenuRowHorseIcons />
                   <span className={MENU_ROW_LABEL}>부스 안내</span>
