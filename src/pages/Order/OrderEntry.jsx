@@ -14,45 +14,68 @@ function OrderEntry() {
   const {
     boothId,
     boothName,
+    departmentName,
     location,
     isOpen,
     content,
-    HeroImage,
+    thumbnailUrl,
     images,
     buttonName,
     nightMenus,
     dayMenus,
+    orderAvailable,
+    onLangChange,
+    isLoading,
   } = useOutletContext();
 
-  const [isNight, setIsNight] = useState(true);
+  const hasDay = dayMenus?.length > 0;
+  const hasNight = nightMenus?.length > 0;
+  const canToggle = hasDay && hasNight;
+
+  const [isNight, setIsNight] = useState(() => hasNight);
   const TimeImage = isNight ? MoonIcon : SunIcon;
   const ToggleIcon = isNight ? NightToggle : MorningToggle;
   const word = isNight ? '밤' : '낮';
   const navigate = useNavigate();
 
+  const activeMenus = canToggle
+    ? isNight
+      ? nightMenus
+      : dayMenus
+    : hasNight
+      ? nightMenus
+      : dayMenus;
+
   return (
     <>
-      <BoothImageSection Image={HeroImage} />
+      <BoothImageSection
+        thumbnailUrl={thumbnailUrl}
+        onLangChange={onLangChange}
+        isLoading={isLoading}
+      />
       <BoothInfoSection
         boothName={boothName}
+        departmentName={departmentName}
         location={location}
         isOpen={isOpen}
         content={content}
         images={images}
+        isLoading={isLoading}
       />
       <MenuSection
         word={word}
         isNight={isNight}
+        canToggle={canToggle}
         onToggle={() => setIsNight((prev) => !prev)}
         Image={TimeImage}
         Icon={ToggleIcon}
-        menus={isNight ? nightMenus : dayMenus}
+        menus={activeMenus}
       />
       <div className="h-28" />
       <OrderButtonBox
         className="relative z-1 "
         buttonName={buttonName}
-        isActive={isOpen}
+        isActive={orderAvailable}
         onClick={() => navigate(`/order/${boothId}/progress`)}
       />
     </>
