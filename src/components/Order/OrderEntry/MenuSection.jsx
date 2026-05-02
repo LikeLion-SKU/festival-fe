@@ -16,7 +16,7 @@ function MenuSection({ word, isNight, canToggle, onToggle, Image, Icon, menus, i
           {canToggle && <Icon />}
         </div>
       </div>
-      <div className={`w-full h-0.5 mt-3 ${isQR ? 'bg-gray-200' : 'bg-white/20'}`} />
+      <div className={`w-full h-0.5 mt-3 ${isQR ? 'bg-gray-200' : 'bg-white'}`} />
       <div className="w-full inline-flex flex-wrap mt-2">
         {menus.map((menu, index) => (
           <div key={index} className="w-1/2 px-4 py-1 flex justify-between items-start gap-2">
