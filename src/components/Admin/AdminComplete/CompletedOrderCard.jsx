@@ -2,16 +2,6 @@ import ReturnIcon from '@/assets/icons/admin/return_icon.svg?react';
 
 const formatPrice = (n) => `${n.toLocaleString('ko-KR')}원`;
 
-// 받침 없거나 ㄹ 받침이면 "로", 그 외 받침이면 "으로"
-const reasonParticle = (str) => {
-  if (!str) return '으로';
-  const last = str[str.length - 1];
-  const code = last.charCodeAt(0);
-  if (code < 0xac00 || code > 0xd7a3) return '으로';
-  const final = (code - 0xac00) % 28;
-  return final === 0 || final === 8 ? '로' : '으로';
-};
-
 export default function CompletedOrderCard({
   tableNumber,
   peopleCount,
@@ -19,7 +9,7 @@ export default function CompletedOrderCard({
   completeTime,
   customerName,
   phone,
-  orderItems = [],
+  items = [],
   totalAmount,
   completedDate,
   cancelReason,
@@ -51,8 +41,7 @@ export default function CompletedOrderCard({
         {cancelReason && (
           <div className="flex w-full items-center">
             <p className="text-[14px] font-semibold tracking-[-0.35px] text-deep-gray">
-              <span className="text-[#FF756C]">{cancelReason}</span>
-              {reasonParticle(cancelReason)} 인한 취소
+              <span className="text-[#FF756C]">{cancelReason}</span>으로 인한 취소
             </p>
           </div>
         )}
@@ -72,19 +61,19 @@ export default function CompletedOrderCard({
       </div>
 
       <div className="flex w-full flex-col">
-        {orderItems.map((item, idx) => (
+        {items.map((item, idx) => (
           <div
             key={idx}
             className={`flex h-10 items-center justify-between px-2 ${
-              idx < orderItems.length - 1 ? 'border-b border-dashed border-[#EFEFEF]' : ''
+              idx < items.length - 1 ? 'border-b border-dashed border-[#EFEFEF]' : ''
             }`}
           >
             <div className="flex items-center gap-2">
-              <span className="text-[14px] font-medium text-deep-gray">{item.menuName}</span>
+              <span className="text-[14px] font-medium text-deep-gray">{item.name}</span>
               <span className="text-[14px] font-medium text-[#A0A0A0]">x{item.quantity}</span>
             </div>
             <span className="text-[14px] font-medium text-deep-gray">
-              {formatPrice(item.totalOrderItemPrice)}
+              {formatPrice(item.price)}
             </span>
           </div>
         ))}

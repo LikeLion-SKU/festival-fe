@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 
 import HatIcon from '@/assets/icons/hat.svg';
 import ZeroIcon from '@/assets/icons/main/0.svg';
@@ -7,6 +8,7 @@ import ThreeIcon from '@/assets/icons/main/3.svg';
 import FiveIcon from '@/assets/icons/main/5.svg';
 import HyphenIcon from '@/assets/icons/main/hypen.svg';
 import SpotIcon from '@/assets/icons/main/spot.svg';
+import MenuButton from '@/components/common/Button/MenuButton';
 
 function DateDot() {
   return (
@@ -25,13 +27,10 @@ function DateDot() {
 }
 
 export default function Intro() {
+  const navigate = useNavigate();
   const videoRef = useRef(null);
   const hasStoppedRef = useRef(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
-  /** 리로드나 재라우팅 시 새 media 요소로 캐시된 재생 위치 섞임 방지 */
-  const [videoMountKey] = useState(
-    () => globalThis.crypto?.randomUUID?.() ?? `intro-video-${Date.now()}`
-  );
 
   useEffect(() => {
     const el = videoRef.current;
@@ -39,48 +38,15 @@ export default function Intro() {
 
     el.muted = true;
     el.defaultMuted = true;
+    el.currentTime = 0;
     hasStoppedRef.current = false;
-
-    let kicked = false;
-    const playFromStart = () => {
-      if (kicked) return;
-      kicked = true;
-      el.currentTime = 0;
-      hasStoppedRef.current = false;
-      el.play().catch(() => {});
-    };
-
-    const onReady = () => playFromStart();
-    el.addEventListener('canplay', onReady, { once: true });
-    el.addEventListener('loadeddata', onReady, { once: true });
-    el.load();
-
     const tryPlay = () => {
       el.play().catch(() => {});
     };
-    const retryTimer = window.setTimeout(tryPlay, 160);
 
-    return () => {
-      el.removeEventListener('canplay', onReady);
-      el.removeEventListener('loadeddata', onReady);
-      window.clearTimeout(retryTimer);
-    };
-  }, []);
-
-  useEffect(() => {
-    const onPageShow = (e) => {
-      if (!e.persisted) return;
-      const el = videoRef.current;
-      if (!el) return;
-      hasStoppedRef.current = false;
-      setVideoLoaded(false);
-      el.pause();
-      el.currentTime = 0;
-      el.load();
-      el.play().catch(() => {});
-    };
-    window.addEventListener('pageshow', onPageShow);
-    return () => window.removeEventListener('pageshow', onPageShow);
+    tryPlay();
+    const timer = window.setTimeout(tryPlay, 120);
+    return () => window.clearTimeout(timer);
   }, []);
 
   return (
@@ -92,7 +58,6 @@ export default function Intro() {
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 bg-[#121212]" />
       )}
       <video
-        key={videoMountKey}
         ref={videoRef}
         autoPlay
         muted
@@ -100,7 +65,7 @@ export default function Intro() {
         loop={false}
         playsInline
         controls={false}
-        preload="auto"
+        preload="metadata"
         disablePictureInPicture
         controlsList="nodownload noplaybackrate noremoteplayback"
         onLoadedData={(e) => {
@@ -127,10 +92,10 @@ export default function Intro() {
       </video>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[8rem]"
+        className="pointer-events-none absolute inset-x-0 bottom-[0rem] z-[1] h-[58rem]"
         style={{
           background:
-            'linear-gradient(180deg, rgba(18,18,18,0) 0%, rgba(18,18,18,0) 22%, rgba(0,0,0,0.1) 40%, rgba(18,18,18,0.38) 58%, rgba(18,18,18,0.80) 80%, rgba(18,18,18,0.94) 88%,rgba(0,0,0,1) 100%, #121212 100%)',
+            'linear-gradient(180deg, rgba(0,0,0,0.05) 0%,rgba(0,0,0,0.05) 85%, rgba(18,18,18,0.5) 90%, rgba(18,18,18,0.5) 95%, rgba(18,18,18,0.7) 97%, rgba(0,0,0,1) 100%)',
         }}
       />
       <div className="relative z-[10] flex flex-1 flex-col items-center justify-between">
@@ -158,6 +123,7 @@ export default function Intro() {
             </div>
           </div>
         </div>
+        <MenuButton className="shrink-0" onClick={() => navigate('/menu')} />
       </div>
     </section>
   );

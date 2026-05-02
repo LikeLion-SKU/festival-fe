@@ -4,10 +4,8 @@ import { useNavigate, useOutletContext } from 'react-router';
 import OrderButtonBox from '@/components/Order/OrderEntry/OrderButtonBox';
 import FoodNavbar from '@/components/Order/OrderProgress/FoodNavbar';
 import MenuSection from '@/components/Order/OrderProgress/MenuSection';
-import Loading from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import OrderHeader from '@/components/common/OrderHeader';
-import { getLangFontClass } from '@/utils/langFont';
 
 const CATEGORY_MAP = { 메인: 'main', 사이드: 'side', 음료: 'drink' };
 const CATEGORY_ORDER = ['main', 'side', 'drink'];
@@ -15,18 +13,8 @@ const CATEGORY_LABEL_MAP = { main: '메인', side: '사이드', drink: '음료' 
 
 function OrderProgress() {
   const navigate = useNavigate();
-  const {
-    boothId,
-    departmentName,
-    lang,
-    foodData,
-    quantities,
-    onSelect,
-    onIncrease,
-    onDecrease,
-    onReset,
-    isMenuLoading,
-  } = useOutletContext();
+  const { boothId, boothName, foodData, quantities, onSelect, onIncrease, onDecrease, onReset } =
+    useOutletContext();
 
   const [activeCategory, setActiveCategory] = useState('메인');
   const [showBackModal, setShowBackModal] = useState(false);
@@ -71,12 +59,10 @@ function OrderProgress() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white relative">
-      {isMenuLoading && <Loading />}
+    <div className="flex flex-col h-full bg-white">
       <div className="shrink-0">
         <OrderHeader
-          title={departmentName}
-          titleClassName={getLangFontClass(lang)}
+          title={boothName}
           showBackButton
           onBack={() => (hasSelection ? setShowBackModal(true) : navigate(-1))}
         />
@@ -95,7 +81,6 @@ function OrderProgress() {
           onSelect={onSelect}
           onIncrease={onIncrease}
           onDecrease={onDecrease}
-          lang={lang}
         />
         <div className="h-25" />
       </div>

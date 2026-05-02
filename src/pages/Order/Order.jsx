@@ -2,9 +2,43 @@ import { useEffect, useState } from 'react';
 import { Outlet, useParams } from 'react-router';
 
 import { getBoothInfo } from '@/api/booth';
-import { getOrderAvailableMenus } from '@/api/boothMenu';
-import Toast from '@/components/common/Toast';
-import { formatBoothLocationKo } from '@/constants/boothBuildingData';
+import Noodle from '@/assets/icons/noodle.svg';
+
+const foodData = [
+  {
+    boothMenuId: 11,
+    image: Noodle,
+    name: '타코야끼',
+    description: '',
+    price: 6000,
+    category: 'main',
+  },
+  {
+    boothMenuId: 12,
+    image: Noodle,
+    name: '야끼소바',
+    description: '',
+    price: 8000,
+    category: 'main',
+  },
+  {
+    boothMenuId: 13,
+    image: Noodle,
+    name: '블루레몬에이드',
+    description: '시원',
+    price: 3000,
+    category: 'drink',
+  },
+  {
+    boothMenuId: 14,
+    image: Noodle,
+    name: '자몽에이드',
+    description: '시원',
+    price: 3000,
+    category: 'drink',
+    soldOut: true,
+  },
+];
 
 function Order() {
   const { boothId } = useParams();
@@ -12,10 +46,6 @@ function Order() {
   const [loadedKey, setLoadedKey] = useState(null);
   const [lang, setLang] = useState(sessionStorage.getItem('language') || 'KO');
   const isLoading = loadedKey !== `${boothId}-${lang}`;
-  const [foodData, setFoodData] = useState([]);
-  const [menuLoadedBoothId, setMenuLoadedBoothId] = useState(null);
-  const isMenuLoading = menuLoadedBoothId !== boothId;
-  const [errorToast, setErrorToast] = useState({ visible: false, message: '' });
   const [quantities, setQuantities] = useState(() => {
     const saved = sessionStorage.getItem('orderQuantities');
     return saved ? JSON.parse(saved) : {};
@@ -26,16 +56,6 @@ function Order() {
     setLang(code);
   };
 
-  const showError = (error) => {
-    const status = error?.response?.status;
-    if (status === 404) return;
-    const message =
-      status >= 500
-        ? '서버 오류가 발생했어요. 잠시 후 다시 시도해주세요.'
-        : '데이터를 불러오는 중 오류가 발생했어요.';
-    setErrorToast({ visible: true, message });
-  };
-
   useEffect(() => {
     getBoothInfo(boothId, lang)
       .then((res) => {
@@ -43,29 +63,9 @@ function Order() {
         setBoothInfo(data);
         sessionStorage.setItem('departmentName', data.departmentName);
       })
-      .catch(showError)
+      .catch(console.error)
       .finally(() => setLoadedKey(`${boothId}-${lang}`));
   }, [boothId, lang]);
-
-  useEffect(() => {
-    getOrderAvailableMenus(boothId)
-      .then((res) => {
-        const flat = Object.entries(res.data).flatMap(([category, items]) =>
-          items.map((item) => ({
-            boothMenuId: item.menuId,
-            name: item.name,
-            description: item.description,
-            iconImageUrl: item.iconImageUrl,
-            price: item.price,
-            soldOut: item.soldOut,
-            category,
-          }))
-        );
-        setFoodData(flat);
-      })
-      .catch(showError)
-      .finally(() => setMenuLoadedBoothId(boothId));
-  }, [boothId]);
 
   const handleReset = () => {
     setQuantities({});
@@ -93,22 +93,19 @@ function Order() {
   useEffect(() => {
     sessionStorage.setItem('orderQuantities', JSON.stringify(quantities));
 
-    const cart = Object.entries(quantities)
-      .map(([key, qty]) => {
-        const [cat, idx] = key.split('-');
-        const item = foodData.filter((i) => i.category === cat)[parseInt(idx)];
-        if (!item) return null;
-        return {
-          key,
-          boothMenuId: item.boothMenuId,
-          name: item.name,
-          price: item.price,
-          quantity: qty,
-        };
-      })
-      .filter(Boolean);
+    const cart = Object.entries(quantities).map(([key, qty]) => {
+      const [cat, idx] = key.split('-');
+      const item = foodData.filter((i) => i.category === cat)[parseInt(idx)];
+      return {
+        key,
+        boothMenuId: item.boothMenuId,
+        name: item.name,
+        price: item.price,
+        quantity: qty,
+      };
+    });
     sessionStorage.setItem('orderCart', JSON.stringify(cart));
-  }, [quantities, foodData]);
+  }, [quantities]);
 
   useEffect(() => {
     return () => {
@@ -120,43 +117,31 @@ function Order() {
   }, []);
 
   return (
-    <>
-      <Toast
-        visible={errorToast.visible}
-        message={errorToast.message}
-        icon="warning"
-        onClose={() => setErrorToast({ visible: false, message: '' })}
-      />
-      <Outlet
-        context={{
-          boothId,
-          boothName: boothInfo?.boothName ?? '',
-          departmentName: boothInfo?.departmentName ?? '',
-
-          location: formatBoothLocationKo(boothInfo?.location ?? boothInfo?.locationDetail ?? ''),
-
-          isOpen: boothInfo?.open ?? false,
-          content: boothInfo?.description ?? '',
-          thumbnailUrl: boothInfo?.thumbnailUrl ?? null,
-          images: boothInfo?.detailImages?.map((d) => d.imageUrl) ?? [],
-          dayMenus: boothInfo?.menus?.day ?? [],
-          nightMenus: boothInfo?.menus?.night ?? [],
-          orderAvailable: boothInfo?.orderAvailable ?? false,
-          buttonName: '주문하러 가기',
-          foodData,
-          quantities,
-          onSelect: handleSelect,
-          onIncrease: handleIncrease,
-          onRemove: handleRemove,
-          onDecrease: handleDecrease,
-          lang,
-          isLoading,
-          isMenuLoading,
-          onReset: handleReset,
-          onLangChange: handleLangChange,
-        }}
-      />
-    </>
+    <Outlet
+      context={{
+        boothId,
+        boothName: boothInfo?.boothName ?? '',
+        departmentName: boothInfo?.departmentName ?? '',
+        location: boothInfo?.locationDetail ?? '',
+        isOpen: boothInfo?.open ?? false,
+        content: boothInfo?.description ?? '',
+        thumbnailUrl: boothInfo?.thumbnailUrl ?? null,
+        images: boothInfo?.detailImages?.map((d) => d.imageUrl) ?? [],
+        dayMenus: boothInfo?.menus?.day ?? [],
+        nightMenus: boothInfo?.menus?.night ?? [],
+        orderAvailable: boothInfo?.orderAvailable ?? false,
+        buttonName: '주문하러 가기',
+        foodData,
+        quantities,
+        onSelect: handleSelect,
+        onIncrease: handleIncrease,
+        onRemove: handleRemove,
+        onDecrease: handleDecrease,
+        isLoading,
+        onReset: handleReset,
+        onLangChange: handleLangChange,
+      }}
+    />
   );
 }
 

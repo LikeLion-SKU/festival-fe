@@ -1,39 +1,30 @@
 import { useRef, useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import { login } from '@/api/auth';
+import { postLogin } from '@/api/login';
 import CheckIcon from '@/assets/icons/admin/check_red_icon.svg?react';
 import WrningIcon from '@/assets/icons/admin/warning_orange_icon.svg?react';
 import DepartmentBox from '@/components/Admin/AdminLogin/DepartmentBox';
 import PasswordBox from '@/components/Admin/AdminLogin/PasswordBox';
 import OrderButton from '@/components/common/OrderButton';
 
-import LoginSplash from './LoginSplash';
-
 export default function AdminLogin() {
   const [department, setDepartment] = useState('');
   const [password, setPassword] = useState('');
   const [isFail, setIsFail] = useState(false);
-  const [showSplash, setShowSplash] = useState(false);
   const navigate = useNavigate();
   const passwordInputRef = useRef(null);
-  const { setIsLoading } = useOutletContext() ?? {};
 
-  const onClicklogin = async () => {
-    setIsLoading?.(true);
+  const login = async () => {
     try {
-      const res = await login({ departmentName: department.departmentName, password });
-      if (res.data?.boothId) localStorage.setItem('boothId', res.data.boothId);
+      await postLogin(department.departmentName, password);
 
       setIsFail(false);
-      setShowSplash(true);
-      setTimeout(() => navigate('/admin/waiting'), 3000);
+      navigate('/admin/waiting');
     } catch (error) {
       console.log('로그인 실패 : ' + error);
       setIsFail(true);
       passwordInputRef.current?.focus();
-    } finally {
-      setIsLoading?.(false);
     }
   };
 
@@ -80,12 +71,10 @@ export default function AdminLogin() {
           width="21.5rem"
           height="3.25rem"
           color={department && password ? '#FE5F54' : '#C9C9C9'}
-          onClick={department && password ? onClicklogin : () => {}}
+          onClick={department && password ? login : ''}
           buttonName="로그인"
         />
       </div>
-
-      {showSplash && <LoginSplash />}
     </div>
   );
 }

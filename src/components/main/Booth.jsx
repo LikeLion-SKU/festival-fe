@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import clsx from 'clsx';
@@ -7,39 +7,9 @@ import HorseIcon from '@/assets/icons/horse.svg';
 import BoothPaper from '@/assets/images/booth-paper.svg';
 import DesertBg from '@/assets/images/desert.svg';
 import FenceBg from '@/assets/images/fence.svg';
-import {
-  MAIN_SECTION_ICON_SCROLL_FADE,
-  useScrollDrivenOpacity,
-} from '@/components/animation/useScrollDrivenOpacity';
 import { BOOTH_CARDS, BUILDINGS } from '@/constants/mainDummyData';
 
 const MAIN_BOOTH_CARDS_PER_BUILDING = 4;
-
-const BOOTH_SPREAD_MS = 1580;
-const BOOTH_SPREAD_EASE = 'cubic-bezier(0.22,1,0.36,1)';
-/** opacity는 카드별로 지정해지면 진해지니까 그룹 자체로 적용시킴*/
-const BOOTH_STACKED_GROUP_OPACITY = 0.9;
-
-/** 스프레드 시작: 중앙에서 카드들이 모인 상태*/
-function getBoothCardCenterTransform(index) {
-  switch (index) {
-    case 0:
-      return 'translate3d(58%, 55%, 0) rotate(8deg) scale(0.84)';
-    case 1:
-      return 'translate3d(-58%, 55%, 0) rotate(-8deg) scale(0.84)';
-    case 2:
-      return 'translate3d(58%, -55%, 0) rotate(5deg) scale(0.88)';
-    case 3:
-      return 'translate3d(-58%, -55%, 0) rotate(-5deg) scale(0.88)';
-    default:
-      return 'translate3d(0, 55%, 0) scale(0.86)';
-  }
-}
-
-/** 짧은 간격으로 순차적으로  */
-function getBoothCardScatterDelayMs(index) {
-  return Math.round(index * 38);
-}
 
 function getTitleLines(title) {
   if (!Array.isArray(title)) {
@@ -120,23 +90,6 @@ function BoothCard({ image, subtitle, title }) {
 export default function Booth() {
   const navigate = useNavigate();
   const [activeBuildingId, setActiveBuildingId] = useState(BUILDINGS[0].id);
-  const iconBlockRef = useRef(null);
-  const cardsGridRef = useRef(null);
-  const hasCardsGridEnteredRef = useRef(false);
-  const settleTimerRef = useRef(null);
-  const [isCardsSettled, setIsCardsSettled] = useState(false);
-  const iconOpacity = useScrollDrivenOpacity(iconBlockRef, MAIN_SECTION_ICON_SCROLL_FADE);
-
-  const runCardsEntrance = useCallback(() => {
-    if (settleTimerRef.current) {
-      window.clearTimeout(settleTimerRef.current);
-    }
-    setIsCardsSettled(false);
-    settleTimerRef.current = window.setTimeout(() => {
-      setIsCardsSettled(true);
-      settleTimerRef.current = null;
-    }, 300);
-  }, []);
 
   const visibleCards = useMemo(
     () =>
@@ -147,60 +100,11 @@ export default function Booth() {
     [activeBuildingId]
   );
 
-  useEffect(() => {
-    const grid = cardsGridRef.current;
-    if (!grid) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting || hasCardsGridEnteredRef.current) return;
-          hasCardsGridEnteredRef.current = true;
-          runCardsEntrance();
-          observer.disconnect();
-        });
-      },
-      { threshold: 0.2, rootMargin: '0px 0px -10% 0px' }
-    );
-
-    observer.observe(grid);
-    return () => observer.disconnect();
-  }, [runCardsEntrance]);
-
-  useEffect(
-    () => () => {
-      if (settleTimerRef.current) window.clearTimeout(settleTimerRef.current);
-    },
-    []
-  );
-
   return (
     <section
       id="booth"
       className="relative min-h-[46rem] overflow-hidden bg-[#141414] px-[1.5rem] pb-[9.0rem] pt-[2.5rem]"
     >
-      <style>{`
-        @keyframes booth-card-spread-opacity {
-          from {
-            opacity: ${BOOTH_STACKED_GROUP_OPACITY};
-          }
-          52% {
-            opacity: 0.92;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-        @keyframes booth-card-spread-transform {
-          from {
-            transform: var(--booth-from-transform);
-          }
-          to {
-            transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
-          }
-        }
-      `}</style>
-
       <div className="pointer-events-none absolute left-1/2 top-[-29rem] z-0 flex w-[28.125rem] max-w-none -translate-x-1/2 flex-col">
         <img src={FenceBg} alt="" aria-hidden="true" className="w-full object-cover" />
         <img src={DesertBg} alt="" aria-hidden="true" className="-mt-[20rem] w-full object-cover" />
@@ -208,11 +112,7 @@ export default function Booth() {
 
       <div className="relative z-10 mx-auto flex w-full flex-col items-center gap-4">
         <div className="flex flex-col items-center gap-6">
-          <div
-            ref={iconBlockRef}
-            style={{ opacity: iconOpacity, willChange: 'opacity' }}
-            className="flex flex-col items-center gap-4"
-          >
+          <div className="flex flex-col items-center gap-4">
             <img src={HorseIcon} alt="" aria-hidden="true" className="h-[2.5rem] w-[2.4375rem]" />
             <p className="text-center text-[1rem] leading-[1.3] text-[#fefefe] [font-family:Sekuya] [text-shadow:1px_1px_0px_rgba(0,0,0,0.11)]">
               BOOTH
@@ -232,10 +132,7 @@ export default function Booth() {
                   type="button"
                   role="tab"
                   aria-selected={active}
-                  onClick={() => {
-                    setActiveBuildingId(b.id);
-                    if (hasCardsGridEnteredRef.current) runCardsEntrance();
-                  }}
+                  onClick={() => setActiveBuildingId(b.id)}
                   className={clsx(
                     'h-9 w-[clamp(2.2rem,14.5vw,3.5rem)] min-w-0 border border-solid border-white px-1 text-center text-[clamp(0.62rem,2.65vw,0.75rem)] tracking-[-0.01875rem] whitespace-nowrap transition-colors sm:px-3',
                     active
@@ -250,33 +147,15 @@ export default function Booth() {
           </div>
         </div>
 
-        <div
-          className="transform-gpu will-change-[opacity]"
-          style={{
-            opacity: isCardsSettled ? undefined : BOOTH_STACKED_GROUP_OPACITY,
-            animation: isCardsSettled
-              ? `booth-card-spread-opacity ${BOOTH_SPREAD_MS}ms ${BOOTH_SPREAD_EASE} 0ms both`
-              : 'none',
-          }}
-        >
-          <div ref={cardsGridRef} className="grid w-full grid-cols-2 gap-x-4 gap-y-4">
-            {visibleCards.map((card, index) => (
-              <div key={card.id} className="transform-gpu">
-                <div
-                  style={{
-                    '--booth-from-transform': getBoothCardCenterTransform(index),
-                    willChange: 'transform',
-                    transform: isCardsSettled ? undefined : getBoothCardCenterTransform(index),
-                    animation: isCardsSettled
-                      ? `booth-card-spread-transform ${BOOTH_SPREAD_MS}ms ${BOOTH_SPREAD_EASE} ${getBoothCardScatterDelayMs(index)}ms both`
-                      : 'none',
-                  }}
-                >
-                  <BoothCard image={card.image} subtitle={card.subtitle} title={card.title} />
-                </div>
-              </div>
-            ))}
-          </div>
+        <div className="grid w-full grid-cols-2 gap-x-4 gap-y-4">
+          {visibleCards.map((card) => (
+            <BoothCard
+              key={card.id}
+              image={card.image}
+              subtitle={card.subtitle}
+              title={card.title}
+            />
+          ))}
         </div>
 
         <button

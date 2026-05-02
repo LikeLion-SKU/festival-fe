@@ -1,25 +1,20 @@
 import { APIService } from './api';
 
-export const getLostItems = ({ foundDate, name, page = 0, size = 4 }) =>
+export const getLostItems = ({ date, keyword, page = 1, size = 10 }) =>
   APIService.public.get('/lost-items', {
-    params: { foundDate, name, page, size },
+    params: { date, keyword, page, size },
   });
 
 export const getLostItemDetail = (id) => APIService.public.get(`/lost-items/${id}`);
 
 export const createLostItem = (formData) =>
-  APIService.private.post('/lost-items', formData, {
-    timeout: 60000,
-    headers: { 'Content-Type': null },
+  APIService.public.post('/lost-items', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
   });
 
 export const updateLostItem = (id, formData) =>
-  APIService.private.put(`/lost-items/${id}`, formData, {
-    timeout: 60000,
-    headers: { 'Content-Type': null },
+  APIService.public.put(`/lost-items/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
   });
 
-export const updateLostItemStatus = (id, returned) =>
-  APIService.private.patch(`/lost-items/${id}/status`, null, { params: { returned } });
-
-export const deleteLostItem = (id) => APIService.private.delete(`/lost-items/${id}`);
+export const deleteLostItem = (id) => APIService.public.delete(`/lost-items/${id}`);

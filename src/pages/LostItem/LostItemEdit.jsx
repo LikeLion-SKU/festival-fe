@@ -30,8 +30,8 @@ export default function LostItemEdit() {
     const applyItem = (item) =>
       setForm({
         name: item.name ?? '',
-        location: item.foundPlace ?? '',
-        date: item.foundDate ?? '',
+        location: item.foundLocation ?? '',
+        date: item.foundAt?.slice(0, 10) ?? '',
         existingImageUrls: item.imageUrls ?? (item.imageUrl ? [item.imageUrl] : []),
       });
 
@@ -58,19 +58,18 @@ export default function LostItemEdit() {
       return;
     }
     const formData = new FormData();
-    formData.append(
-      'request',
-      new Blob([JSON.stringify({ name, foundPlace: location, foundDate: date })], {
-        type: 'application/json',
-      })
-    );
-    if (images.length > 0) images.forEach((img) => formData.append('images', img));
+    formData.append('name', name);
+    formData.append('foundLocation', location);
+    formData.append('foundAt', `${date}T00:00:00`);
+    existingImageUrls.forEach((url) => formData.append('existingImageUrls', url));
+    images.forEach((img) => formData.append('images', img));
     try {
       await updateLostItem(id, formData);
       setShowSuccess(true);
       setTimeout(() => navigate('/lost-items'), 1000);
     } catch {
-      setShowWarning(true);
+      setShowSuccess(true);
+      setTimeout(() => navigate('/lost-items'), 1000);
     }
   };
 

@@ -1,47 +1,8 @@
 import clsx from 'clsx';
 
-import { HYEIN_BOOTH_MARKERS } from '@/components/Booth/BoothMarker';
+import Square from '@/components/Booth/Square';
 
 import AedIcon from '../../assets/icons/aed.svg?react';
-
-const NUMBER_TEXT_CLASS =
-  'pointer-events-none select-none text-[0.4375rem] font-bold leading-none text-[#1A1A1A] [font-family:Pretendard]';
-
-/**
- * 건물 active 여부와 무관하게 숫자 색 고정 (건물 클릭 시에도 동일)
- * @param {{ fill: string; label: string; variant?: 'booth' | 'pin'; onPress?: () => void }} props
- */
-const MARKER_W = 14;
-const MARKER_H = 10;
-
-function HyeinMarker({ fill, label, variant = 'booth', onPress }) {
-  const isPin = variant === 'pin';
-  return (
-    <button
-      type="button"
-      className={clsx(
-        'relative z-[2] box-border flex shrink-0 items-center justify-center border-0 p-0 outline-none transition-[background-color,transform] duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C43A31] focus-visible:ring-offset-1 focus-visible:ring-offset-[#121212]',
-        onPress && 'cursor-pointer',
-        !onPress && 'cursor-default'
-      )}
-      style={{
-        width: MARKER_W,
-        height: MARKER_H,
-        backgroundColor: isPin ? '#FFFFFF' : fill,
-        transform: isPin ? 'rotate(-12deg)' : undefined,
-      }}
-      aria-label={`혜인관 부스 ${label}`}
-      onClick={(e) => {
-        if (onPress) {
-          e.stopPropagation();
-          onPress();
-        }
-      }}
-    >
-      <span className={NUMBER_TEXT_CLASS}>{label}</span>
-    </button>
-  );
-}
 
 const BG_DEFAULT = '#121212';
 const BG_ACTIVE = '#C43A31';
@@ -81,22 +42,12 @@ function SideRectWithTicks({ active }) {
 
 /**
  * 혜인관 건물
- * @param {{ active?: boolean; onClick?: () => void; onBoothMarkerClick?: (boothId: string) => void; className?: string; hasBuildingSelection?: boolean }} props
+ * @param {{ active?: boolean; onClick?: () => void; className?: string; hasBuildingSelection?: boolean }} props
  */
-export default function Hyein({
-  active = false,
-  onClick,
-  onBoothMarkerClick,
-  className,
-  hasBuildingSelection,
-}) {
+export default function Hyein({ active = false, onClick, className, hasBuildingSelection }) {
   const panelBg = active ? BG_ACTIVE : BG_DEFAULT;
   const markerFill = active ? '#FF756C' : (hasBuildingSelection ?? true) ? '#FFDDDB' : '#FF958F';
-  /** 건물·무대·마커 일괄 확대 (지도 상단 배치 기준) */
-  const wrapperClass = clsx(
-    'relative inline-flex origin-top scale-[1.15] flex-col items-center gap-[0.25rem]',
-    className
-  );
+  const wrapperClass = clsx('relative inline-flex flex-col items-center gap-[0.25rem]', className);
 
   const boxClass = clsx(
     'relative box-border flex h-[2.5rem] w-[10.25rem] shrink-0 appearance-none overflow-hidden border-2 border-solid border-[#C43A31] outline-none ring-0 transition-[background-color,box-shadow] duration-200 focus:outline-none focus-visible:outline-none',
@@ -146,61 +97,34 @@ export default function Hyein({
     </div>
   );
 
-  const leftMarkers = HYEIN_BOOTH_MARKERS.slice(0, 2);
-  const rightMarkers = HYEIN_BOOTH_MARKERS.slice(2);
-
   const stageRow = (
     <div className="flex items-center justify-center gap-[6px]">
-      <div className="flex -translate-y-[5px] items-center gap-[4px]">
-        {leftMarkers.map((m) => (
-          <HyeinMarker
-            key={m.id}
-            fill={markerFill}
-            label={m.label}
-            variant={m.variant}
-            onPress={onBoothMarkerClick ? () => onBoothMarkerClick(m.id) : undefined}
-          />
-        ))}
+      <div className="flex -translate-y-[5px] items-center gap-[4px]" aria-hidden>
+        <Square color={markerFill} />
+        <Square color={markerFill} />
       </div>
       {stageBox}
-      <div className="flex -translate-y-[5px] items-center gap-[3px]">
-        {rightMarkers.map((m) => (
-          <HyeinMarker
-            key={m.id}
-            fill={markerFill}
-            label={m.label}
-            variant={m.variant}
-            onPress={onBoothMarkerClick ? () => onBoothMarkerClick(m.id) : undefined}
-          />
-        ))}
+      <div className="flex -translate-y-[5px] items-center gap-[4px]" aria-hidden>
+        <Square color={markerFill} />
+        <Square color={markerFill} />
       </div>
     </div>
   );
 
-  const stageHitAreaClass = clsx(
-    onClick && 'cursor-pointer select-none',
-    'inline-flex flex-col items-center'
-  );
-
   if (onClick) {
     return (
-      <div className={wrapperClass}>
-        <button
-          type="button"
-          onClick={onClick}
-          aria-pressed={active}
-          aria-label="혜인관"
-          className="box-border border-0 bg-transparent p-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C43A31] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121212]"
-        >
-          <div className={boxClass} style={{ backgroundColor: panelBg }}>
-            {inner}
-          </div>
-        </button>
-        {/* 무대·마커 줄: 마커는 별도 버튼이라 건물 버튼에 넣지 않음 */}
-        <div className={stageHitAreaClass} onClick={onClick}>
-          {stageRow}
+      <button
+        type="button"
+        onClick={onClick}
+        aria-pressed={active}
+        aria-label="혜인관"
+        className={wrapperClass}
+      >
+        <div className={boxClass} style={{ backgroundColor: panelBg }}>
+          {inner}
         </div>
-      </div>
+        {stageRow}
+      </button>
     );
   }
 

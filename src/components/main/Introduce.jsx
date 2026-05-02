@@ -1,11 +1,4 @@
-import { useRef } from 'react';
-
 import HorseIcon from '@/assets/icons/horse.svg';
-import {
-  MAIN_SECTION_BODY_SCROLL_FADE,
-  MAIN_SECTION_ICON_SCROLL_FADE,
-  useScrollDrivenOpacity,
-} from '@/components/animation/useScrollDrivenOpacity';
 
 const INTRODUCE_LINES = [
   '‘Blooming’이라는 단어는',
@@ -17,37 +10,24 @@ const INTRODUCE_LINES = [
 ];
 
 export default function Introduce() {
-  const iconBlockRef = useRef(null);
-  const bodyBlockRef = useRef(null);
-  const iconOpacity = useScrollDrivenOpacity(iconBlockRef, MAIN_SECTION_ICON_SCROLL_FADE);
-  const bodyOpacity = useScrollDrivenOpacity(bodyBlockRef, MAIN_SECTION_BODY_SCROLL_FADE);
-
   return (
     <section
       id="introduce"
-      className="min-h-[21rem] bg-[#141414] px-[3.65625rem] pt-[6rem]"
+      className="min-h-[24rem] bg-[#141414] px-[3.65625rem] pt-[3.75rem]"
       style={{
         backgroundImage:
           'linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 31%, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 125%)',
       }}
     >
       <div className="flex flex-col items-center gap-[0.75rem]">
-        <div
-          ref={iconBlockRef}
-          style={{ opacity: iconOpacity, willChange: 'opacity' }}
-          className="flex flex-col items-center gap-[0.25rem]"
-        >
+        <div className="flex flex-col items-center gap-[0.25rem]">
           <img src={HorseIcon} alt="" aria-hidden="true" className="h-[2.5rem] w-[2.4375rem]" />
           <p className="text-center text-[1rem] leading-[3.2] text-[#fefefe] [font-family:Sekuya] [text-shadow:1px_1px_0px_rgba(0,0,0,0.11)]">
             INTRODUCE
           </p>
         </div>
 
-        <div
-          ref={bodyBlockRef}
-          style={{ opacity: bodyOpacity, willChange: 'opacity' }}
-          className="text-center text-[0.75rem] tracking-[-0.0225rem] text-[#fdfdfd] [font-family:Pretendard]"
-        >
+        <div className="text-center text-[0.75rem] tracking-[-0.0225rem] text-[#fdfdfd] [font-family:Pretendard]">
           {INTRODUCE_LINES.map((line) => (
             <p key={line} className="m-0 leading-[1.3rem]">
               {line}

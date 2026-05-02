@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useOutletContext, useSearchParams } from 'react-router';
+import { useNavigate, useOutletContext } from 'react-router';
 
 import MoonIcon from '@/assets/icons/moon_icon.svg?react';
 import MorningToggle from '@/assets/icons/morning_toggle.svg?react';
@@ -25,19 +25,14 @@ function OrderEntry() {
     dayMenus,
     orderAvailable,
     onLangChange,
-    lang,
     isLoading,
   } = useOutletContext();
-
-  const [searchParams] = useSearchParams();
-  const isQR = searchParams.get('entry') === 'qr';
 
   const hasDay = dayMenus?.length > 0;
   const hasNight = nightMenus?.length > 0;
   const canToggle = hasDay && hasNight;
 
-  const [userToggle, setUserToggle] = useState(null);
-  const isNight = userToggle !== null ? userToggle : hasNight;
+  const [isNight, setIsNight] = useState(() => hasNight);
   const TimeImage = isNight ? MoonIcon : SunIcon;
   const ToggleIcon = isNight ? NightToggle : MorningToggle;
   const word = isNight ? '밤' : '낮';
@@ -52,12 +47,11 @@ function OrderEntry() {
       : dayMenus;
 
   return (
-    <div className={isQR ? '' : 'bg-[#1A1A1A] min-h-screen'}>
+    <>
       <BoothImageSection
         thumbnailUrl={thumbnailUrl}
         onLangChange={onLangChange}
         isLoading={isLoading}
-        isQR={isQR}
       />
       <BoothInfoSection
         boothName={boothName}
@@ -66,34 +60,25 @@ function OrderEntry() {
         isOpen={isOpen}
         content={content}
         images={images}
-        lang={lang}
         isLoading={isLoading}
-        isQR={isQR}
       />
       <MenuSection
         word={word}
         isNight={isNight}
         canToggle={canToggle}
-        onToggle={() => setUserToggle((prev) => !(prev !== null ? prev : hasNight))}
+        onToggle={() => setIsNight((prev) => !prev)}
         Image={TimeImage}
         Icon={ToggleIcon}
         menus={activeMenus}
-        isQR={isQR}
       />
-      {isQR ? (
-        <>
-          <div className="h-28" />
-          <OrderButtonBox
-            className="relative z-1"
-            buttonName={buttonName}
-            isActive={orderAvailable}
-            onClick={() => navigate(`/order/${boothId}/progress`)}
-          />
-        </>
-      ) : (
-        <div className="h-10" />
-      )}
-    </div>
+      <div className="h-28" />
+      <OrderButtonBox
+        className="relative z-1 "
+        buttonName={buttonName}
+        isActive={orderAvailable}
+        onClick={() => navigate(`/order/${boothId}/progress`)}
+      />
+    </>
   );
 }
 

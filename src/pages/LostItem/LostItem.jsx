@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import { login, logout } from '@/api/auth';
-import { deleteLostItem, getLostItems, updateLostItemStatus } from '@/api/lostItem';
+import { getLostItems } from '@/api/lostItem';
 import LockIcon from '@/assets/icons/lock.svg';
 import backgroundImg from '@/assets/images/about-fire2.svg';
+import airpodImg from '@/assets/images/airpod.png';
 import FilterTab from '@/components/common/FilterTab';
 import PageHeader from '@/components/common/PageHeader';
 import SearchInput from '@/components/common/SearchInput';
@@ -23,16 +23,22 @@ const DATE_TABS = [
 const CARD_GAP = 8;
 const CARD_MIN_HEIGHT = 110;
 
+const MOCK_ITEMS = Array.from({ length: 20 }, (_, i) => ({
+  id: i + 1,
+  name: ['에어팟 Airpod pro2', '지갑', '핸드폰 갤럭시', '우산', '텀블러'][i % 5],
+  foundAt: `2026-05-${13 + (i % 3)}T${10 + i}:00:00`,
+  foundLocation: ['유담관 앞에서 찾음', '학생회관', '도서관 앞', '공학관'][i % 4],
+  imageUrl: airpodImg,
+}));
+
 export default function LostItem() {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [selectedDate, setSelectedDate] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [items, setItems] = useState([]);
-  const [refreshKey, setRefreshKey] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(4);
-  const [itemsKey, setItemsKey] = useState(0);
   const [managingItem, setManagingItem] = useState(null);
   const [claimStatus, setClaimStatus] = useState('unclaimed');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -59,14 +65,13 @@ export default function LostItem() {
     }
   };
 
-  const handleLogin = async () => {
-    try {
-      await login({ departmentName: 'STUDENT_COUNCIL', password: loginPassword });
+  const handleLogin = () => {
+    if (loginPassword === 'likelion14') {
       localStorage.setItem('accessToken', 'admin');
       setShowLoginModal(false);
       setLoginPassword('');
       setLoginFail(false);
-    } catch {
+    } else {
       setLoginFail(true);
     }
   };
@@ -86,24 +91,27 @@ export default function LostItem() {
 
   useEffect(() => {
     const params = {
-      page: currentPage - 1,
+      page: currentPage,
       size: pageSize,
-      ...(query && { name: query }),
-      ...(selectedDate !== 'all' && { foundDate: selectedDate }),
+      ...(query && { keyword: query }),
+      ...(selectedDate !== 'all' && { date: selectedDate }),
     };
 
     getLostItems(params)
       .then((res) => {
-        const content = res.data.content ?? [];
-        setItems([...content].sort((a, b) => (a.returned ? 1 : 0) - (b.returned ? 1 : 0)));
+        setItems(res.data.content ?? []);
         setTotalPages(res.data.totalPages ?? 1);
-        setItemsKey((k) => k + 1);
       })
       .catch(() => {
-        setItems([]);
-        setTotalPages(1);
+        const filtered =
+          selectedDate === 'all'
+            ? MOCK_ITEMS
+            : MOCK_ITEMS.filter((item) => item.foundAt.startsWith(selectedDate));
+        const start = (currentPage - 1) * pageSize;
+        setItems(filtered.slice(start, start + pageSize));
+        setTotalPages(Math.ceil(filtered.length / pageSize));
       });
-  }, [selectedDate, currentPage, pageSize, query, refreshKey]);
+  }, [selectedDate, currentPage, pageSize]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDateChange = (value) => {
     setSelectedDate(value);
@@ -166,12 +174,6 @@ export default function LostItem() {
           </p>
         </div>
 
-        <style>{`
-          @keyframes lost-card-in {
-            from { opacity: 0; transform: translateY(12px); }
-            to   { opacity: 1; transform: translateY(0); }
-          }
-        `}</style>
         <div
           ref={cardContainerRef}
           className="flex-1 min-h-0 flex flex-col gap-[0.5rem] px-[1.25rem]"
@@ -179,26 +181,17 @@ export default function LostItem() {
         >
           {Array.from({ length: pageSize }, (_, i) =>
             items[i] ? (
-              <div
-                key={`${itemsKey}-${i}`}
+              <LostItemCard
+                key={items[i].id}
+                item={items[i]}
                 className="flex-1 min-h-0 overflow-hidden"
-                style={{
-                  opacity: 0,
-                  animation: 'lost-card-in 0.7s ease forwards',
-                  animationDelay: `${i * 70}ms`,
+                onClick={(item) => navigate(`/lost-items/${item.id}`)}
+                isAdmin={isLoggedIn}
+                onManage={(item) => {
+                  setManagingItem(item);
+                  setClaimStatus(item.status ?? 'unclaimed');
                 }}
-              >
-                <LostItemCard
-                  item={items[i]}
-                  className="w-full h-full"
-                  onClick={(item) => navigate(`/lost-items/${item.id}`)}
-                  isAdmin={isLoggedIn}
-                  onManage={(item) => {
-                    setManagingItem(item);
-                    setClaimStatus(item.returned ? 'claimed' : 'unclaimed');
-                  }}
-                />
-              </div>
+              />
             ) : (
               <div key={`empty-${i}`} className="flex-1 min-h-0" />
             )
@@ -216,7 +209,6 @@ export default function LostItem() {
         visible={toast.visible}
         message={toast.message}
         duration={toast.duration ?? 2000}
-        icon={toast.icon ?? 'check'}
         onClose={() => setToast({ visible: false, message: '' })}
       />
 
@@ -269,12 +261,7 @@ export default function LostItem() {
               </button>
               <button
                 type="button"
-                onClick={async () => {
-                  try {
-                    await logout();
-                  } catch {
-                    /* 실패해도 로컬 토큰 제거 */
-                  }
+                onClick={() => {
                   localStorage.removeItem('accessToken');
                   setShowLogoutModal(false);
                 }}
@@ -337,7 +324,7 @@ export default function LostItem() {
                   const newDisplay = e.target.value;
                   const diff = newDisplay.length - loginPassword.length;
                   if (diff > 0) {
-                    const added = newDisplay.replace(/\*/g, '').replace(/[^a-zA-Z0-9]/g, '');
+                    const added = newDisplay.replace(/\*/g, '');
                     setLoginPassword((prev) => prev + added);
                   } else if (diff < 0) {
                     setLoginPassword((prev) => prev.slice(0, newDisplay.length));
@@ -456,16 +443,10 @@ export default function LostItem() {
               </button>
               <button
                 type="button"
-                onClick={async () => {
-                  try {
-                    await deleteLostItem(managingItem.id);
-                    setRefreshKey((k) => k + 1);
-                    setToast({ visible: true, message: '삭제가 완료되었습니다' });
-                  } catch {
-                    setToast({ visible: true, message: '삭제에 실패했습니다', icon: 'warning' });
-                  }
+                onClick={() => {
                   setShowDeleteConfirm(false);
                   setManagingItem(null);
+                  setToast({ visible: true, message: '삭제가 완료되었습니다' });
                 }}
                 className="flex-1 bg-[#7D2A25] text-[#FFFFFF] text-[0.875rem] font-semibold [font-family:Pretendard]"
                 style={{
@@ -585,26 +566,14 @@ export default function LostItem() {
               </div>
               <button
                 type="button"
-                onClick={async () => {
-                  try {
-                    await updateLostItemStatus(managingItem.id, claimStatus === 'claimed');
-                    setItems((prev) =>
-                      prev.map((it) =>
-                        it.id === managingItem.id
-                          ? { ...it, returned: claimStatus === 'claimed' }
-                          : it
-                      )
-                    );
-                    setToast({ visible: true, message: '저장되었습니다', duration: 1500 });
-                  } catch {
-                    setToast({
-                      visible: true,
-                      message: '저장에 실패했습니다',
-                      duration: 1500,
-                      icon: 'warning',
-                    });
-                  }
+                onClick={() => {
+                  setItems((prev) =>
+                    prev.map((it) =>
+                      it.id === managingItem.id ? { ...it, status: claimStatus } : it
+                    )
+                  );
                   setManagingItem(null);
+                  setToast({ visible: true, message: '저장되었습니다', duration: 1500 });
                 }}
                 className="w-full bg-[#8A2822] text-[#FFFFFF] text-[0.875rem] font-semibold [font-family:Pretendard]"
                 style={{

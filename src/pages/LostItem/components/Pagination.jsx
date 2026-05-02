@@ -1,7 +1,7 @@
 const VISIBLE_PAGES = 5;
 
 export default function Pagination({ currentPage, totalPages, onPageChange }) {
-  if (totalPages < 1) return null;
+  if (totalPages <= 1) return null;
 
   const startPage = Math.max(
     1,

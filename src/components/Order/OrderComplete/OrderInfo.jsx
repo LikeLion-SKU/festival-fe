@@ -23,7 +23,7 @@ function OrderInfo() {
 
   const orderTypeLabel = orderType === 'dine-in' ? '매장' : '포장';
 
-  const handleCopy = () => navigator.clipboard.writeText(accountNumber.replace(/-/g, ''));
+  const handleCopy = () => navigator.clipboard.writeText(accountNumber);
 
   return (
     <div className="flex flex-col">

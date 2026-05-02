@@ -130,22 +130,7 @@ export default function Menu() {
           />
         </div>
 
-        <style>{`
-          @keyframes menu-in {
-            from { opacity: 0; transform: scale(0.96) translateY(12px); }
-            to   { opacity: 1; transform: scale(1) translateY(0); }
-          }
-          .menu-animate-in {
-            animation: menu-in 1s cubic-bezier(0.22, 1, 1, 1) forwards;
-          }
-        `}</style>
-        <div
-          className="menu-animate-in relative z-10 flex h-full min-h-0 flex-col px-[1.75rem] md:pt-[calc(8.33vh+2.675rem)]"
-          style={{
-            paddingTop: 'max(min(4rem, 6dvh), calc(env(safe-area-inset-top, 0px) + 0.75rem))',
-            paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom, 0px))',
-          }}
-        >
+        <div className="relative z-10 flex h-full min-h-0 flex-col overflow-hidden px-[1.75rem] pb-[calc(6.25rem+env(safe-area-inset-bottom,0px))] pt-[max(4.75rem,calc(env(safe-area-inset-top)+0.75rem))] md:pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pt-[calc(8.33vh+2.675rem)]">
           <div aria-hidden className="min-h-0 w-full flex-1 shrink basis-0" />
 
           <img
@@ -238,11 +223,16 @@ export default function Menu() {
             </div>
           </div>
 
-          <div className="flex justify-center shrink-0" style={{ marginTop: 'min(3.25rem, 4dvh)' }}>
+          <div aria-hidden className="min-h-0 w-full flex-1 shrink basis-0" />
+        </div>
+
+        <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center">
+          <div
+            className="pointer-events-auto flex w-full max-w-[450px] justify-center px-[1.75rem]"
+            style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom, 0px))' }}
+          >
             <MenuButton variant="close" onClick={() => navigate(-1)} />
           </div>
-
-          <div aria-hidden className="min-h-0 w-full flex-1 shrink basis-0" />
         </div>
       </div>
     </div>

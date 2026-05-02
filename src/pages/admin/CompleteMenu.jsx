@@ -1,104 +1,44 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import Lottie from 'lottie-react/build/index.es.js';
-
-import { getCompleteMenu, getSales, patchChangeOrderStatus, subscribeOrder } from '@/api/order';
 import ClapIcon from '@/assets/icons/admin/clap_icon.svg?react';
 import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
-import LoadingAnimation from '@/assets/lottie/loading_animations.json';
 import CompletedOrderCard from '@/components/Admin/AdminComplete/CompletedOrderCard';
 import BottomSheet from '@/components/Admin/BottomSheet';
 import MenuFilterBox from '@/components/Admin/MenuFilterBox';
 import OrderReturnModal from '@/components/Admin/OrderReturnModal';
-import PastDateModal from '@/components/Admin/PastDateModal';
-import Toast from '@/components/common/Toast';
-import { FILTERS, filterOrders, isPastDate } from '@/constants/menuFilterData';
+import { completedOrderData } from '@/constants/completedOrderDummyData';
 
-const toApiDate = (md) => {
-  //api 요청을 보내기 위한 날짜 변환
-  if (!md || md === 'all') return undefined;
-  const [m, d] = md.split('/');
-  return `${new Date().getFullYear()}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
-};
+const ORDERED_DATES = ['5/13', '5/14', '5/15'];
+const TODAY = '5/15';
+const FILTERS = [
+  { key: 'all', label: '전체' },
+  { key: '5/13', label: '5/13' },
+  { key: '5/14', label: '5/14' },
+  { key: '5/15', label: '5/15' },
+];
 
-const formatSales = (n) => {
-  //매출 출력용 문자열 변환
-  if (!n || n <= 0) return '0원';
-  const man = Math.floor(n / 10000);
-  const cheon = Math.floor((n % 10000) / 1000);
-  const baek = Math.floor((n % 1000) / 100);
-  const rest = n % 100;
-  const parts = [];
-  if (man) parts.push(`${man}만`);
-  if (cheon) parts.push(`${cheon}천`);
-  if (baek) parts.push(`${baek}백`);
-  if (rest) parts.push(`${rest}`);
-  return `${parts.join(' ')} 원`;
-};
+const isPastDate = (date) => ORDERED_DATES.indexOf(date) < ORDERED_DATES.indexOf(TODAY);
 
 export default function CompleteMenu() {
   const [modal, setModal] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [dateFilter, setDateFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [sales, setSales] = useState(null);
-  const [toast, setToast] = useState({ visible: false, message: '' });
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const { notifyOrderStatus, clearCount, setIsLoading, setScrollContainer } =
-    useOutletContext() ?? {};
 
-  useEffect(() => {
-    clearCount?.('complete');
-  }, [clearCount]);
-
-  const queryKey = ['admin', 'orders', 'completed'];
-
-  const { data: orderData = [], isPending } = useQuery({
-    queryKey,
-    queryFn: getCompleteMenu,
-    select: (res) => res?.data ?? [],
-  });
-
-  useEffect(() => {
-    //페이지 진입시 구독
-    const eventSource = subscribeOrder('COMPLETED');
-
-    const handleCompletedOrder = (event) => {
-      //새로운 데이터 들어오면 추가
-      const newOrder = JSON.parse(event.data);
-      queryClient.setQueryData(queryKey, (prev) => ({
-        ...(prev ?? {}),
-        data: [...(prev?.data ?? []), newOrder],
-      }));
-    };
-
-    const handleNotification = (event) => {
-      //다른 페이지 데이터 들어오면 카운트
-      const { orderStatus } = JSON.parse(event.data);
-      notifyOrderStatus?.(orderStatus);
-    };
-
-    eventSource.addEventListener('completedOrderEvent', handleCompletedOrder);
-    eventSource.addEventListener('orderNotification', handleNotification);
-
-    eventSource.onerror = () => {
-      if (eventSource.readyState === EventSource.CLOSED) {
-        eventSource.close();
-      }
-    };
-
-    return () => {
-      eventSource.removeEventListener('completedOrderEvent', handleCompletedOrder);
-      eventSource.removeEventListener('orderNotification', handleNotification);
-      eventSource.close();
-    };
-  }, [queryClient, notifyOrderStatus]);
-
-  const filtered = filterOrders(orderData, dateFilter, searchQuery);
+  const filtered = completedOrderData
+    .filter((d) => dateFilter === 'all' || d.completedDate === dateFilter)
+    .filter((d) => {
+      if (!searchQuery.trim()) return true;
+      const q = searchQuery.trim().toLowerCase();
+      return (
+        d.customerName.toLowerCase().includes(q) ||
+        String(d.tableNumber).includes(q) ||
+        d.phone.includes(q)
+      );
+    });
 
   const closeModal = () => {
     setModal(null);
@@ -106,53 +46,22 @@ export default function CompleteMenu() {
   };
 
   const handleUndoClick = (order) => {
-    //되돌리기 클릭시
-    setSelectedOrderId(order.orderId);
-    if (isPastDate(order.orderDate)) {
-      setModal('pastDate'); //지난 날짜면 불가
+    setSelectedOrderId(order.id);
+    if (isPastDate(order.completedDate)) {
+      setModal('pastDate');
     } else {
       setModal('undoConfirm');
-      console.log('통과');
     }
   };
 
-  const handleRevenueClick = async () => {
-    //매출 조회 요청
-    setIsLoading?.(true);
-    try {
-      const res = await getSales(toApiDate(dateFilter));
-      setSales(res?.data?.sales ?? 0);
-      setModal('total');
-    } catch (error) {
-      console.log('매출 조회 실패: ' + error);
-      setToast({ visible: true, message: '잠시후 다시 시도해주세요', icon: 'warning' });
-    } finally {
-      setIsLoading?.(false);
-    }
-  };
-
-  const handleUndoConfirm = async (orderId) => {
-    // 되돌리기 요청
-    if (!orderId) return;
-    setIsLoading?.(true);
-    try {
-      await patchChangeOrderStatus(orderId, 'COOKING');
-      queryClient.setQueryData(queryKey, (prev) => ({
-        ...(prev ?? {}),
-        data: (prev?.data ?? []).filter((o) => o.orderId !== orderId),
-      }));
-      setModal('undoDone');
-    } catch (error) {
-      console.log('조리중으로 되돌리기 실패: ' + error);
-      setToast({ visible: true, message: '잠시후 다시 시도해주세요', icon: 'warning' });
-    } finally {
-      setIsLoading?.(false);
-    }
+  const handleUndoConfirm = (selectedOrderId) => {
+    setModal('undoDone');
+    console.log(selectedOrderId + '삭제');
   };
 
   return (
     <div className="flex flex-col w-full h-full bg-[#F8F8F8] items-center">
-      <MenuFilterBox /* 주문 필터링 박스 */
+      <MenuFilterBox
         title="완료된 주문"
         count={filtered.length}
         filters={FILTERS}
@@ -161,32 +70,27 @@ export default function CompleteMenu() {
         searchQuery={searchQuery}
         onSearchQueryChange={setSearchQuery}
         showRevenueButton
-        onRevenueClick={handleRevenueClick}
+        onRevenueClick={() => setModal('total')}
       />
 
       {filtered.length > 0 ? (
-        <div
-          ref={setScrollContainer}
-          className="flex flex-col w-full gap-2 overflow-auto no-scrollbar px-5 py-5"
-        >
+        <div className="flex flex-col w-full gap-2 overflow-auto no-scrollbar px-5 py-5">
           {filtered.map((data) => (
-            <CompletedOrderCard /* 주문 완료 카드 */
-              key={data.orderId}
+            <CompletedOrderCard
+              key={data.id}
               tableNumber={data.tableNumber}
-              peopleCount={data.numOfPeople}
+              peopleCount={data.peopleCount}
               orderTime={data.orderTime}
               completeTime={data.completeTime}
               customerName={data.customerName}
-              phone={data.customerPhoneNumber}
-              orderItems={data.orderItems}
-              totalAmount={data.totalOrderPrice}
-              completedDate={data.orderDate}
+              phone={data.phone}
+              items={data.items}
+              totalAmount={data.totalAmount}
+              completedDate={data.completedDate}
               onUndo={() => handleUndoClick(data)}
             />
           ))}
         </div>
-      ) : isPending ? (
-        <Lottie animationData={LoadingAnimation} loop className="w-40 h-40 m-auto" />
       ) : (
         <div className="flex flex-col items-center mt-50 gap-3">
           <NothingIcon />
@@ -198,7 +102,7 @@ export default function CompleteMenu() {
         </div>
       )}
 
-      <BottomSheet /* 조리로 되돌리기 확인 모달 박스 */
+      <BottomSheet
         open={modal === 'undoConfirm'}
         onOpenChange={(o) => !o && closeModal()}
         showButton
@@ -214,7 +118,7 @@ export default function CompleteMenu() {
         </div>
       </BottomSheet>
 
-      <OrderReturnModal /* 주문 되돌리기 완료 확인 박스 */
+      <OrderReturnModal
         open={modal === 'undoDone'}
         onOpenChange={(o) => !o && closeModal()}
         onMove={() => {
@@ -224,13 +128,22 @@ export default function CompleteMenu() {
         onConfirm={closeModal}
       />
 
-      <PastDateModal /* 지난 날짜 되돌리기 불가 안내 모달 */
+      <BottomSheet
         open={modal === 'pastDate'}
         onOpenChange={(o) => !o && closeModal()}
-        onConfirm={closeModal}
-      />
+        showButton
+        buttonName="확인"
+        onButtonClick={closeModal}
+      >
+        <div className="flex flex-col items-center pt-16.75">
+          <WarningIcon />
+          <p className="font-semibold text-[1.25rem] mt-6.25">
+            지난 날짜의 주문은 되돌릴 수 없어요.
+          </p>
+        </div>
+      </BottomSheet>
 
-      <BottomSheet /* 매출 확인 모달 */
+      <BottomSheet
         open={modal === 'total'}
         onOpenChange={(o) => !o && closeModal()}
         showButton
@@ -239,24 +152,15 @@ export default function CompleteMenu() {
       >
         <div className="flex flex-col items-center pt-7.75">
           <ClapIcon />
-          <p className="font-semibold text-[1.25rem] mt-7">
-            {dateFilter === 'all' ? '축제기간 동안' : `${dateFilter}에는`}
-          </p>
+          <p className="font-semibold text-[1.25rem] mt-7">오늘은</p>
           <p className="font-semibold text-[1.25rem]">
-            <span className="text-[#FE5F54] font-bold">총 {formatSales(sales ?? 0)}</span> 벌었어요!
+            <span className="text-[#FE5F54] font-bold">100만 원</span> 벌었어요!
           </p>
           <p className="font-semibold text-[14px] text-[#FFBBB8] mt-2">
             수고한 내자신..기특하ㄷr...
           </p>
         </div>
       </BottomSheet>
-
-      <Toast /* 요청 실패시 재시도 안내 토스트 */
-        visible={toast.visible}
-        message={toast.message}
-        icon={toast.icon ?? 'check'}
-        onClose={() => setToast({ visible: false, message: '' })}
-      />
     </div>
   );
 }

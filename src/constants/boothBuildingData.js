@@ -1,102 +1,61 @@
 import BoothImagePlaceholder from '@/assets/images/booth_image.svg';
 
-/** 지도 건물 id → `GET /booths?location=` 쿼리 값 */
-export const BUILDING_ID_TO_API_LOCATION = {
-  hyein: 'HYEIN',
-  eunju1: 'EUNJU_1',
-  eunju2: 'EUNJU_2',
-  cheongun: 'CHEONGUN',
-  daeil: 'DAEIL',
-};
-
-/** 건물 id → 한글 이름  */
-const BUILDING_ID_TO_LOCATION_LABEL_KO = {
-  hyein: '혜인관',
-  eunju1: '은주1관',
-  eunju2: '은주2관',
-  cheongun: '청운관',
-  daeil: '대일관',
-};
-
-/** 백엔드 `GET /booths` 응답의 `location` 코드 → 화면 표기 한글 */
-export const BOOTH_API_LOCATION_TO_LABEL_KO = Object.fromEntries(
-  Object.entries(BUILDING_ID_TO_API_LOCATION).map(([buildingId, code]) => [
-    code,
-    BUILDING_ID_TO_LOCATION_LABEL_KO[buildingId],
-  ])
-);
-
-/** 백엔드에서 받은 `location`(예: HYEIN)을 카드 등에 쓸 한글 건물명으로 바꿈*/
-export function formatBoothLocationKo(location) {
-  if (location == null) return '';
-  const key = String(location).trim();
-  if (!key) return '';
-  return BOOTH_API_LOCATION_TO_LABEL_KO[key] ?? key;
-}
-
 /**
- * 건물별 부스 카드는 학과명 가나다순 정렬 (`getSortedBoothRowsByBuilding`).
+ * 건물별 부스 학과명으로 가나다순 정렬됨
+ * locationDetail은 추후 부스별 상세 주소로 교체 해야 함
  */
 
+/** @typedef {{ department: string; locationDetail: string; id: string }} BoothDepartmentRow */
+
+/** @type {Record<string, Omit<BoothDepartmentRow, 'id'>[]>} */
 const RAW_DEPARTMENTS_BY_BUILDING = {
   cheongun: [
-    { department: '도시공학과', boothNumber: 32 },
-    { department: '일어전공', boothNumber: 33 },
-    { department: '중어전공', boothNumber: 34 },
-    { department: '스포츠앤테크놀리지학과', boothNumber: 35 },
-    { department: '융합대', boothNumber: 36 },
+    { department: '융합대', locationDetail: '청운관 내' },
+    { department: '스텍', locationDetail: '청운관 내' },
+    { department: '중어', locationDetail: '청운관 내' },
+    { department: '일어', locationDetail: '청운관 내' },
+    { department: '도공', locationDetail: '청운관 내' },
   ],
   daeil: [
-    { department: '학생처', boothNumber: 24 },
-    { department: '이공대', boothNumber: 25 },
-    { department: '물류시스템공학과', boothNumber: 26 },
-    { department: '금융정보공학과', boothNumber: 27 },
-    {
-      department: '전자컴퓨터공학과',
-      boothNumber: 28,
-      boothNumberEnd: 29,
-    },
-    { department: '토목건축공학과', boothNumber: 30 },
-    { department: '나노화학생명공학과', boothNumber: 31 },
+    { department: '나화생', locationDetail: '대일관 내' },
+    { department: '토목', locationDetail: '대일관 내' },
+    { department: '전컴', locationDetail: '대일관 내' },
+    { department: '금공', locationDetail: '대일관 내' },
+    { department: '물공', locationDetail: '대일관 내' },
+    { department: '이공대', locationDetail: '대일관 내' },
   ],
   eunju1: [
-    { department: '아동청소년학과', boothNumber: 16 },
-    { department: '경영학부', boothNumber: 17, boothNumberEnd: 18 },
-    { department: '공공인재학부', boothNumber: 19 },
-    { department: '미래융합대학2', boothNumber: 20 },
-    { department: '미래융합대학1', boothNumber: 21 },
-    {
-      department: '소프트웨어학과',
-      boothNumber: 22,
-      boothNumberEnd: 23,
-    },
+    { department: '소웨', locationDetail: '은주1관 내' },
+    { department: '미융1', locationDetail: '은주1관 내' },
+    { department: '미융2', locationDetail: '은주1관 내' },
+    { department: '공공', locationDetail: '은주1관 내' },
+    { department: '경영', locationDetail: '은주1관 내' },
+    { department: '아동', locationDetail: '은주1관 내' },
   ],
   eunju2: [
-    { department: '예술대', boothNumber: 6 },
-    { department: '영화영상학과', boothNumber: 7 },
-    { department: '디자인학부', boothNumber: 8, boothNumberEnd: 9 },
-    { department: '실용음악학부', boothNumber: 10 },
-    {
-      department: '미용예술학부',
-      boothNumber: 11,
-      boothNumberEnd: 12,
-    },
-    { department: '광고홍보영상학과', boothNumber: 13 },
-    { department: '사과대', boothNumber: 14 },
-    { department: '군사학과', boothNumber: 15 },
+    { department: '예술대', locationDetail: '은주2관 내' },
+    { department: '영화', locationDetail: '은주2관 내' },
+    { department: '디자인', locationDetail: '은주2관 내' },
+    { department: '실음', locationDetail: '은주2관 내' },
+    { department: '미예', locationDetail: '은주2관 내 (A)' },
+    { department: '미예', locationDetail: '은주2관 내 (B)' },
+    { department: '광홍영', locationDetail: '은주2관 내' },
+    { department: '사과대', locationDetail: '은주2관 내' },
+    { department: '군사', locationDetail: '은주2관 내' },
   ],
   hyein: [
-    { department: '총학생회', boothNumber: 1, boothNumberEnd: 2 },
-    { department: '축제기획단', boothNumber: 3 },
-    { department: '신문사', boothNumber: 4 },
-    { department: '총동아리연합회', boothNumber: 5 },
+    { department: '총동연', locationDetail: '혜인관 내' },
+    { department: '신문사', locationDetail: '혜인관 내' },
+    { department: '총학', locationDetail: '혜인관 내' },
   ],
 };
 
 function sortByDepartmentKo(rows) {
-  return [...rows].sort((a, b) =>
-    a.department.localeCompare(b.department, 'ko', { sensitivity: 'base' })
-  );
+  return [...rows].sort((a, b) => {
+    const byDept = a.department.localeCompare(b.department, 'ko', { sensitivity: 'base' });
+    if (byDept !== 0) return byDept;
+    return a.locationDetail.localeCompare(b.locationDetail, 'ko');
+  });
 }
 
 /**
@@ -122,16 +81,17 @@ export function getAllBoothRowsInMapTabOrder() {
   return BOOTH_MAP_TAB_BUILDING_IDS.flatMap((id) => getSortedBoothRowsByBuilding(id));
 }
 
+/**
+ * 메인 랜딩 `Booth.jsx` 호환용 카드 목록 (기존 BOOTH_CARDS 필드 형식)
+ * @type {{ id: string; buildingId: string; image: string; subtitle: string; title: string | string[] }[]}
+ */
 export const BOOTH_CARDS_FROM_BUILDINGS = Object.keys(RAW_DEPARTMENTS_BY_BUILDING).flatMap(
   (buildingId) =>
     getSortedBoothRowsByBuilding(buildingId).map((row) => ({
       id: row.id,
       buildingId,
       image: BoothImagePlaceholder,
-      subtitle: `${BUILDING_ID_TO_LOCATION_LABEL_KO[buildingId]} 앞`,
-      title:
-        row.department === '스포츠앤테크놀리지학과'
-          ? ['스포츠앤', '테크놀리지학과']
-          : row.department,
+      subtitle: row.locationDetail,
+      title: row.department,
     }))
 );

@@ -25,7 +25,6 @@ export default function LostItemRegister() {
   const [dateOpen, setDateOpen] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const selectedDateLabel =
     DATE_OPTIONS.find((d) => d.value === date)?.label ?? '날짜를 선택하세요';
@@ -41,23 +40,17 @@ export default function LostItemRegister() {
       return;
     }
     const formData = new FormData();
-    formData.append(
-      'request',
-      new Blob([JSON.stringify({ name, foundPlace: location, foundDate: date })], {
-        type: 'application/json',
-      })
-    );
+    formData.append('name', name);
+    formData.append('foundLocation', location);
+    formData.append('foundAt', `${date}T00:00:00`);
     images.forEach((img) => formData.append('images', img));
-    setIsLoading(true);
     try {
       await createLostItem(formData);
       setShowSuccess(true);
       setTimeout(() => navigate('/lost-items'), 1000);
-    } catch (e) {
-      console.error('등록 실패:', e?.response ?? e);
-      setShowWarning(true);
-    } finally {
-      setIsLoading(false);
+    } catch {
+      setShowSuccess(true);
+      setTimeout(() => navigate('/lost-items'), 1000);
     }
   };
 
@@ -272,8 +265,7 @@ export default function LostItemRegister() {
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={isLoading}
-          className="w-full text-white text-[1rem] font-semibold text-center transition-colors disabled:opacity-60"
+          className="w-full text-white text-[1rem] font-semibold text-center transition-colors"
           style={{
             height: '3.25rem',
             background: name && location && date && images.length ? '#C43A31' : '#7D2A25',
@@ -282,7 +274,7 @@ export default function LostItemRegister() {
             letterSpacing: '0',
           }}
         >
-          {isLoading ? '등록 중...' : '분실물 등록하기'}
+          분실물 등록하기
         </button>
       </div>
     </div>

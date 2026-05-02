@@ -21,44 +21,6 @@
   font-style: normal;
 }
 
-@font-face {
-  font-family: 'Inter';
-  src: url('/fonts/inter variable_en/Inter-VariableFont_opsz,wght.ttf') format('truetype');
-  font-weight: 100 900;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Noto Sans SC';
-  src: url('/fonts/notosans sc_zh/NotoSansSC-Thin.otf') format('opentype');
-  font-weight: 100;
-}
-@font-face {
-  font-family: 'Noto Sans SC';
-  src: url('/fonts/notosans sc_zh/NotoSansSC-Light.otf') format('opentype');
-  font-weight: 300;
-}
-@font-face {
-  font-family: 'Noto Sans SC';
-  src: url('/fonts/notosans sc_zh/NotoSansSC-Regular.otf') format('opentype');
-  font-weight: 400;
-}
-@font-face {
-  font-family: 'Noto Sans SC';
-  src: url('/fonts/notosans sc_zh/NotoSansSC-Medium.otf') format('opentype');
-  font-weight: 500;
-}
-@font-face {
-  font-family: 'Noto Sans SC';
-  src: url('/fonts/notosans sc_zh/NotoSansSC-Bold.otf') format('opentype');
-  font-weight: 700;
-}
-@font-face {
-  font-family: 'Noto Sans SC';
-  src: url('/fonts/notosans sc_zh/NotoSansSC-Black.otf') format('opentype');
-  font-weight: 900;
-}
-
 @layer utilities {
   /* 스크롤바 숨기기 */
   .no-scrollbar::-webkit-scrollbar {
@@ -94,8 +56,6 @@ body {
   --color-warn-orange: #ff9500;
   --color-order-button-active: #c43a31;
   --color-gray-500: #7f7f7f;
-  --font-inter: 'Inter', sans-serif;
-  --font-noto-sc: 'Noto Sans SC', sans-serif;
 }
 
 html,

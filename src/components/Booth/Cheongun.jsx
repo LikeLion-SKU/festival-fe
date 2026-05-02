@@ -1,49 +1,8 @@
 import clsx from 'clsx';
 
-import { CHEONGUN_BOOTH_MARKERS } from '@/components/Booth/BoothMarker';
+import Square from '@/components/Booth/Square';
 
 import AedIcon from '../../assets/icons/aed.svg?react';
-
-const NUMBER_TEXT_CLASS =
-  'pointer-events-none inline-block origin-center rotate-90 select-none text-[0.4375rem] font-bold leading-none text-[#1A1A1A] [font-family:Pretendard]';
-
-/**
- * 건물 버튼 안에 넣기 위해 div 마커
- * @param {{ fill: string; label: string; onPress?: () => void }} props
- */
-function CheongunMarker({ fill, label, onPress }) {
-  const common = clsx(
-    'relative z-[2] box-border flex shrink-0 items-center justify-center border-0 transition-[background-color] duration-200 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C43A31] focus-visible:ring-offset-1 focus-visible:ring-offset-[#121212]',
-    onPress ? 'cursor-pointer' : 'cursor-default'
-  );
-  const style = {
-    width: 14,
-    height: 10,
-    backgroundColor: fill,
-  };
-
-  if (onPress) {
-    return (
-      <div
-        className={common}
-        style={style}
-        aria-label={`청운관 부스 ${label}`}
-        onClick={(e) => {
-          e.stopPropagation();
-          onPress();
-        }}
-      >
-        <span className={NUMBER_TEXT_CLASS}>{label}</span>
-      </div>
-    );
-  }
-
-  return (
-    <div className={common} style={style} aria-hidden>
-      <span className={NUMBER_TEXT_CLASS}>{label}</span>
-    </div>
-  );
-}
 
 const BG_DEFAULT = '#121212';
 const BG_ACTIVE = '#C43A31';
@@ -55,24 +14,18 @@ const SIDE_RECT_CLASS =
 
 /**
  * 청운관 (부스 지도용) — AED 아이콘 있음
- * @param {{ active?: boolean; onClick?: () => void; onBoothMarkerClick?: (boothId: string) => void; className?: string; hasBuildingSelection?: boolean }} props
+ * @param {{ active?: boolean; onClick?: () => void; className?: string; hasBuildingSelection?: boolean }} props
  */
-export default function Cheongun({
-  active = false,
-  onClick,
-  onBoothMarkerClick,
-  className,
-  hasBuildingSelection,
-}) {
+export default function Cheongun({ active = false, onClick, className, hasBuildingSelection }) {
   const panelBg = active ? BG_ACTIVE : BG_DEFAULT;
   const markerFill = active ? '#FF756C' : (hasBuildingSelection ?? true) ? '#FFDDDB' : '#FF958F';
   const wrapperClass = clsx(
-    'relative inline-flex flex-col items-center gap-[0.25rem] rotate-[-72deg] origin-top scale-[1.15]',
+    'relative inline-flex flex-col items-center gap-[0.25rem] rotate-[-72deg]',
     className
   );
 
   const frameClass = clsx(
-    'relative box-border h-[2.55rem] w-[6.05rem] shrink-0 appearance-none overflow-hidden bg-[#C43A31] p-[2px] outline-none ring-0 transition-[box-shadow] duration-200 focus:outline-none focus-visible:outline-none',
+    'relative box-border h-[2.5rem] w-[5.05rem] shrink-0 appearance-none overflow-hidden bg-[#C43A31] p-[2px] outline-none ring-0 transition-[box-shadow] duration-200 focus:outline-none focus-visible:outline-none',
     onClick && 'cursor-pointer select-none',
     active && 'z-30 shadow-[0_0_12px_rgba(196,58,49,0.45)]'
   );
@@ -130,17 +83,23 @@ export default function Cheongun({
     </div>
   );
 
-  /** 마커 수정함 */
   const markerRow = (
-    <div className="flex translate-x-[-8px] translate-y-[4px] items-center justify-center gap-[3px]">
-      {CHEONGUN_BOOTH_MARKERS.map((m) => (
-        <CheongunMarker
-          key={m.id}
-          fill={markerFill}
-          label={m.label}
-          onPress={onBoothMarkerClick ? () => onBoothMarkerClick(m.id) : undefined}
-        />
-      ))}
+    <div
+      className="flex items-center justify-center gap-[6px] translate-x-[-8px] translate-y-[4px]"
+      aria-hidden
+    >
+      <span className="inline-flex -rotate-[0deg]">
+        <Square color={markerFill} />
+      </span>
+      <span className="inline-flex rotate-[0deg]">
+        <Square color={markerFill} />
+      </span>
+      <span className="inline-flex -rotate-[0deg]">
+        <Square color={markerFill} />
+      </span>
+      <span className="inline-flex rotate-[0deg]">
+        <Square color={markerFill} />
+      </span>
     </div>
   );
 

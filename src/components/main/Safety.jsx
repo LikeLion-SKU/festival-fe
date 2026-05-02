@@ -1,12 +1,5 @@
-import { useRef } from 'react';
-
 import HorseIcon from '@/assets/icons/horse.svg';
 import DesertBg from '@/assets/images/desert.svg';
-import {
-  MAIN_SECTION_BODY_SCROLL_FADE,
-  MAIN_SECTION_ICON_SCROLL_FADE,
-  useScrollDrivenOpacity,
-} from '@/components/animation/useScrollDrivenOpacity';
 
 const AED_ROWS = [
   ['북악관', '로비 내'],
@@ -23,11 +16,6 @@ const EVACUATION_ROWS = [
 ];
 
 export default function Safety() {
-  const iconBlockRef = useRef(null);
-  const bodyBlockRef = useRef(null);
-  const iconOpacity = useScrollDrivenOpacity(iconBlockRef, MAIN_SECTION_ICON_SCROLL_FADE);
-  const bodyOpacity = useScrollDrivenOpacity(bodyBlockRef, MAIN_SECTION_BODY_SCROLL_FADE);
-
   return (
     <section
       id="safety"
@@ -63,37 +51,29 @@ export default function Safety() {
             'linear-gradient(180deg, rgba(0,0,0,0.6) 20%, rgba(0,0,0,0.6) 50%,rgba(0,0,0,0.95) 100%)',
         }}
       />
-      <div
-        ref={iconBlockRef}
-        style={{ opacity: iconOpacity, willChange: 'opacity' }}
-        className="relative z-10 flex flex-col items-center gap-[0.25rem]"
-      >
+      <div className="relative z-10 flex flex-col items-center gap-[0.25rem]">
         <img src={HorseIcon} alt="" aria-hidden="true" className="h-[2.5rem] w-[2.4375rem]" />
         <p className="text-center text-[1rem] leading-[3.2] text-[#fefefe] [font-family:Sekuya] [text-shadow:1px_1px_0px_rgba(0,0,0,0.11)]">
           SAFETY GUIDE
         </p>
       </div>
-      <div
-        ref={bodyBlockRef}
-        style={{ opacity: bodyOpacity, willChange: 'opacity' }}
-        className="relative z-10 mt-[1.75rem] -mx-[2rem] w-[calc(100%+4rem)]"
-      >
+      <div className="relative z-10 mt-[1.75rem] -mx-[2rem] w-[calc(100%+4rem)]">
         <div className="mt-[0.8rem] h-px w-full bg-white/70" />
         <div className="py-[1.15rem]">
           <div className="grid grid-cols-[7.5rem_4.6rem_1fr] items-start gap-x-[0.8rem]">
             <p className="whitespace-nowrap pt-[0.4rem] pl-[1rem] text-left text-[0.875rem] font-extrabold leading-[1.35] tracking-[-0.01rem] text-white [font-family:Pretendard]">
               AED 위치 안내
             </p>
-            <div className="pt-[0.4rem] text-left text-[0.75rem] font-semibold leading-[1.46] tracking-[-0.01rem] text-white [font-family:Pretendard]">
+            <div className="pt-[0.45rem] text-left text-[0.75rem] font-semibold leading-[1.46] tracking-[-0.01rem] text-white [font-family:Pretendard]">
               {AED_ROWS.map(([building, place]) => (
-                <p key={`${building}-${place}`} className="m-0 whitespace-nowrap">
+                <p key={`${building}-${place}`} className="m-0">
                   {building}
                 </p>
               ))}
             </div>
-            <div className="pt-[0.4rem] -translate-x-[2.6rem] text-left text-[0.75rem] font-normal leading-[1.46] tracking-[-0.01rem] text-white [font-family:Pretendard]">
+            <div className="pt-[0.45rem] text-left text-[0.75rem] font-normal leading-[1.46] tracking-[-0.01rem] text-white [font-family:Pretendard]">
               {AED_ROWS.map(([building, place]) => (
-                <p key={`${building}-${place}-detail`} className="m-0 whitespace-nowrap">
+                <p key={`${building}-${place}-detail`} className="m-0">
                   {place}
                 </p>
               ))}
@@ -106,9 +86,9 @@ export default function Safety() {
             <p className="pt-[0.4rem] pl-[1rem] text-left text-[0.875rem] font-extrabold leading-[1.35] tracking-[-0.01rem] text-white [font-family:Pretendard]">
               대피로 안내
             </p>
-            <div className="pl-[1.3rem] mt-[0.4rem] text-left text-[0.75rem] font-semibold leading-[1.46] tracking-[-0.01rem] text-white [font-family:Pretendard]">
+            <div className="pl-[1.4rem] text-left text-[0.75rem] font-semibold leading-[1.46] tracking-[-0.01rem] text-white [font-family:Pretendard]">
               {EVACUATION_ROWS.map((line) => (
-                <p key={line} className="m-0 whitespace-nowrap">
+                <p key={line} className="m-0">
                   {line}
                 </p>
               ))}

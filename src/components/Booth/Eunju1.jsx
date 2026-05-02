@@ -1,39 +1,6 @@
 import clsx from 'clsx';
 
-import { EUNJU1_BOOTH_MARKERS } from '@/components/Booth/BoothMarker';
-
-const NUMBER_TEXT_CLASS =
-  'pointer-events-none inline-block origin-center rotate-180 select-none text-[0.4375rem] font-bold leading-none text-[#1A1A1A] [font-family:Pretendard]';
-
-/**
- * @param {{ fill: string; label: string; onPress?: () => void }} props
- */
-function Eunju1Marker({ fill, label, onPress }) {
-  return (
-    <button
-      type="button"
-      className={clsx(
-        'relative z-[2] box-border flex shrink-0 items-center justify-center border-0 p-0 outline-none transition-[background-color] duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C43A31] focus-visible:ring-offset-1 focus-visible:ring-offset-[#121212]',
-        onPress && 'cursor-pointer',
-        !onPress && 'cursor-default'
-      )}
-      style={{
-        width: 14,
-        height: 10,
-        backgroundColor: fill,
-      }}
-      aria-label={`은주1관 부스 ${label}`}
-      onClick={(e) => {
-        if (onPress) {
-          e.stopPropagation();
-          onPress();
-        }
-      }}
-    >
-      <span className={NUMBER_TEXT_CLASS}>{label}</span>
-    </button>
-  );
-}
+import Square from '@/components/Booth/Square';
 
 const BG_DEFAULT = '#121212';
 const BG_ACTIVE = '#C43A31';
@@ -70,27 +37,18 @@ function SideRectWithTicks() {
 /**
  * 은주1관 건물
  * 혜인관과 동일 구조 + 본체 기울기/위치 변경 + 우측 상단 삼각형 파임
- * @param {{ active?: boolean; onClick?: () => void; onBoothMarkerClick?: (boothId: string) => void; className?: string; hasBuildingSelection?: boolean }} props
+ * @param {{ active?: boolean; onClick?: () => void; className?: string; hasBuildingSelection?: boolean }} props
  */
-export default function Eunju1({
-  active = false,
-  onClick,
-  onBoothMarkerClick,
-  className,
-  hasBuildingSelection,
-}) {
+export default function Eunju1({ active = false, onClick, className, hasBuildingSelection }) {
   const panelBg = active ? BG_ACTIVE : BG_DEFAULT;
   const markerFill = active ? '#FF756C' : (hasBuildingSelection ?? true) ? '#FFDDDB' : '#FF958F';
-  const wrapperClass = clsx(
-    'relative inline-flex flex-col items-center origin-top scale-[1.15]',
-    className
-  );
+  const wrapperClass = clsx('relative inline-flex flex-col items-center', className);
 
   const buildingShellClass =
     'inline-flex flex-col items-center gap-[0.25rem] rotate-[170deg] translate-x-[3.2rem] -translate-y-[-7.8rem]';
 
   const boxClass = clsx(
-    'relative box-border flex h-[2.5rem] w-[11.65rem] shrink-0 appearance-none overflow-hidden border-2 border-solid border-[#C43A31] outline-none ring-0 transition-[background-color,box-shadow] duration-200 focus:outline-none focus-visible:outline-none',
+    'relative box-border flex h-[2.5rem] w-[10.25rem] shrink-0 appearance-none overflow-hidden border-2 border-solid border-[#C43A31] outline-none ring-0 transition-[background-color,box-shadow] duration-200 focus:outline-none focus-visible:outline-none',
     onClick && 'cursor-pointer select-none',
     active && 'z-30 shadow-[0_0_12px_rgba(196,58,49,0.45)]'
   );
@@ -145,50 +103,41 @@ export default function Eunju1({
     </svg>
   );
 
-  /** 마커 16→23 좌→우 순서 */
   const markerRow = (
-    <div className="flex translate-x-[12px] translate-y-[3px] items-center justify-center gap-[3px]">
-      {EUNJU1_BOOTH_MARKERS.map((m) => (
-        <Eunju1Marker
-          key={m.id}
-          fill={markerFill}
-          label={m.label}
-          onPress={onBoothMarkerClick ? () => onBoothMarkerClick(m.id) : undefined}
-        />
+    <div
+      className="flex translate-x-[12px] translate-y-[3px] items-center justify-center gap-[6px]"
+      aria-hidden
+    >
+      {Array.from({ length: 8 }).map((_, i) => (
+        <Square key={i} color={markerFill} />
       ))}
     </div>
   );
 
-  const markerHitClass = clsx(onClick && 'cursor-pointer select-none', 'inline-flex');
-
   if (onClick) {
     return (
-      <div className={wrapperClass}>
+      <button
+        type="button"
+        onClick={onClick}
+        aria-pressed={active}
+        aria-label="은주1관"
+        className={wrapperClass}
+      >
         <div className={buildingShellClass}>
-          <button
-            type="button"
-            onClick={onClick}
-            aria-pressed={active}
-            aria-label="은주1관"
-            className="box-border border-0 bg-transparent p-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C43A31] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121212]"
+          <div
+            className={boxClass}
+            style={{
+              backgroundColor: panelBg,
+              clipPath: CORNER_NOTCH,
+              WebkitClipPath: CORNER_NOTCH,
+            }}
           >
-            <div
-              className={boxClass}
-              style={{
-                backgroundColor: panelBg,
-                clipPath: CORNER_NOTCH,
-                WebkitClipPath: CORNER_NOTCH,
-              }}
-            >
-              {notchStroke}
-              {inner}
-            </div>
-          </button>
-          <div className={markerHitClass} onClick={onClick}>
-            {markerRow}
+            {notchStroke}
+            {inner}
           </div>
+          {markerRow}
         </div>
-      </div>
+      </button>
     );
   }
 
