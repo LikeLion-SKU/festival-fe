@@ -13,7 +13,7 @@ import {
 import CheckIcon from '@/assets/icons/admin/check_red_big_icon.svg?react';
 import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
-import LoadingAnimation from '@/assets/lottie/loading animations.json';
+import LoadingAnimation from '@/assets/lottie/loading_animations.json';
 import BottomSheet from '@/components/Admin/BottomSheet';
 import CancelGuideModal from '@/components/Admin/CancelGuideModal';
 import CancelReasonModal from '@/components/Admin/CancelReasonModal';

@@ -7,7 +7,7 @@ import Lottie from 'lottie-react/build/index.es.js';
 import { getCancelMenu, patchChangeOrderStatus, subscribeOrder } from '@/api/order';
 import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
-import LoadingAnimation from '@/assets/lottie/loading animations.json';
+import LoadingAnimation from '@/assets/lottie/loading_animations.json';
 import CompletedOrderCard from '@/components/Admin/AdminComplete/CompletedOrderCard';
 import BottomSheet from '@/components/Admin/BottomSheet';
 import MenuFilterBox from '@/components/Admin/MenuFilterBox';
