@@ -1,5 +1,14 @@
 import BoothImagePlaceholder from '@/assets/images/booth_image.svg';
 
+/** 지도 건물 id → `GET /booths?location=` 쿼리 값 */
+export const BUILDING_ID_TO_API_LOCATION = {
+  hyein: 'HYEIN',
+  eunju1: 'EUNJU_1',
+  eunju2: 'EUNJU_2',
+  cheongun: 'CHEONGUN',
+  daeil: 'DAEIL',
+};
+
 /**
  * 건물별 부스 카드는 학과명 가나다순 정렬 (`getSortedBoothRowsByBuilding`).
  * locationDetail은 추후 부스별 상세 주소로 교체 해야 함
