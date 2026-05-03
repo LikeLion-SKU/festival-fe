@@ -2,43 +2,7 @@ import { useEffect, useState } from 'react';
 import { Outlet, useParams } from 'react-router';
 
 import { getBoothInfo } from '@/api/booth';
-import Noodle from '@/assets/icons/noodle.svg';
-
-const foodData = [
-  {
-    boothMenuId: 11,
-    image: Noodle,
-    name: '타코야끼',
-    description: '',
-    price: 6000,
-    category: 'main',
-  },
-  {
-    boothMenuId: 12,
-    image: Noodle,
-    name: '야끼소바',
-    description: '',
-    price: 8000,
-    category: 'main',
-  },
-  {
-    boothMenuId: 13,
-    image: Noodle,
-    name: '블루레몬에이드',
-    description: '시원',
-    price: 3000,
-    category: 'drink',
-  },
-  {
-    boothMenuId: 14,
-    image: Noodle,
-    name: '자몽에이드',
-    description: '시원',
-    price: 3000,
-    category: 'drink',
-    soldOut: true,
-  },
-];
+import { getOrderAvailableMenus } from '@/api/boothMenu';
 
 function Order() {
   const { boothId } = useParams();
@@ -46,6 +10,7 @@ function Order() {
   const [loadedKey, setLoadedKey] = useState(null);
   const [lang, setLang] = useState(sessionStorage.getItem('language') || 'KO');
   const isLoading = loadedKey !== `${boothId}-${lang}`;
+  const [foodData, setFoodData] = useState([]);
   const [quantities, setQuantities] = useState(() => {
     const saved = sessionStorage.getItem('orderQuantities');
     return saved ? JSON.parse(saved) : {};
@@ -66,6 +31,25 @@ function Order() {
       .catch(console.error)
       .finally(() => setLoadedKey(`${boothId}-${lang}`));
   }, [boothId, lang]);
+
+  useEffect(() => {
+    getOrderAvailableMenus(boothId)
+      .then((res) => {
+        const flat = Object.entries(res.data).flatMap(([category, items]) =>
+          items.map((item) => ({
+            boothMenuId: item.menuId,
+            name: item.name,
+            description: item.description,
+            iconImageUrl: item.iconImageUrl,
+            price: item.price,
+            soldOut: item.soldOut,
+            category,
+          }))
+        );
+        setFoodData(flat);
+      })
+      .catch(console.error);
+  }, [boothId]);
 
   const handleReset = () => {
     setQuantities({});
@@ -93,19 +77,22 @@ function Order() {
   useEffect(() => {
     sessionStorage.setItem('orderQuantities', JSON.stringify(quantities));
 
-    const cart = Object.entries(quantities).map(([key, qty]) => {
-      const [cat, idx] = key.split('-');
-      const item = foodData.filter((i) => i.category === cat)[parseInt(idx)];
-      return {
-        key,
-        boothMenuId: item.boothMenuId,
-        name: item.name,
-        price: item.price,
-        quantity: qty,
-      };
-    });
+    const cart = Object.entries(quantities)
+      .map(([key, qty]) => {
+        const [cat, idx] = key.split('-');
+        const item = foodData.filter((i) => i.category === cat)[parseInt(idx)];
+        if (!item) return null;
+        return {
+          key,
+          boothMenuId: item.boothMenuId,
+          name: item.name,
+          price: item.price,
+          quantity: qty,
+        };
+      })
+      .filter(Boolean);
     sessionStorage.setItem('orderCart', JSON.stringify(cart));
-  }, [quantities]);
+  }, [quantities, foodData]);
 
   useEffect(() => {
     return () => {

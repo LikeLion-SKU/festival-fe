@@ -13,8 +13,16 @@ const CATEGORY_LABEL_MAP = { main: '메인', side: '사이드', drink: '음료' 
 
 function OrderProgress() {
   const navigate = useNavigate();
-  const { boothId, boothName, foodData, quantities, onSelect, onIncrease, onDecrease, onReset } =
-    useOutletContext();
+  const {
+    boothId,
+    departmentName,
+    foodData,
+    quantities,
+    onSelect,
+    onIncrease,
+    onDecrease,
+    onReset,
+  } = useOutletContext();
 
   const [activeCategory, setActiveCategory] = useState('메인');
   const [showBackModal, setShowBackModal] = useState(false);
@@ -62,7 +70,7 @@ function OrderProgress() {
     <div className="flex flex-col h-full bg-white">
       <div className="shrink-0">
         <OrderHeader
-          title={boothName}
+          title={departmentName}
           showBackButton
           onBack={() => (hasSelection ? setShowBackModal(true) : navigate(-1))}
         />
