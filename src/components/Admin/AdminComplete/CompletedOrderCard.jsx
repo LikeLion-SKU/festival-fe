@@ -19,7 +19,7 @@ export default function CompletedOrderCard({
   completeTime,
   customerName,
   phone,
-  items = [],
+  orderItems = [],
   totalAmount,
   completedDate,
   cancelReason,
@@ -72,19 +72,19 @@ export default function CompletedOrderCard({
       </div>
 
       <div className="flex w-full flex-col">
-        {items.map((item, idx) => (
+        {orderItems.map((item, idx) => (
           <div
             key={idx}
             className={`flex h-10 items-center justify-between px-2 ${
-              idx < items.length - 1 ? 'border-b border-dashed border-[#EFEFEF]' : ''
+              idx < orderItems.length - 1 ? 'border-b border-dashed border-[#EFEFEF]' : ''
             }`}
           >
             <div className="flex items-center gap-2">
-              <span className="text-[14px] font-medium text-deep-gray">{item.name}</span>
+              <span className="text-[14px] font-medium text-deep-gray">{item.menuName}</span>
               <span className="text-[14px] font-medium text-[#A0A0A0]">x{item.quantity}</span>
             </div>
             <span className="text-[14px] font-medium text-deep-gray">
-              {formatPrice(item.price)}
+              {formatPrice(item.totalOrderItemPrice)}
             </span>
           </div>
         ))}

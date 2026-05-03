@@ -10,27 +10,8 @@ import CompletedOrderCard from '@/components/Admin/AdminComplete/CompletedOrderC
 import BottomSheet from '@/components/Admin/BottomSheet';
 import MenuFilterBox from '@/components/Admin/MenuFilterBox';
 import OrderReturnModal from '@/components/Admin/OrderReturnModal';
-
-const ORDERED_DATES = ['5/13', '5/14', '5/15'];
-const TODAY = (() => {
-  const now = new Date();
-  return `${now.getMonth() + 1}/${now.getDate()}`;
-})();
-const FILTERS = [
-  { key: 'all', label: '전체' },
-  { key: '5/13', label: '5/13' },
-  { key: '5/14', label: '5/14' },
-  { key: '5/15', label: '5/15' },
-];
-
-const isPastDate = (date) => ORDERED_DATES.indexOf(date) < ORDERED_DATES.indexOf(TODAY);
-
-const orderItemsToItems = (orderItems = []) =>
-  orderItems.map((i) => ({
-    name: i.menuName,
-    quantity: i.quantity,
-    price: i.totalOrderItemPrice,
-  }));
+import PastDateModal from '@/components/Admin/PastDateModal';
+import { FILTERS, isPastDate } from '@/constants/menuFilterData';
 
 export default function CancelMenu() {
   const [modal, setModal] = useState(null);
@@ -85,17 +66,16 @@ export default function CancelMenu() {
     };
   }, [queryClient, notifyOrderStatus]);
 
-  const filtered = orderData
-    .filter((d) => dateFilter === 'all' || d.orderDate === dateFilter)
-    .filter((d) => {
-      if (!searchQuery.trim()) return true;
-      const q = searchQuery.trim().toLowerCase();
-      return (
-        d.customerName.toLowerCase().includes(q) ||
-        String(d.tableNumber).includes(q) ||
-        d.customerPhoneNumber.includes(q)
-      );
-    });
+  const q = searchQuery.trim().toLowerCase();
+  const filtered = orderData.filter((d) => {
+    if (dateFilter !== 'all' && d.orderDate !== dateFilter) return false;
+    if (!q) return true;
+    return (
+      d.customerName.toLowerCase().includes(q) ||
+      String(d.tableNumber).includes(q) ||
+      d.customerPhoneNumber.includes(q)
+    );
+  });
 
   const closeModal = () => {
     setModal(null);
@@ -148,7 +128,7 @@ export default function CancelMenu() {
               completeTime={data.cancelTime}
               customerName={data.customerName}
               phone={data.customerPhoneNumber}
-              items={orderItemsToItems(data.orderItems)}
+              orderItems={data.orderItems}
               totalAmount={data.totalOrderPrice}
               completedDate={data.orderDate}
               cancelReason={data.orderCancelReason}
@@ -193,20 +173,11 @@ export default function CancelMenu() {
         onConfirm={closeModal}
       />
 
-      <BottomSheet
+      <PastDateModal
         open={modal === 'pastDate'}
         onOpenChange={(o) => !o && closeModal()}
-        showButton
-        buttonName="확인"
-        onButtonClick={closeModal}
-      >
-        <div className="flex flex-col items-center pt-16.75">
-          <WarningIcon />
-          <p className="font-semibold text-[1.25rem] mt-6.25">
-            지난 날짜의 주문은 되돌릴 수 없어요.
-          </p>
-        </div>
-      </BottomSheet>
+        onConfirm={closeModal}
+      />
     </div>
   );
 }
