@@ -113,7 +113,7 @@ export default function Timetable() {
         ref={bannerListRef}
         className="mx-auto mt-[1.5rem] flex w-full max-w-[24rem] flex-col gap-[0.05rem]"
       >
-        {(TIMETABLE_DAY_BANNERS[selectedDay] ?? []).map((banner, index, banners) => {
+        {(TIMETABLE_DAY_BANNERS[selectedDay] ?? []).map((banner, index) => {
           const isVariant2 = banner.variant === 2;
           const isVariant1 = banner.variant === 1;
           const isRightAligned = index % 2 === 1;
@@ -149,7 +149,7 @@ export default function Timetable() {
                   transform: isBannerSequenceStarted ? undefined : 'translateY(100px)',
                   willChange: 'opacity, transform',
                   animation: isBannerSequenceStarted
-                    ? `timetable-banner-rise 700ms cubic-bezier(0.22,1,0.36,1) ${(banners.length - 1 - index) * 90}ms both`
+                    ? `timetable-banner-rise 700ms cubic-bezier(0.22,1,0.36,1) ${index * 90}ms both`
                     : 'none',
                 }}
                 className="transform-gpu"
