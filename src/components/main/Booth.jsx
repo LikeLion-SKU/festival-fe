@@ -124,7 +124,7 @@ export default function Booth() {
     settleTimerRef.current = window.setTimeout(() => {
       setIsCardsSettled(true);
       settleTimerRef.current = null;
-    }, 180);
+    }, 260);
   }, []);
 
   const visibleCards = useMemo(
@@ -237,7 +237,7 @@ export default function Booth() {
                 willChange: 'transform, opacity',
                 transform: isCardsSettled ? undefined : getBoothCardCenterTransform(index),
                 animation: isCardsSettled
-                  ? `booth-card-scatter 1200ms cubic-bezier(0.16,0.84,0.22,1) ${index * 30}ms both`
+                  ? `booth-card-scatter 1150ms cubic-bezier(0.2,0.85,0.22,1) ${index * 95}ms both`
                   : 'none',
               }}
               className="transform-gpu opacity-100"
