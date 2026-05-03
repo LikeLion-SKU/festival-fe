@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import Lottie from 'lottie-react/build/index.es.js';
 
 import {
   getCookingMenu,
@@ -13,6 +14,7 @@ import {
 import CheckIcon from '@/assets/icons/admin/check_red_big_icon.svg?react';
 import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
+import LoadingAnimation from '@/assets/lottie/loading animations.json';
 import TableOrderCard from '@/components/Admin/AdminCooking/TableOrderCard';
 import BottomSheet from '@/components/Admin/BottomSheet';
 import CancelGuideModal from '@/components/Admin/CancelGuideModal';
@@ -32,7 +34,7 @@ export default function CookingMenu() {
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [expandedIds, setExpandedIds] = useState(() => new Set());
   const queryClient = useQueryClient();
-  const { notifyOrderStatus, clearCount } = useOutletContext() ?? {};
+  const { notifyOrderStatus, clearCount, setIsLoading } = useOutletContext() ?? {};
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [toast, setToast] = useState({ visible: false, message: '' });
 
@@ -42,7 +44,7 @@ export default function CookingMenu() {
 
   const queryKey = ['admin', 'orders', 'cooking'];
 
-  const { data: orderData = [] } = useQuery({
+  const { data: orderData = [], isPending } = useQuery({
     queryKey,
     queryFn: getCookingMenu,
     select: (res) => res?.data ?? [],
@@ -169,6 +171,7 @@ export default function CookingMenu() {
     setSelectedOrderId(orderId);
     if (allChecked) {
       //전부 다 서빈 완료면 완료 요청
+      setIsLoading?.(true);
       try {
         await patchChangeOrderStatus(orderId, 'COMPLETED');
         queryClient.setQueryData(queryKey, (prev) => ({
@@ -179,6 +182,8 @@ export default function CookingMenu() {
       } catch (error) {
         console.log('주문 완료 처리 실패: ' + error);
         setToast({ visible: true, message: '잠시후 다시 시도해주세요', icon: 'warning' });
+      } finally {
+        setIsLoading?.(false);
       }
     } else {
       //서빙 안된거 있을 때는 경고 모달
@@ -189,6 +194,7 @@ export default function CookingMenu() {
   const handleWarningConfirm = async () => {
     //경고 안내 모달 확인시
     if (!selectedOrderId) return;
+    setIsLoading?.(true);
     try {
       await patchChangeOrderStatus(selectedOrderId, 'COMPLETED');
       queryClient.setQueryData(queryKey, (prev) => ({
@@ -199,12 +205,15 @@ export default function CookingMenu() {
     } catch (error) {
       console.log('주문 완료 처리 실패: ' + error);
       setToast({ visible: true, message: '잠시후 다시 시도해주세요', icon: 'warning' });
+    } finally {
+      setIsLoading?.(false);
     }
   };
 
   const handleCancelSubmit = async () => {
     //취소 이유 선택 확인시
     if (!reason) return;
+    setIsLoading?.(true);
     try {
       await patchCanCelOrder(selectedOrderId, reason);
       queryClient.setQueryData(queryKey, (prev) => ({
@@ -215,6 +224,8 @@ export default function CookingMenu() {
     } catch (error) {
       console.log('주문 취소 실패:' + error);
       setToast({ visible: true, message: '잠시후 다시 시도해주세요', icon: 'warning' });
+    } finally {
+      setIsLoading?.(false);
     }
   };
 
@@ -295,6 +306,8 @@ export default function CookingMenu() {
             ))}
           </div>
         </div>
+      ) : isPending ? (
+        <Lottie animationData={LoadingAnimation} loop className="w-40 h-40 m-auto" />
       ) : (
         <div className="flex flex-col items-center mt-67 gap-3">
           <NothingIcon />

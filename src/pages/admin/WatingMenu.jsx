@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import Lottie from 'lottie-react/build/index.es.js';
 
 import {
   getWaitingMenu,
@@ -12,6 +13,7 @@ import {
 import CheckIcon from '@/assets/icons/admin/check_red_big_icon.svg?react';
 import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
+import LoadingAnimation from '@/assets/lottie/loading animations.json';
 import BottomSheet from '@/components/Admin/BottomSheet';
 import CancelGuideModal from '@/components/Admin/CancelGuideModal';
 import CancelReasonModal from '@/components/Admin/CancelReasonModal';
@@ -25,7 +27,7 @@ export default function WaitingMenu() {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [toast, setToast] = useState({ visible: false, message: '' });
   const queryClient = useQueryClient();
-  const { notifyOrderStatus, clearCount } = useOutletContext() ?? {};
+  const { notifyOrderStatus, clearCount, setIsLoading } = useOutletContext() ?? {};
 
   useEffect(() => {
     clearCount?.('wait');
@@ -33,7 +35,7 @@ export default function WaitingMenu() {
 
   const queryKey = ['admin', 'orders', 'waiting'];
 
-  const { data: orderData = [] } = useQuery({
+  const { data: orderData = [], isPending } = useQuery({
     queryKey,
     queryFn: getWaitingMenu,
     select: (res) => res?.data ?? [],
@@ -90,6 +92,7 @@ export default function WaitingMenu() {
   const handleConfirm = async () => {
     //신분증 확인 모달 클릭시 조리 중으로 변경
     if (!selectedOrderId) return;
+    setIsLoading?.(true);
     try {
       await patchChangeOrderStatus(selectedOrderId, 'COOKING');
       queryClient.setQueryData(queryKey, (prev) => ({
@@ -100,12 +103,15 @@ export default function WaitingMenu() {
     } catch (error) {
       console.log('조리중 으로 변경 실패 : ' + error);
       setToast({ visible: true, message: '잠시후 다시 시도해주세요', icon: 'warning' });
+    } finally {
+      setIsLoading?.(false);
     }
   };
 
   const handleCancelSubmit = async () => {
     //취소 이유 선택 모달 확인시 취소로 변경
     if (!reason) return;
+    setIsLoading?.(true);
     try {
       await patchCanCelOrder(selectedOrderId, reason);
       queryClient.setQueryData(queryKey, (prev) => ({
@@ -116,6 +122,8 @@ export default function WaitingMenu() {
     } catch (error) {
       console.log('주문 취소 실패:' + error);
       setToast({ visible: true, message: '잠시후 다시 시도해주세요', icon: 'warning' });
+    } finally {
+      setIsLoading?.(false);
     }
   };
 
@@ -144,6 +152,8 @@ export default function WaitingMenu() {
             />
           ))}
         </div>
+      ) : isPending ? (
+        <Lottie animationData={LoadingAnimation} loop className="w-40 h-40 m-auto" />
       ) : (
         <div className="flex flex-col items-center mt-67 gap-3">
           <NothingIcon />

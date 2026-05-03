@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import Lottie from 'lottie-react/build/index.es.js';
 
 import { getCancelMenu, patchChangeOrderStatus, subscribeOrder } from '@/api/order';
 import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
+import LoadingAnimation from '@/assets/lottie/loading animations.json';
 import CompletedOrderCard from '@/components/Admin/AdminComplete/CompletedOrderCard';
 import BottomSheet from '@/components/Admin/BottomSheet';
 import MenuFilterBox from '@/components/Admin/MenuFilterBox';
@@ -22,7 +24,7 @@ export default function CancelMenu() {
   const [toast, setToast] = useState({ visible: false, message: '' });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { notifyOrderStatus, clearCount } = useOutletContext() ?? {};
+  const { notifyOrderStatus, clearCount, setIsLoading } = useOutletContext() ?? {};
 
   useEffect(() => {
     clearCount?.('cancel');
@@ -30,7 +32,7 @@ export default function CancelMenu() {
 
   const queryKey = ['admin', 'orders', 'canceled'];
 
-  const { data: orderData = [] } = useQuery({
+  const { data: orderData = [], isPending } = useQuery({
     queryKey,
     queryFn: getCancelMenu,
     select: (res) => res?.data ?? [],
@@ -91,6 +93,7 @@ export default function CancelMenu() {
   const handleUndoConfirm = async (orderId) => {
     //되돌리기 요청
     if (!orderId) return;
+    setIsLoading?.(true);
     try {
       await patchChangeOrderStatus(orderId, 'WAITING');
       queryClient.setQueryData(queryKey, (prev) => ({
@@ -101,6 +104,8 @@ export default function CancelMenu() {
     } catch (error) {
       console.log('대기로 되돌리기 실패: ' + error);
       setToast({ visible: true, message: '잠시후 다시 시도해주세요', icon: 'warning' });
+    } finally {
+      setIsLoading?.(false);
     }
   };
 
@@ -135,6 +140,8 @@ export default function CancelMenu() {
             />
           ))}
         </div>
+      ) : isPending ? (
+        <Lottie animationData={LoadingAnimation} loop className="w-40 h-40 m-auto" />
       ) : (
         <div className="flex flex-col items-center mt-50">
           <NothingIcon />
