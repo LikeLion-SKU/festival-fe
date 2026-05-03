@@ -13,7 +13,7 @@ import MenuFilterBox from '@/components/Admin/MenuFilterBox';
 import OrderReturnModal from '@/components/Admin/OrderReturnModal';
 import PastDateModal from '@/components/Admin/PastDateModal';
 import Toast from '@/components/common/Toast';
-import { FILTERS, isPastDate } from '@/constants/menuFilterData';
+import { FILTERS, filterOrders, isPastDate } from '@/constants/menuFilterData';
 
 const toApiDate = (md) => {
   //api 요청을 보내기 위한 날짜 변환
@@ -95,17 +95,7 @@ export default function CompleteMenu() {
     };
   }, [queryClient, notifyOrderStatus]);
 
-  const q = searchQuery.trim().toLowerCase();
-  const filtered = orderData.filter((d) => {
-    //필터링된 데이터
-    if (dateFilter !== 'all' && d.orderDate !== dateFilter) return false;
-    if (!q) return true;
-    return (
-      d.customerName.toLowerCase().includes(q) ||
-      String(d.tableNumber).includes(q) ||
-      d.customerPhoneNumber.includes(q)
-    );
-  });
+  const filtered = filterOrders(orderData, dateFilter, searchQuery);
 
   const closeModal = () => {
     setModal(null);

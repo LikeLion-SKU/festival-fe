@@ -12,3 +12,17 @@ export const FILTERS = [
 
 //지난 날짜 판단
 export const isPastDate = (date) => ORDERED_DATES.indexOf(date) < ORDERED_DATES.indexOf(TODAY);
+
+//날짜 + 검색어로 주문 목록 필터링
+export const filterOrders = (orderData, dateFilter, searchQuery) => {
+  const q = searchQuery.trim().toLowerCase();
+  return orderData.filter((d) => {
+    if (dateFilter !== 'all' && d.orderDate !== dateFilter) return false;
+    if (!q) return true;
+    return (
+      d.customerName.toLowerCase().includes(q) ||
+      String(d.tableNumber).includes(q) ||
+      d.customerPhoneNumber.includes(q)
+    );
+  });
+};
