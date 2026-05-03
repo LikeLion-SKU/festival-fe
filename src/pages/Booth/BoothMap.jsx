@@ -198,7 +198,7 @@ export default function BoothMapPage() {
         <div
           ref={sheetPanelRef}
           className={`pointer-events-auto flex h-[28rem] w-full min-w-0 max-w-[450px] flex-col overscroll-contain rounded-t-[2.875rem] border border-white/15 bg-gradient-to-b from-[rgba(26,26,26,0.92)] to-[rgba(16,16,16,0.96)] pb-[calc(1rem+env(safe-area-inset-bottom,0px))] pt-8 transition-transform duration-300 ${
-            sheetExpanded ? 'translate-y-[0%]' : 'translate-y-[70%]'
+            sheetExpanded ? 'translate-y-[0%]' : 'translate-y-[82%]'
           }`}
           onTouchStart={(e) => {
             touchStartY.current = e.touches[0].clientY;
