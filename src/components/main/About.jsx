@@ -57,21 +57,23 @@ export default function About() {
         </p>
         <div className="mt-[2.25rem] flex flex-col items-center gap-[1.3rem]">
           <span className="h-[0.3125rem] w-[0.3125rem] rounded-full bg-white" />
-          <span className="h-[0.3125rem] w-[0.3125rem] rounded-full bg-white" />
-          <span className="h-[0.3125rem] w-[0.3125rem] rounded-full bg-white" />
+          <span className="h-[0.3125rem] w-[0.3125rem] rounded-full bg-white opacity-70" />
+          <span className="h-[0.3125rem] w-[0.3125rem] rounded-full bg-white opacity-30" />
         </div>
         <img src={SkuLogo} alt="SKU LIKELION 로고" className="mt-[3.125rem] h-[9rem] w-[9rem]" />
         <p className="mt-[2rem] text-[1.125rem] leading-[1.2] text-[#fefefe] [font-family:Sekuya]">
           SKU LIKELION 14TH
         </p>
-        <p className="mt-[3.25rem] text-[0.75rem] font-normal leading-[1.6] text-[#fefefe] [font-family:Pretendard]">
-          안녕하세요, <span className="font-bold">멋쟁이사자처럼 서경대</span>입니다.
+        <p className="mt-[3.25rem] text-[0.75rem] font-regular leading-[1.6] text-[#fefefe] [font-family:Pretendard] whitespace-nowrap">
+          안녕하세요, 서경대학교 <span className="font-bold">멋쟁이사자처럼</span> 입니다.
         </p>
-        <div className="mt-[2.25rem] text-[0.625rem] font-normal leading-[1.6] text-[#fefefe] [font-family:Pretendard]">
-          <p className="m-0">학우분들께서 축제를 더욱 즐겁고</p>
-          <p className="m-0">편리하게 즐길 수 있도록 축제 페이지를 제작하였습니다.</p>
-          <p className="m-0">
-            여러분들께 도움이 되는 페이지가 되길 바라며, 즐거운 축제 즐기시길 바랍니다 !
+        <div className="mt-[1rem] text-[0.75rem] font-regular leading-[1.6] text-[#fefefe] [font-family:Pretendard] whitespace-nowrap">
+          <p className="m-0 whitespace-nowrap">
+            올해에도 여러분의 축제를 더 쉽고 편하게 만들어드리고자
+          </p>
+          <p className="m-[-0.1rem] whitespace-nowrap">축제 페이지를 준비했습니다 ♡</p>
+          <p className="mt-[1rem] whitespace-nowrap">
+            유용하게 사용해주시고 즐거운 축제 즐기시길 바랍니다 :)
           </p>
         </div>
       </div>
