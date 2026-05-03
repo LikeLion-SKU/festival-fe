@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import clsx from 'clsx';
@@ -25,6 +25,44 @@ export default function BoothMapPage() {
   const [searchMode, setSearchMode] = useState(false);
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const touchStartY = useRef(0);
+  const sheetPanelRef = useRef(null);
+
+  /** 지도/배경 페이지가 밀리거나 움직이지 않도록 */
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const prev = {
+      htmlOverflow: html.style.overflow,
+      bodyOverflow: body.style.overflow,
+      htmlOb: html.style.overscrollBehavior,
+      bodyOb: body.style.overscrollBehavior,
+    };
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    html.style.overscrollBehavior = 'none';
+    body.style.overscrollBehavior = 'none';
+    return () => {
+      html.style.overflow = prev.htmlOverflow;
+      body.style.overflow = prev.bodyOverflow;
+      html.style.overscrollBehavior = prev.htmlOb;
+      body.style.overscrollBehavior = prev.bodyOb;
+    };
+  }, []);
+
+  /** 시트에서 스크롤 목록이 아닌 영역의 세로 드래그가 뷰포트로 전달되지 않게 */
+  useEffect(() => {
+    const panel = sheetPanelRef.current;
+    if (!panel) return;
+
+    const onTouchMove = (e) => {
+      const scrollEl = panel.querySelector('[data-booth-sheet-scroll]');
+      if (scrollEl?.contains(e.target)) return;
+      e.preventDefault();
+    };
+
+    panel.addEventListener('touchmove', onTouchMove, { passive: false });
+    return () => panel.removeEventListener('touchmove', onTouchMove);
+  }, []);
 
   const orderedBuildingButtons = useMemo(() => {
     const map = new Map(BUILDINGS.map((item) => [item.id, item]));
@@ -67,6 +105,7 @@ export default function BoothMapPage() {
     <section
       className={clsx(
         'relative min-h-dvh overflow-hidden text-white',
+        !searchMode && 'overscroll-none',
         searchMode && 'flex flex-col'
       )}
       style={sectionBgStyle}
@@ -157,7 +196,8 @@ export default function BoothMapPage() {
         aria-hidden={searchMode}
       >
         <div
-          className={`pointer-events-auto flex h-[28rem] w-full min-w-0 max-w-[450px] flex-col rounded-t-[2.875rem] border border-white/15 bg-gradient-to-b from-[rgba(26,26,26,0.92)] to-[rgba(16,16,16,0.96)] pb-[calc(1rem+env(safe-area-inset-bottom,0px))] pt-8 transition-transform duration-300 ${
+          ref={sheetPanelRef}
+          className={`pointer-events-auto flex h-[28rem] w-full min-w-0 max-w-[450px] flex-col overscroll-contain rounded-t-[2.875rem] border border-white/15 bg-gradient-to-b from-[rgba(26,26,26,0.92)] to-[rgba(16,16,16,0.96)] pb-[calc(1rem+env(safe-area-inset-bottom,0px))] pt-8 transition-transform duration-300 ${
             sheetExpanded ? 'translate-y-[0%]' : 'translate-y-[70%]'
           }`}
           onTouchStart={(e) => {
@@ -194,7 +234,10 @@ export default function BoothMapPage() {
               })}
             </div>
           </div>
-          <div className="mx-[27px] mt-5 min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden pb-2 [-webkit-overflow-scrolling:touch]">
+          <div
+            data-booth-sheet-scroll
+            className="mx-[27px] mt-5 min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain pb-2 [-webkit-overflow-scrolling:touch]"
+          >
             {modalBoothRows.length === 0 ? (
               <p className="py-8 text-center text-sm text-white/50 [font-family:Pretendard]">
                 {search.trim() ? '검색 결과가 없습니다.' : '등록된 부스 목록이 없습니다.'}

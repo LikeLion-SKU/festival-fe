@@ -40,7 +40,10 @@ export default function BoothMap({ activeBuildingId, onSelectBuilding, onMapBack
   };
 
   return (
-    <div ref={containerRef} className="relative aspect-[335/360] w-full bg-transparent">
+    <div
+      ref={containerRef}
+      className="relative aspect-[335/360] w-full touch-manipulation overscroll-contain bg-transparent"
+    >
       <div
         className="pointer-events-none absolute inset-0 z-0 bg-contain bg-no-repeat"
         style={{
