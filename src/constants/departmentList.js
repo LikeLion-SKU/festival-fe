@@ -1,5 +1,4 @@
 export const departmentList = [
-  { department: '멋사 운영진', departmentName: 'SKULIKELION' },
   { department: '사회과학대', departmentName: 'SOCIAL' },
   { department: '경영학부', departmentName: 'BUSINESS' },
   { department: '아동청소년학과', departmentName: 'CHILD_YOUTH' },
@@ -28,5 +27,4 @@ export const departmentList = [
   { department: '미래융합학부2', departmentName: 'FUTURE_2' },
   { department: '총동아리연합회', departmentName: 'CLUB' },
   { department: '신문사', departmentName: 'PRESS' },
-  { department: '총학생회', departmentName: 'STUDENT_COUNCIL' },
 ];
