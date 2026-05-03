@@ -53,11 +53,11 @@ export default function BoothMap({ activeBuildingId, onSelectBuilding, onMapBack
         <div className="absolute left-0 top-0 origin-top-left" style={scaleLayerStyle}>
           <div className="relative h-full w-full">
             <div
-              className="pointer-events-none absolute left-[91%] top-[85%] z-[5] flex -translate-x-1/2 -translate-y-1/2 items-center gap-1"
+              className="pointer-events-none absolute left-[93%] top-[100%] z-[5] flex -translate-x-1/2 -translate-y-1/2 items-center gap-1"
               aria-hidden
             >
-              <AedIcon width={25} height={25} className="shrink-0 [&_path]:fill-[#C43A31]" />
-              <span className="-translate-y-[1px] whitespace-nowrap text-[1.05rem] font-semibold leading-none text-[#C43A31] [font-family:Pretendard]">
+              <AedIcon width={20} height={20} className="shrink-0 [&_path]:fill-[#C43A31]" />
+              <span className="-translate-y-[1px] whitespace-nowrap text-[0.85rem] font-semibold leading-none text-[#C43A31] [font-family:Pretendard]">
                 AED
               </span>
             </div>
@@ -69,42 +69,42 @@ export default function BoothMap({ activeBuildingId, onSelectBuilding, onMapBack
                 className="absolute inset-0 z-[1] cursor-default bg-transparent p-0"
                 onClick={() => onMapBackdropClick?.()}
               />
-              <div className="pointer-events-auto absolute left-1/2 top-[8%] z-[2] -translate-x-1/2">
+              <div className="pointer-events-auto absolute left-[50%] top-[5%] z-[2] -translate-x-1/2">
                 <Hyein
                   active={activeBuildingId === 'hyein'}
                   hasBuildingSelection={activeBuildingId != null}
                   onClick={() => onSelectBuilding?.('hyein')}
                 />
               </div>
-              <div className="pointer-events-auto absolute left-[7%] top-[17%] z-[2]">
+              <div className="pointer-events-auto absolute left-[-8.5%] top-[21.5%] z-[2]">
                 <Cheongun
                   active={activeBuildingId === 'cheongun'}
                   hasBuildingSelection={activeBuildingId != null}
                   onClick={() => onSelectBuilding?.('cheongun')}
                 />
               </div>
-              <div className="pointer-events-auto absolute left-[24%] top-[32%] z-[2]">
+              <div className="pointer-events-auto absolute left-[21%] top-[39%] z-[2]">
                 <Eunju1
                   active={activeBuildingId === 'eunju1'}
                   hasBuildingSelection={activeBuildingId != null}
                   onClick={() => onSelectBuilding?.('eunju1')}
                 />
               </div>
-              <div className="pointer-events-auto absolute left-[57%] top-[31%] z-[2]">
+              <div className="pointer-events-auto absolute left-[58%] top-[36%] z-[2]">
                 <Eunju2
                   active={activeBuildingId === 'eunju2'}
                   hasBuildingSelection={activeBuildingId != null}
                   onClick={() => onSelectBuilding?.('eunju2')}
                 />
               </div>
-              <div className="pointer-events-auto absolute left-[-7%] top-[49%] z-[2]">
+              <div className="pointer-events-auto absolute left-[-21%] top-[64%] z-[2]">
                 <Daeil
                   active={activeBuildingId === 'daeil'}
                   hasBuildingSelection={activeBuildingId != null}
                   onClick={() => onSelectBuilding?.('daeil')}
                 />
               </div>
-              <div className="pointer-events-none absolute left-[19%] top-[68%]">
+              <div className="pointer-events-none absolute left-[11.5%] top-[82%]">
                 <Pokpung />
               </div>
             </div>

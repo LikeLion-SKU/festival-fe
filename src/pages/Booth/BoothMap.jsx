@@ -137,6 +137,8 @@ export default function BoothMapPage() {
                         imageSrc={BoothPlaceholderImg}
                         locationDetail={row.locationDetail}
                         departmentName={row.department}
+                        boothNumber={row.boothNumber}
+                        boothNumberEnd={row.boothNumberEnd}
                       />
                     </li>
                   ))}
@@ -205,6 +207,8 @@ export default function BoothMapPage() {
                     imageSrc={BoothPlaceholderImg}
                     locationDetail={row.locationDetail}
                     departmentName={row.department}
+                    boothNumber={row.boothNumber}
+                    boothNumberEnd={row.boothNumberEnd}
                   />
                 ))}
               </div>

@@ -1,11 +1,13 @@
 import clsx from 'clsx';
 
 /**
- * 부스 안내 지도 하단 모달용 카드 (피그마 4071:12056 계열)
+ * 부스 안내 지도 하단 모달용 카드
  * @param {{
  *   imageSrc?: string;
  *   locationDetail: string;
  *   departmentName: string;
+ *   boothNumber?: number | string;
+ *   boothNumberEnd?: number;
  *   className?: string;
  *   variant?: 'sheet' | 'search';
  * }} props
@@ -14,12 +16,21 @@ export default function BoothCard({
   imageSrc,
   locationDetail,
   departmentName,
+  boothNumber,
+  boothNumberEnd,
   className,
   variant = 'sheet',
 }) {
   const heightClass = variant === 'search' ? 'h-[168px]' : 'h-[119px]';
   const subtitleSize = variant === 'search' ? 'text-[14px]' : 'text-[12px]';
   const titleSize = variant === 'search' ? 'text-[24px]' : 'text-[16px]';
+  const badgeText =
+    boothNumber != null && boothNumberEnd != null && boothNumberEnd > boothNumber
+      ? `${boothNumber}~${boothNumberEnd}`
+      : boothNumber;
+  const badgeFont = variant === 'search' ? 'text-[14px]' : 'text-[11px]';
+  const badgePadding = variant === 'search' ? 'min-h-8 px-3 py-1' : 'min-h-7 px-2 py-0.5';
+  const showBadge = badgeText != null && String(badgeText).trim() !== '';
 
   return (
     <article
@@ -29,6 +40,20 @@ export default function BoothCard({
         className
       )}
     >
+      {showBadge && (
+        <div
+          className={clsx(
+            'pointer-events-none absolute left-2 top-2 z-[2] inline-flex max-w-[calc(100%-1rem)] shrink-0 items-center justify-center bg-[#333333]/95 [font-family:Pretendard]',
+            badgePadding,
+            badgeFont
+          )}
+          aria-hidden
+        >
+          <span className="font-bold leading-none tracking-[-0.02em] whitespace-nowrap text-white">
+            {badgeText}
+          </span>
+        </div>
+      )}
       <img
         src={imageSrc}
         alt=""
