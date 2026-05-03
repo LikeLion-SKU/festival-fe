@@ -1,18 +1,27 @@
+import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import SkuLogo from '@/assets/icons/sku-logo.svg';
 import AboutFire2 from '@/assets/images/about-fire2.svg';
 import AboutFire from '@/assets/images/about-fire.svg';
+import CastCreditsAnimation from '@/components/animation/CastCreditsAnimation';
+import {
+  MAIN_SECTION_ICON_SCROLL_FADE,
+  useScrollDrivenOpacity,
+} from '@/components/animation/useScrollDrivenOpacity';
 
 const CAST_ROWS = [
   { role: 'PROJECT LEADER', names: 'Yoon Heejun, Lim Dahyun' },
-  { role: 'PRODUCT OWNER', names: 'Jeong Youngjin, Choi Unjo, Lim Dahyun, Kim Junghyeon' },
+  { role: 'PRODUCT OWNER', names: 'Jeong Youngjin, Choi Unjo, Kim Junghyeon' },
   { role: 'FRONTEND', names: 'Sim SeoHyeon, Jeong Mokjin, Kim Hyunsu' },
-  { role: 'BACKEND', names: 'Keum Sieon, Kim NaKung, Shin Chaerin' },
+  { role: 'BACKEND', names: 'Keum Sieon, Kim NaKyung, Shin Chaerin' },
 ];
 
 export default function About() {
   const navigate = useNavigate();
+  const heroBlockRef = useRef(null);
+  const heroOpacity = useScrollDrivenOpacity(heroBlockRef, MAIN_SECTION_ICON_SCROLL_FADE);
+
   return (
     <section
       id="about"
@@ -38,7 +47,11 @@ export default function About() {
             'linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0.35) 70%, rgba(0,0,0,0.15) 90%,rgba(0,0,0,0) 100%)',
         }}
       />
-      <div className="relative z-10 flex flex-col items-center pt-[0.5rem] text-center text-white">
+      <div
+        ref={heroBlockRef}
+        style={{ opacity: heroOpacity, willChange: 'opacity' }}
+        className="relative z-10 flex flex-col items-center pt-[0.5rem] text-center text-white"
+      >
         <p className="text-[1.25rem] leading-[1.2] text-[#fefefe] [font-family:Sekuya] [text-shadow:1px_1px_0px_rgba(0,0,0,0.11)]">
           ABOUT
         </p>
@@ -61,37 +74,11 @@ export default function About() {
             여러분들께 도움이 되는 페이지가 되길 바라며, 즐거운 축제 즐기시길 바랍니다 !
           </p>
         </div>
-        <div className="mt-[6rem] -mx-[1rem] w-[calc(100%+2rem)] text-[#C43A31]">
+      </div>
+      <div className="relative z-10 mt-[6rem] flex w-full flex-col items-center text-center text-white">
+        <div className="-mx-[1rem] w-[calc(100%+2rem)] text-[#C43A31]">
           <p className="text-center text-[1.125rem] leading-[1.2] [font-family:Sekuya]">CAST</p>
-          <div className="mt-[3rem] space-y-[2rem]">
-            {CAST_ROWS.map((row) => (
-              <div
-                key={row.role}
-                className="grid grid-cols-[5.6rem_1fr] items-start gap-x-[0rem] text-left"
-              >
-                <p className="pl-[1.3rem] m-0 text-[0.75rem] font-black leading-[1.4] [font-family:Pretendard]">
-                  {row.role.includes('LEADER') ? (
-                    <>
-                      {row.role.replace(' LEADER', '')}{' '}
-                      <span className="relative left-[1rem] inline-block">LEADER</span>
-                    </>
-                  ) : row.role.includes('OWNER') ? (
-                    <>
-                      {row.role.replace(' OWNER', '')}{' '}
-                      <span className="relative left-[1.1rem] inline-block">OWNER</span>
-                    </>
-                  ) : row.role === 'BACKEND' ? (
-                    <span className="relative left-[0.5rem] inline-block">BACKEND</span>
-                  ) : (
-                    row.role
-                  )}
-                </p>
-                <p className="-ml-[-1.25rem] m-0 text-[0.75rem] font-semibold leading-[1.4] [font-family:Pretendard]">
-                  {row.names}
-                </p>
-              </div>
-            ))}
-          </div>
+          <CastCreditsAnimation rows={CAST_ROWS} />
         </div>
         <div className="mt-[8rem] -mx-[1rem] flex w-[calc(100%+2rem)] flex-col gap-[0.55rem]">
           <button

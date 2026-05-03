@@ -89,10 +89,10 @@ export default function Intro() {
       </video>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-[0rem] z-[1] h-[58rem]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[8rem]"
         style={{
           background:
-            'linear-gradient(180deg, rgba(0,0,0,0.05) 0%,rgba(0,0,0,0.05) 85%, rgba(18,18,18,0.5) 90%, rgba(18,18,18,0.5) 95%, rgba(18,18,18,0.7) 97%, rgba(18,18,18,1) 100%)',
+            'linear-gradient(180deg, rgba(18,18,18,0) 0%, rgba(18,18,18,0) 22%, rgba(0,0,0,0.1) 40%, rgba(18,18,18,0.38) 58%, rgba(18,18,18,0.80) 80%, rgba(18,18,18,0.94) 88%,rgba(0,0,0,1) 100%, #121212 100%)',
         }}
       />
       <div className="relative z-[10] flex flex-1 flex-col items-center justify-between">
