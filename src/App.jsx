@@ -4,11 +4,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import AdminLayout from '@/layouts/AdminLayout';
 import MobileLayout from '@/layouts/MobileLayout';
-import OrderLayout from '@/layouts/OrderLayout';
 import RootLayout from '@/layouts/RootLayout';
 import Order from '@/pages/Order/Order';
 import AdminMain from '@/pages/admin/AdminMain';
-import ProtectedRoute from '@/router/ProtectedRoute';
 
 const page = (importFn) => () => importFn().then((m) => ({ Component: m.default }));
 
@@ -42,35 +40,21 @@ const router = createBrowserRouter([
     ],
   },
   {
-    //헤더 있는 주문 시스템 레이아웃
-    Component: OrderLayout,
+    //관리자 레이아웃 (헤더 + 컨테이너 통합)
+    Component: AdminLayout,
     children: [
       {
-        Component: MobileLayout,
-        children: [],
-      },
-      {
-        Component: AdminLayout,
+        path: '/admin',
+        Component: AdminMain,
         children: [
-          //{ path: '', lazy: page(() => import('파일 경로')) },
-          {
-            Component: ProtectedRoute,
-            children: [
-              {
-                path: '/admin',
-                Component: AdminMain,
-                children: [
-                  { path: 'waiting', lazy: page(() => import('@/pages/admin/WatingMenu')) },
-                  { path: 'cooking', lazy: page(() => import('@/pages/admin/CookingMenu')) },
-                  { path: 'complete', lazy: page(() => import('@/pages/admin/CompleteMenu')) },
-                  { path: 'cancel', lazy: page(() => import('@/pages/admin/CancelMenu')) },
-                  { path: 'menu', lazy: page(() => import('@/pages/admin/ManagementMenu')) },
-                ],
-              },
-            ],
-          },
+          { path: 'waiting', lazy: page(() => import('@/pages/admin/WatingMenu')) },
+          { path: 'cooking', lazy: page(() => import('@/pages/admin/CookingMenu')) },
+          { path: 'complete', lazy: page(() => import('@/pages/admin/CompleteMenu')) },
+          { path: 'cancel', lazy: page(() => import('@/pages/admin/CancelMenu')) },
+          { path: 'menu', lazy: page(() => import('@/pages/admin/ManagementMenu')) },
         ],
       },
+      { path: '/login', lazy: page(() => import('@/pages/admin/AdminLogin')) },
     ],
   },
   {
@@ -93,11 +77,6 @@ const router = createBrowserRouter([
         ],
       },
     ],
-  },
-  {
-    //헤더 없는 관리자 페이지
-    Component: AdminLayout,
-    children: [{ path: '/login', lazy: page(() => import('@/pages/admin/AdminLogin')) }],
   },
 ]);
 
