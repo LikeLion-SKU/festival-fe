@@ -17,11 +17,13 @@ import CancelGuideModal from '@/components/Admin/CancelGuideModal';
 import CancelReasonModal from '@/components/Admin/CancelReasonModal';
 import OrderCancelModal from '@/components/Admin/OrderCancelModal';
 import OrderCard from '@/components/Admin/OrderCard';
+import Toast from '@/components/common/Toast';
 
 export default function WaitingMenu() {
   const [modal, setModal] = useState(null);
   const [reason, setReason] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [toast, setToast] = useState({ visible: false, message: '' });
   const queryClient = useQueryClient();
   const { notifyOrderStatus, clearCount } = useOutletContext() ?? {};
 
@@ -38,9 +40,11 @@ export default function WaitingMenu() {
   });
 
   useEffect(() => {
+    //페이지 들어오면 구독
     const eventSource = subscribeOrder('WAITING');
 
     const handleWaitingOrder = (event) => {
+      //새로운 데이터 들어오면 맨 밑에 추가
       const newOrder = JSON.parse(event.data);
       queryClient.setQueryData(queryKey, (prev) => ({
         ...(prev ?? {}),
@@ -49,6 +53,7 @@ export default function WaitingMenu() {
     };
 
     const handleNotification = (event) => {
+      //다른 페이지에 새로운게 들어오면 알림
       const { orderStatus } = JSON.parse(event.data);
       notifyOrderStatus?.(orderStatus);
     };
@@ -70,6 +75,7 @@ export default function WaitingMenu() {
   }, [queryClient, notifyOrderStatus]);
 
   useEffect(() => {
+    //confirmDone일 때만 1.5초 뒤에 꺼짐
     if (modal !== 'confirmDone') return;
     const t = setTimeout(() => setModal(null), 1500);
     return () => clearTimeout(t);
@@ -82,6 +88,7 @@ export default function WaitingMenu() {
   };
 
   const handleConfirm = async () => {
+    //신분증 확인 모달 클릭시 조리 중으로 변경
     if (!selectedOrderId) return;
     try {
       await patchChangeOrderStatus(selectedOrderId, 'COOKING');
@@ -92,10 +99,12 @@ export default function WaitingMenu() {
       setModal('confirmDone');
     } catch (error) {
       console.log('조리중 으로 변경 실패 : ' + error);
+      setToast({ visible: true, message: '잠시후 다시 시도해주세요', icon: 'warning' });
     }
   };
 
   const handleCancelSubmit = async () => {
+    //취소 이유 선택 모달 확인시 취소로 변경
     if (!reason) return;
     try {
       await patchCanCelOrder(selectedOrderId, reason);
@@ -106,6 +115,7 @@ export default function WaitingMenu() {
       setModal('cancelGuide');
     } catch (error) {
       console.log('주문 취소 실패:' + error);
+      setToast({ visible: true, message: '잠시후 다시 시도해주세요', icon: 'warning' });
     }
   };
 
@@ -141,6 +151,7 @@ export default function WaitingMenu() {
         </div>
       )}
 
+      {/* 신분증 확인 안내 모달 */}
       <BottomSheet
         open={modal === 'confirm'}
         onOpenChange={(o) => !o && closeModal()}
@@ -158,6 +169,7 @@ export default function WaitingMenu() {
         </div>
       </BottomSheet>
 
+      {/* 조리 중으로 이동 모달 */}
       <BottomSheet open={modal === 'confirmDone'} onOpenChange={(o) => !o && closeModal()}>
         <div className="flex flex-col items-center pt-16.75">
           <CheckIcon />
@@ -166,6 +178,7 @@ export default function WaitingMenu() {
         </div>
       </BottomSheet>
 
+      {/* 취소 이유 선택 모달 */}
       <CancelReasonModal
         open={modal === 'cancelReason'}
         onOpenChange={(o) => !o && closeModal()}
@@ -174,16 +187,26 @@ export default function WaitingMenu() {
         onSubmit={handleCancelSubmit}
       />
 
+      {/* 취소 안내 모달 */}
       <CancelGuideModal
         open={modal === 'cancelGuide'}
         onOpenChange={(o) => !o && closeModal()}
         onConfirm={() => setModal('cancelDone')}
       />
 
+      {/* 취소 확인 모달 */}
       <OrderCancelModal
         open={modal === 'cancelDone'}
         onOpenChange={(o) => !o && closeModal()}
         onConfirm={closeModal}
+      />
+
+      {/* 요청 실패시 재시도 안내 토스트 */}
+      <Toast
+        visible={toast.visible}
+        message={toast.message}
+        icon={toast.icon ?? 'check'}
+        onClose={() => setToast({ visible: false, message: '' })}
       />
     </div>
   );
