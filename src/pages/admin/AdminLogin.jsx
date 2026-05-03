@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { postLogin } from '@/api/login';
+import { login } from '@/api/auth';
 import CheckIcon from '@/assets/icons/admin/check_red_icon.svg?react';
 import WrningIcon from '@/assets/icons/admin/warning_orange_icon.svg?react';
 import DepartmentBox from '@/components/Admin/AdminLogin/DepartmentBox';
@@ -15,9 +15,9 @@ export default function AdminLogin() {
   const navigate = useNavigate();
   const passwordInputRef = useRef(null);
 
-  const login = async () => {
+  const onClicklogin = async () => {
     try {
-      await postLogin(department.departmentName, password);
+      await login({ departmentName: department.departmentName, password });
 
       setIsFail(false);
       navigate('/admin/waiting');
@@ -71,7 +71,7 @@ export default function AdminLogin() {
           width="21.5rem"
           height="3.25rem"
           color={department && password ? '#FE5F54' : '#C9C9C9'}
-          onClick={department && password ? login : ''}
+          onClick={department && password ? onClicklogin : ''}
           buttonName="로그인"
         />
       </div>
