@@ -1,19 +1,35 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 
+import { getAllBooth } from '@/api/booth';
 import backgroundImg from '@/assets/images/about-fire2.svg';
 import BoothPlaceholderImg from '@/assets/images/booth_image.svg';
 import BoothCard from '@/components/Booth/BoothCard';
 import BoothMap from '@/components/Booth/BoothMap';
 import PageHeader from '@/components/common/PageHeader';
 import SearchInput from '@/components/common/SearchInput';
-import {
-  getAllBoothRowsInMapTabOrder,
-  getSortedBoothRowsByBuilding,
-} from '@/constants/boothBuildingData';
+import { BUILDING_ID_TO_API_LOCATION } from '@/constants/boothBuildingData';
 import { BUILDINGS } from '@/constants/mainDummyData';
+
+function normalizeBoothList(payload) {
+  if (payload == null) return [];
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload.data)) return payload.data;
+  if (Array.isArray(payload.content)) return payload.content;
+  if (Array.isArray(payload.booths)) return payload.booths;
+  return [];
+}
+
+function sortBoothRowsByDepartmentKo(rows) {
+  return [...rows].sort((a, b) =>
+    String(a.departmentName ?? '').localeCompare(String(b.departmentName ?? ''), 'ko', {
+      sensitivity: 'base',
+    })
+  );
+}
 
 const BUILDING_BUTTON_ORDER = ['hyein', 'eunju1', 'eunju2', 'cheongun', 'daeil'];
 
@@ -69,27 +85,50 @@ export default function BoothMapPage() {
     return BUILDING_BUTTON_ORDER.map((id) => map.get(id)).filter(Boolean);
   }, []);
 
-  const modalBoothRows = useMemo(() => {
-    let rows = activeBuildingId
-      ? getSortedBoothRowsByBuilding(activeBuildingId)
-      : getAllBoothRowsInMapTabOrder();
-    const q = search.trim().toLowerCase();
-    if (q) {
-      rows = rows.filter(
-        (r) => r.department.toLowerCase().includes(q) || r.locationDetail.toLowerCase().includes(q)
-      );
-    }
-    return rows;
-  }, [activeBuildingId, search]);
+  const apiLocation =
+    searchMode || !activeBuildingId ? undefined : BUILDING_ID_TO_API_LOCATION[activeBuildingId];
+
+  const {
+    data: boothListPayload,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ['boothList', apiLocation ?? 'all'],
+    queryFn: () => getAllBooth(apiLocation),
+  });
+
+  const boothRows = useMemo(() => {
+    const raw = normalizeBoothList(boothListPayload);
+    const mapped = raw.map((item, index) => ({
+      id: String(item.boothId ?? `idx-${index}`),
+      boothId: item.boothId,
+      thumbnailUrl: item.thumbnailUrl,
+      locationDetail: item.locationDetail ?? '',
+      departmentName: item.departmentName ?? '',
+    }));
+    return sortBoothRowsByDepartmentKo(mapped);
+  }, [boothListPayload]);
+
+  const searchQ = search.trim().toLowerCase();
+
+  const sheetBoothRows = useMemo(() => {
+    if (!searchQ) return boothRows;
+    return boothRows.filter(
+      (r) =>
+        r.departmentName.toLowerCase().includes(searchQ) ||
+        r.locationDetail.toLowerCase().includes(searchQ)
+    );
+  }, [boothRows, searchQ]);
 
   /** 검색 오버레이: 건물 탭 무관하게 전체 부스 중 검색 */
   const searchOverlayRows = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return [];
-    return getAllBoothRowsInMapTabOrder().filter(
-      (r) => r.department.toLowerCase().includes(q) || r.locationDetail.toLowerCase().includes(q)
+    if (!searchQ) return [];
+    return boothRows.filter(
+      (r) =>
+        r.departmentName.toLowerCase().includes(searchQ) ||
+        r.locationDetail.toLowerCase().includes(searchQ)
     );
-  }, [search]);
+  }, [boothRows, searchQ]);
 
   const sectionBgStyle = searchMode
     ? { backgroundColor: '#121212' }
@@ -163,6 +202,14 @@ export default function BoothMapPage() {
             >
               {!search.trim() ? (
                 <div className="min-h-[min(50vh,24rem)]" aria-hidden />
+              ) : isPending ? (
+                <p className="py-12 text-center text-sm text-white/50 [font-family:Pretendard]">
+                  불러오는 중…
+                </p>
+              ) : isError ? (
+                <p className="py-12 text-center text-sm text-white/50 [font-family:Pretendard]">
+                  부스 목록을 불러오지 못했습니다.
+                </p>
               ) : searchOverlayRows.length === 0 ? (
                 <p className="py-12 text-center text-sm text-white/50 [font-family:Pretendard]">
                   검색 결과가 없습니다.
@@ -173,11 +220,10 @@ export default function BoothMapPage() {
                     <li key={row.id} className="min-w-0">
                       <BoothCard
                         variant="search"
-                        imageSrc={BoothPlaceholderImg}
+                        to={row.boothId != null ? `/order/${row.boothId}` : undefined}
+                        imageSrc={row.thumbnailUrl || BoothPlaceholderImg}
                         locationDetail={row.locationDetail}
-                        departmentName={row.department}
-                        boothNumber={row.boothNumber}
-                        boothNumberEnd={row.boothNumberEnd}
+                        departmentName={row.departmentName}
                       />
                     </li>
                   ))}
@@ -238,20 +284,27 @@ export default function BoothMapPage() {
             data-booth-sheet-scroll
             className="mx-[27px] mt-5 min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain pb-2 [-webkit-overflow-scrolling:touch]"
           >
-            {modalBoothRows.length === 0 ? (
+            {isPending ? (
+              <p className="py-8 text-center text-sm text-white/50 [font-family:Pretendard]">
+                불러오는 중…
+              </p>
+            ) : isError ? (
+              <p className="py-8 text-center text-sm text-white/50 [font-family:Pretendard]">
+                부스 목록을 불러오지 못했습니다.
+              </p>
+            ) : sheetBoothRows.length === 0 ? (
               <p className="py-8 text-center text-sm text-white/50 [font-family:Pretendard]">
                 {search.trim() ? '검색 결과가 없습니다.' : '등록된 부스 목록이 없습니다.'}
               </p>
             ) : (
               <div className="grid min-w-0 grid-cols-2 gap-x-3 gap-y-4">
-                {modalBoothRows.map((row) => (
+                {sheetBoothRows.map((row) => (
                   <BoothCard
                     key={row.id}
-                    imageSrc={BoothPlaceholderImg}
+                    to={row.boothId != null ? `/order/${row.boothId}` : undefined}
+                    imageSrc={row.thumbnailUrl || BoothPlaceholderImg}
                     locationDetail={row.locationDetail}
-                    departmentName={row.department}
-                    boothNumber={row.boothNumber}
-                    boothNumberEnd={row.boothNumberEnd}
+                    departmentName={row.departmentName}
                   />
                 ))}
               </div>
