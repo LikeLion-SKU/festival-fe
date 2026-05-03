@@ -64,6 +64,17 @@ export default function BoothMap({ activeBuildingId, onSelectBuilding, onMapBack
                 AED
               </span>
             </div>
+            <div
+              className="pointer-events-none absolute left-[54%] top-[49%] z-[5] select-none"
+              style={{
+                transform: 'translate(-10%, -200%) rotate(97deg)',
+              }}
+              aria-hidden
+            >
+              <span className="block whitespace-nowrap text-[12px] font-semibold italic leading-none tracking-[0.02em] text-[#391412] [font-family:Pretendard]">
+                SEOKYEONG UNIVERSITY
+              </span>
+            </div>
             <div className="absolute inset-0 z-10 translate-x-[14px]">
               <button
                 type="button"
