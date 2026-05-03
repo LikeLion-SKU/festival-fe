@@ -128,13 +128,19 @@ export default function Timetable() {
                 ? '!ml-[0.6rem]'
                 : '!ml-[2.5rem]'
               : '',
-            banner.id === 6 ? '!translate-x-[1.2rem]' : '',
+            selectedDay === 'day2' && banner.id === 6
+              ? '!-translate-x-[0.2rem]'
+              : selectedDay === 'day3' && banner.id === 6
+                ? '!translate-x-[1.2rem]'
+                : '',
             banner.id === 7 ? '!-translate-x-[0.8rem]' : '',
           ].join(' ');
           const isSmallArtistText =
             (selectedDay === 'day2' && (banner.id === 1 || banner.id === 5)) ||
             (selectedDay === 'day3' && (banner.id === 4 || banner.id === 7));
           const artistSizeClass = isSmallArtistText ? '!text-[1.15rem]' : '';
+          const teamOffsetClass =
+            selectedDay === 'day2' && banner.id === 5 ? '!-translate-y-[0.25rem]' : '';
 
           return (
             <div
@@ -168,6 +174,7 @@ export default function Timetable() {
                   useVariant1TextLayoutForVariant2={false}
                   artistOffsetClass={artistOffsetClass}
                   artistSizeClass={artistSizeClass}
+                  teamOffsetClass={teamOffsetClass}
                   showRightImageSlot={isVariant1}
                   rightImageSlotSrc={isVariant1 ? Singer1 : ''}
                   rightImageSlotOffsetClass={rightImageSlotOffsetClass}
