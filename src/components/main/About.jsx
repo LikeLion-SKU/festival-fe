@@ -12,7 +12,7 @@ import {
 
 const CAST_ROWS = [
   { role: 'PROJECT LEADER', names: 'Yoon Heejun, Lim Dahyun' },
-  { role: 'PRODUCT OWNER', names: 'Jeong Youngjin, Choi Unjo, Lim Dahyun, Kim Junghyeon' },
+  { role: 'PRODUCT OWNER', names: 'Jeong Youngjin, Choi Unjo, Kim Junghyeon' },
   { role: 'FRONTEND', names: 'Sim SeoHyeon, Jeong Mokjin, Kim Hyunsu' },
   { role: 'BACKEND', names: 'Keum Sieon, Kim NaKyung, Shin Chaerin' },
 ];
