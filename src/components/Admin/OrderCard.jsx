@@ -17,47 +17,19 @@ export default function OrderCard({
   totalOrderPrice,
   onConfirm,
   onCancel,
-  checkedItems: checkedItemsProp,
   onToggleItem,
   isOpen: isOpenProp,
   onOpenChange,
 }) {
   const [internalOpen, setInternalOpen] = useState(false);
-  const [internalChecked, setInternalChecked] = useState(() => new Set());
 
   const isCooking = variant === 'cooking';
   const isOpenControlled = isOpenProp !== undefined;
   const isOpen = isOpenControlled ? isOpenProp : internalOpen;
-  const isControlled = checkedItemsProp !== undefined;
-  const checkedItems = isControlled ? checkedItemsProp : internalChecked;
-
-  const renderItems = isCooking
-    ? orderItems.flatMap((item) =>
-        Array.from({ length: item.quantity }, () => ({
-          menuName: item.menuName,
-          quantity: 1,
-          totalOrderItemPrice:
-            item.quantity > 0 ? item.totalOrderItemPrice / item.quantity : item.totalOrderItemPrice,
-        }))
-      )
-    : orderItems;
 
   const toggleOpen = () => {
     if (isOpenControlled) onOpenChange?.(!isOpen);
     else setInternalOpen((v) => !v);
-  };
-
-  const toggleChecked = (idx) => {
-    if (isControlled) {
-      onToggleItem?.(idx);
-      return;
-    }
-    setInternalChecked((prev) => {
-      const next = new Set(prev);
-      if (next.has(idx)) next.delete(idx);
-      else next.add(idx);
-      return next;
-    });
   };
 
   return (
@@ -122,16 +94,16 @@ export default function OrderCard({
           </div>
 
           <div className="flex w-full flex-col">
-            {renderItems.map((item, idx) => {
-              const checked = checkedItems.has(idx);
+            {orderItems.map((item, idx) => {
+              const checked = item.isServed;
               const strike = isCooking && checked;
               return (
                 <div
                   key={idx}
                   className={`flex h-12 items-center justify-between gap-3 px-2 ${
-                    idx < renderItems.length - 1 ? 'border-b border-dashed border-[#EFEFEF]' : ''
+                    idx < orderItems.length - 1 ? 'border-b border-dashed border-[#EFEFEF]' : ''
                   }`}
-                  onClick={() => toggleChecked(idx)}
+                  onClick={() => onToggleItem?.(idx)}
                 >
                   <div className="flex flex-1 items-center gap-3">
                     {isCooking /* 조리 중 버전이면 체크 박스 */ && (
@@ -180,8 +152,8 @@ export default function OrderCard({
               type="button"
               onClick={() =>
                 onConfirm?.({
-                  allChecked: renderItems.length > 0 && checkedItems.size === renderItems.length,
-                  checkedCount: checkedItems.size,
+                  allChecked: orderItems.length > 0 && orderItems.every((it) => it.isServed),
+                  checkedCount: orderItems.filter((it) => it.isServed).length,
                 })
               }
               className="flex h-11 flex-1 items-center justify-center gap-1 rounded-lg bg-[#FF756C] px-4 py-2.5"

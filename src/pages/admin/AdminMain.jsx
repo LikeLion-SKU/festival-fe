@@ -49,10 +49,8 @@ const STATUS_TO_KEY = {
   WAITING: 'wait',
   COOKING: 'cook',
   COMPLETED: 'complete',
-  COMPLETE: 'complete',
   DONE: 'complete',
   CANCELED: 'cancel',
-  CANCELLED: 'cancel',
 };
 
 const INITIAL_COUNTS = { wait: 0, cook: 0, complete: 0, cancel: 0 };

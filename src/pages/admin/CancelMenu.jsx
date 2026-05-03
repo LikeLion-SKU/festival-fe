@@ -10,33 +10,16 @@ import CompletedOrderCard from '@/components/Admin/AdminComplete/CompletedOrderC
 import BottomSheet from '@/components/Admin/BottomSheet';
 import MenuFilterBox from '@/components/Admin/MenuFilterBox';
 import OrderReturnModal from '@/components/Admin/OrderReturnModal';
-
-const ORDERED_DATES = ['5/13', '5/14', '5/15'];
-const TODAY = (() => {
-  const now = new Date();
-  return `${now.getMonth() + 1}/${now.getDate()}`;
-})();
-const FILTERS = [
-  { key: 'all', label: '전체' },
-  { key: '5/13', label: '5/13' },
-  { key: '5/14', label: '5/14' },
-  { key: '5/15', label: '5/15' },
-];
-
-const isPastDate = (date) => ORDERED_DATES.indexOf(date) < ORDERED_DATES.indexOf(TODAY);
-
-const orderItemsToItems = (orderItems = []) =>
-  orderItems.map((i) => ({
-    name: i.menuName,
-    quantity: i.quantity,
-    price: i.totalOrderItemPrice,
-  }));
+import PastDateModal from '@/components/Admin/PastDateModal';
+import Toast from '@/components/common/Toast';
+import { FILTERS, filterOrders, isPastDate } from '@/constants/menuFilterData';
 
 export default function CancelMenu() {
   const [modal, setModal] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [dateFilter, setDateFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [toast, setToast] = useState({ visible: false, message: '' });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { notifyOrderStatus, clearCount } = useOutletContext() ?? {};
@@ -54,9 +37,11 @@ export default function CancelMenu() {
   });
 
   useEffect(() => {
+    //페이지 진입시 구독
     const eventSource = subscribeOrder('CANCELED');
 
     const handleCanceledOrder = (event) => {
+      //새로운 데이터 들어올 시 추가
       const newOrder = JSON.parse(event.data);
       queryClient.setQueryData(queryKey, (prev) => ({
         ...(prev ?? {}),
@@ -65,6 +50,7 @@ export default function CancelMenu() {
     };
 
     const handleNotification = (event) => {
+      //다른 페이지 데이터 추가시 표시
       const { orderStatus } = JSON.parse(event.data);
       notifyOrderStatus?.(orderStatus);
     };
@@ -85,17 +71,7 @@ export default function CancelMenu() {
     };
   }, [queryClient, notifyOrderStatus]);
 
-  const filtered = orderData
-    .filter((d) => dateFilter === 'all' || d.orderDate === dateFilter)
-    .filter((d) => {
-      if (!searchQuery.trim()) return true;
-      const q = searchQuery.trim().toLowerCase();
-      return (
-        d.customerName.toLowerCase().includes(q) ||
-        String(d.tableNumber).includes(q) ||
-        d.customerPhoneNumber.includes(q)
-      );
-    });
+  const filtered = filterOrders(orderData, dateFilter, searchQuery); //필터링된 데이터
 
   const closeModal = () => {
     setModal(null);
@@ -103,15 +79,17 @@ export default function CancelMenu() {
   };
 
   const handleUndoClick = (order) => {
+    //되돌리기 버튼 클릭 시
     setSelectedOrderId(order.orderId);
     if (isPastDate(order.orderDate)) {
-      setModal('pastDate');
+      setModal('pastDate'); //지난 날짜면 불가능
     } else {
       setModal('undoConfirm');
     }
   };
 
   const handleUndoConfirm = async (orderId) => {
+    //되돌리기 요청
     if (!orderId) return;
     try {
       await patchChangeOrderStatus(orderId, 'WAITING');
@@ -122,12 +100,13 @@ export default function CancelMenu() {
       setModal('undoDone');
     } catch (error) {
       console.log('대기로 되돌리기 실패: ' + error);
+      setToast({ visible: true, message: '잠시후 다시 시도해주세요', icon: 'warning' });
     }
   };
 
   return (
     <div className="flex flex-col w-full h-full bg-[#F8F8F8] items-center">
-      <MenuFilterBox
+      <MenuFilterBox /* 주문 필터링 박스 */
         title="취소된 주문"
         count={filtered.length}
         filters={FILTERS}
@@ -140,7 +119,7 @@ export default function CancelMenu() {
       {filtered.length > 0 ? (
         <div className="flex flex-col w-full gap-2 overflow-auto no-scrollbar px-5 py-5">
           {filtered.map((data) => (
-            <CompletedOrderCard
+            <CompletedOrderCard /* 취소 주문 카드 */
               key={data.orderId}
               tableNumber={data.tableNumber}
               peopleCount={data.numOfPeople}
@@ -148,7 +127,7 @@ export default function CancelMenu() {
               completeTime={data.cancelTime}
               customerName={data.customerName}
               phone={data.customerPhoneNumber}
-              items={orderItemsToItems(data.orderItems)}
+              orderItems={data.orderItems}
               totalAmount={data.totalOrderPrice}
               completedDate={data.orderDate}
               cancelReason={data.orderCancelReason}
@@ -167,7 +146,7 @@ export default function CancelMenu() {
         </div>
       )}
 
-      <BottomSheet
+      <BottomSheet /* 대기로 되돌리기 확인 모달 박스 */
         open={modal === 'undoConfirm'}
         onOpenChange={(o) => !o && closeModal()}
         showButton
@@ -183,7 +162,7 @@ export default function CancelMenu() {
         </div>
       </BottomSheet>
 
-      <OrderReturnModal
+      <OrderReturnModal /* 주문 되돌리기 완료 확인 박스 */
         open={modal === 'undoDone'}
         onOpenChange={(o) => !o && closeModal()}
         onMove={() => {
@@ -193,20 +172,18 @@ export default function CancelMenu() {
         onConfirm={closeModal}
       />
 
-      <BottomSheet
+      <PastDateModal /* 지난 날짜 되돌리기 불가 안내 모달 */
         open={modal === 'pastDate'}
         onOpenChange={(o) => !o && closeModal()}
-        showButton
-        buttonName="확인"
-        onButtonClick={closeModal}
-      >
-        <div className="flex flex-col items-center pt-16.75">
-          <WarningIcon />
-          <p className="font-semibold text-[1.25rem] mt-6.25">
-            지난 날짜의 주문은 되돌릴 수 없어요.
-          </p>
-        </div>
-      </BottomSheet>
+        onConfirm={closeModal}
+      />
+
+      <Toast /* 요청 실패시 재시도 안내 토스트 */
+        visible={toast.visible}
+        message={toast.message}
+        icon={toast.icon ?? 'check'}
+        onClose={() => setToast({ visible: false, message: '' })}
+      />
     </div>
   );
 }

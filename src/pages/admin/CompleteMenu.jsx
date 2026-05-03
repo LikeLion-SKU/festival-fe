@@ -11,35 +11,19 @@ import CompletedOrderCard from '@/components/Admin/AdminComplete/CompletedOrderC
 import BottomSheet from '@/components/Admin/BottomSheet';
 import MenuFilterBox from '@/components/Admin/MenuFilterBox';
 import OrderReturnModal from '@/components/Admin/OrderReturnModal';
-
-const ORDERED_DATES = ['5/13', '5/14', '5/15'];
-const TODAY = (() => {
-  const now = new Date();
-  return `${now.getMonth() + 1}/${now.getDate()}`;
-})();
-const FILTERS = [
-  { key: 'all', label: '전체' },
-  { key: '5/13', label: '5/13' },
-  { key: '5/14', label: '5/14' },
-  { key: '5/15', label: '5/15' },
-];
-
-const isPastDate = (date) => ORDERED_DATES.indexOf(date) < ORDERED_DATES.indexOf(TODAY);
-
-const orderItemsToItems = (orderItems = []) =>
-  orderItems.map((i) => ({
-    name: i.menuName,
-    quantity: i.quantity,
-    price: i.totalOrderItemPrice,
-  }));
+import PastDateModal from '@/components/Admin/PastDateModal';
+import Toast from '@/components/common/Toast';
+import { FILTERS, filterOrders, isPastDate } from '@/constants/menuFilterData';
 
 const toApiDate = (md) => {
+  //api 요청을 보내기 위한 날짜 변환
   if (!md || md === 'all') return undefined;
   const [m, d] = md.split('/');
   return `${new Date().getFullYear()}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
 };
 
 const formatSales = (n) => {
+  //매출 출력용 문자열 변환
   if (!n || n <= 0) return '0원';
   const man = Math.floor(n / 10000);
   const cheon = Math.floor((n % 10000) / 1000);
@@ -59,6 +43,7 @@ export default function CompleteMenu() {
   const [dateFilter, setDateFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sales, setSales] = useState(null);
+  const [toast, setToast] = useState({ visible: false, message: '' });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { notifyOrderStatus, clearCount } = useOutletContext() ?? {};
@@ -76,9 +61,11 @@ export default function CompleteMenu() {
   });
 
   useEffect(() => {
+    //페이지 진입시 구독
     const eventSource = subscribeOrder('COMPLETED');
 
     const handleCompletedOrder = (event) => {
+      //새로운 데이터 들어오면 추가
       const newOrder = JSON.parse(event.data);
       queryClient.setQueryData(queryKey, (prev) => ({
         ...(prev ?? {}),
@@ -87,6 +74,7 @@ export default function CompleteMenu() {
     };
 
     const handleNotification = (event) => {
+      //다른 페이지 데이터 들어오면 카운트
       const { orderStatus } = JSON.parse(event.data);
       notifyOrderStatus?.(orderStatus);
     };
@@ -107,17 +95,7 @@ export default function CompleteMenu() {
     };
   }, [queryClient, notifyOrderStatus]);
 
-  const filtered = orderData
-    .filter((d) => dateFilter === 'all' || d.orderDate === dateFilter)
-    .filter((d) => {
-      if (!searchQuery.trim()) return true;
-      const q = searchQuery.trim().toLowerCase();
-      return (
-        d.customerName.toLowerCase().includes(q) ||
-        String(d.tableNumber).includes(q) ||
-        d.customerPhoneNumber.includes(q)
-      );
-    });
+  const filtered = filterOrders(orderData, dateFilter, searchQuery);
 
   const closeModal = () => {
     setModal(null);
@@ -125,25 +103,29 @@ export default function CompleteMenu() {
   };
 
   const handleUndoClick = (order) => {
+    //되돌리기 클릭시
     setSelectedOrderId(order.orderId);
     if (isPastDate(order.orderDate)) {
-      setModal('pastDate');
+      setModal('pastDate'); //지난 날짜면 불가
     } else {
       setModal('undoConfirm');
     }
   };
 
   const handleRevenueClick = async () => {
+    //매출 조회 요청
     try {
       const res = await getSales(toApiDate(dateFilter));
       setSales(res?.data?.sales ?? 0);
       setModal('total');
     } catch (error) {
       console.log('매출 조회 실패: ' + error);
+      setToast({ visible: true, message: '잠시후 다시 시도해주세요', icon: 'warning' });
     }
   };
 
   const handleUndoConfirm = async (orderId) => {
+    // 되돌리기 요청
     if (!orderId) return;
     try {
       await patchChangeOrderStatus(orderId, 'COOKING');
@@ -154,12 +136,13 @@ export default function CompleteMenu() {
       setModal('undoDone');
     } catch (error) {
       console.log('조리중으로 되돌리기 실패: ' + error);
+      setToast({ visible: true, message: '잠시후 다시 시도해주세요', icon: 'warning' });
     }
   };
 
   return (
     <div className="flex flex-col w-full h-full bg-[#F8F8F8] items-center">
-      <MenuFilterBox
+      <MenuFilterBox /* 주문 필터링 박스 */
         title="완료된 주문"
         count={filtered.length}
         filters={FILTERS}
@@ -174,7 +157,7 @@ export default function CompleteMenu() {
       {filtered.length > 0 ? (
         <div className="flex flex-col w-full gap-2 overflow-auto no-scrollbar px-5 py-5">
           {filtered.map((data) => (
-            <CompletedOrderCard
+            <CompletedOrderCard /* 주문 완료 카드 */
               key={data.orderId}
               tableNumber={data.tableNumber}
               peopleCount={data.numOfPeople}
@@ -182,7 +165,7 @@ export default function CompleteMenu() {
               completeTime={data.completeTime}
               customerName={data.customerName}
               phone={data.customerPhoneNumber}
-              items={orderItemsToItems(data.orderItems)}
+              orderItems={data.orderItems}
               totalAmount={data.totalOrderPrice}
               completedDate={data.orderDate}
               onUndo={() => handleUndoClick(data)}
@@ -200,7 +183,7 @@ export default function CompleteMenu() {
         </div>
       )}
 
-      <BottomSheet
+      <BottomSheet /* 조리로 되돌리기 확인 모달 박스 */
         open={modal === 'undoConfirm'}
         onOpenChange={(o) => !o && closeModal()}
         showButton
@@ -216,7 +199,7 @@ export default function CompleteMenu() {
         </div>
       </BottomSheet>
 
-      <OrderReturnModal
+      <OrderReturnModal /* 주문 되돌리기 완료 확인 박스 */
         open={modal === 'undoDone'}
         onOpenChange={(o) => !o && closeModal()}
         onMove={() => {
@@ -226,22 +209,13 @@ export default function CompleteMenu() {
         onConfirm={closeModal}
       />
 
-      <BottomSheet
+      <PastDateModal /* 지난 날짜 되돌리기 불가 안내 모달 */
         open={modal === 'pastDate'}
         onOpenChange={(o) => !o && closeModal()}
-        showButton
-        buttonName="확인"
-        onButtonClick={closeModal}
-      >
-        <div className="flex flex-col items-center pt-16.75">
-          <WarningIcon />
-          <p className="font-semibold text-[1.25rem] mt-6.25">
-            지난 날짜의 주문은 되돌릴 수 없어요.
-          </p>
-        </div>
-      </BottomSheet>
+        onConfirm={closeModal}
+      />
 
-      <BottomSheet
+      <BottomSheet /* 매출 확인 모달 */
         open={modal === 'total'}
         onOpenChange={(o) => !o && closeModal()}
         showButton
@@ -261,6 +235,13 @@ export default function CompleteMenu() {
           </p>
         </div>
       </BottomSheet>
+
+      <Toast /* 요청 실패시 재시도 안내 토스트 */
+        visible={toast.visible}
+        message={toast.message}
+        icon={toast.icon ?? 'check'}
+        onClose={() => setToast({ visible: false, message: '' })}
+      />
     </div>
   );
 }

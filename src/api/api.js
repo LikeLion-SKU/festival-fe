@@ -76,6 +76,7 @@ privateApi.interceptors.response.use(
     } catch (refreshError) {
       processQueue(refreshError);
       forceLogout();
+      window.location.href = '/login'; // 로그인 페이지로 강제 이동
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;

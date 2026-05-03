@@ -20,21 +20,11 @@ import CancelReasonModal from '@/components/Admin/CancelReasonModal';
 import OpenButton from '@/components/Admin/OpenButton';
 import OrderCancelModal from '@/components/Admin/OrderCancelModal';
 import OrderCard from '@/components/Admin/OrderCard';
+import Toast from '@/components/common/Toast';
 
-const unitsToOrderItems = (units = []) =>
-  units.map((u) => ({
-    menuName: u.menuName,
-    quantity: 1,
-    totalOrderItemPrice: u.menuPrice,
-  }));
-
-const buildServedSet = (units = []) => {
-  const set = new Set();
-  units.forEach((u, idx) => {
-    if (u.isServed) set.add(idx);
-  });
-  return set;
-};
+const unitsToOrderItems = (
+  units = [] //OrderCard컴포넌트 prop 맞춰주기 위한 함수
+) => units.map((u) => ({ ...u, totalOrderItemPrice: u.menuPrice }));
 
 export default function CookingMenu() {
   const [modal, setModal] = useState(null);
@@ -44,6 +34,7 @@ export default function CookingMenu() {
   const queryClient = useQueryClient();
   const { notifyOrderStatus, clearCount } = useOutletContext() ?? {};
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [toast, setToast] = useState({ visible: false, message: '' });
 
   useEffect(() => {
     clearCount?.('cook');
@@ -58,9 +49,11 @@ export default function CookingMenu() {
   });
 
   useEffect(() => {
+    //페이지 집입시 구독
     const eventSource = subscribeOrder('COOKING');
 
     const handleCookingOrder = (event) => {
+      //새로운 데이터 들어오면 추가
       const newOrder = JSON.parse(event.data);
       queryClient.setQueryData(queryKey, (prev) => ({
         ...(prev ?? {}),
@@ -69,11 +62,13 @@ export default function CookingMenu() {
     };
 
     const handleNotification = (event) => {
+      //다른 페이지 새로운 데이터 추가시 표시
       const { orderStatus } = JSON.parse(event.data);
       notifyOrderStatus?.(orderStatus);
     };
 
     const handleUnitStatus = (event) => {
+      //체크 여부 변화시 실시간 적용
       const { orderId, orderItemUnitId, isServed } = JSON.parse(event.data);
       queryClient.setQueryData(queryKey, (prev) => {
         if (!prev?.data) return prev;
@@ -127,6 +122,7 @@ export default function CookingMenu() {
   };
 
   const toggleItem = async (orderId, idx) => {
+    //서빙 상태 변경 요청
     const order = orderData.find((o) => o.orderId === orderId);
     const unit = order?.orderItemUnits?.[idx];
     if (!unit) return;
@@ -151,10 +147,12 @@ export default function CookingMenu() {
       });
     } catch (error) {
       console.log('서빙 상태 변경 실패: ' + error);
+      setToast({ visible: true, message: '잠시후 다시 시도해주세요', icon: 'warning' });
     }
   };
 
   useEffect(() => {
+    //cookingDone면 1.5초 뒤에 닫기
     if (modal !== 'cookingDone') return;
     const t = setTimeout(() => setModal(null), 1500);
     return () => clearTimeout(t);
@@ -167,8 +165,10 @@ export default function CookingMenu() {
   };
 
   const handleConfirm = async ({ allChecked, orderId }) => {
+    //완료로 변경
     setSelectedOrderId(orderId);
     if (allChecked) {
+      //전부 다 서빈 완료면 완료 요청
       try {
         await patchChangeOrderStatus(orderId, 'COMPLETED');
         queryClient.setQueryData(queryKey, (prev) => ({
@@ -178,13 +178,16 @@ export default function CookingMenu() {
         setModal('cookingDone');
       } catch (error) {
         console.log('주문 완료 처리 실패: ' + error);
+        setToast({ visible: true, message: '잠시후 다시 시도해주세요', icon: 'warning' });
       }
     } else {
+      //서빙 안된거 있을 때는 경고 모달
       setModal('warning');
     }
   };
 
   const handleWarningConfirm = async () => {
+    //경고 안내 모달 확인시
     if (!selectedOrderId) return;
     try {
       await patchChangeOrderStatus(selectedOrderId, 'COMPLETED');
@@ -195,10 +198,12 @@ export default function CookingMenu() {
       setModal('cookingDone');
     } catch (error) {
       console.log('주문 완료 처리 실패: ' + error);
+      setToast({ visible: true, message: '잠시후 다시 시도해주세요', icon: 'warning' });
     }
   };
 
   const handleCancelSubmit = async () => {
+    //취소 이유 선택 확인시
     if (!reason) return;
     try {
       await patchCanCelOrder(selectedOrderId, reason);
@@ -209,6 +214,7 @@ export default function CookingMenu() {
       setModal('cancelGuide');
     } catch (error) {
       console.log('주문 취소 실패:' + error);
+      setToast({ visible: true, message: '잠시후 다시 시도해주세요', icon: 'warning' });
     }
   };
 
@@ -277,7 +283,6 @@ export default function CookingMenu() {
                 customerPhoneNumber={data.customerPhoneNumber}
                 orderItems={unitsToOrderItems(data.orderItemUnits)}
                 totalOrderPrice={data.totalOrderPrice}
-                checkedItems={buildServedSet(data.orderItemUnits)}
                 onToggleItem={(idx) => toggleItem(data.orderId, idx)}
                 isOpen={expandedIds.has(data.orderId)}
                 onOpenChange={(o) => toggleOne(data.orderId, o)}
@@ -343,6 +348,13 @@ export default function CookingMenu() {
         open={modal === 'cancelDone'}
         onOpenChange={(o) => !o && closeModal()}
         onConfirm={closeModal}
+      />
+
+      <Toast /* 요청 실패시 재시도 안내 토스트 */
+        visible={toast.visible}
+        message={toast.message}
+        icon={toast.icon ?? 'check'}
+        onClose={() => setToast({ visible: false, message: '' })}
       />
     </div>
   );
