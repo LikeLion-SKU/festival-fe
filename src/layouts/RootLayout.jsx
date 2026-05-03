@@ -14,7 +14,6 @@ export default function RootLayout() {
   return (
     <main className="flex h-full flex-col">
       {isLoading && <LoadingBar />}
-      {/* <Header /> */}
       <div className="min-h-0 flex-1">
         <Outlet context={{ onModalChange: setIsModalOpen, isModalOpen: isModalOpen }} />
       </div>
