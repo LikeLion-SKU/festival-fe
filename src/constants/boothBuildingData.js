@@ -56,6 +56,7 @@ const RAW_DEPARTMENTS_BY_BUILDING = {
     { department: '군사학과', locationDetail: '은주2관 앞', boothNumber: 15 },
   ],
   hyein: [
+    { department: '총학생회', locationDetail: '혜인관 앞', boothNumber: 1, boothNumberEnd: 2 },
     { department: '축제기획단', locationDetail: '혜인관 앞', boothNumber: 3 },
     { department: '신문사', locationDetail: '혜인관 앞', boothNumber: 4 },
     { department: '총동아리연합회', locationDetail: '혜인관 앞', boothNumber: 5 },
