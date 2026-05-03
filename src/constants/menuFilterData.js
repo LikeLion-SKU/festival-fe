@@ -10,8 +10,14 @@ export const FILTERS = [
   ...ORDERED_DATES.map((d) => ({ key: d, label: d })),
 ];
 
-//지난 날짜 판단
-export const isPastDate = (date) => ORDERED_DATES.indexOf(date) < ORDERED_DATES.indexOf(TODAY);
+//"M/D" 문자열을 비교 가능한 숫자로 변환 (ex: "5/13" → 513)
+const toMonthDay = (md) => {
+  const [m, d] = md.split('/').map(Number);
+  return m * 100 + d;
+};
+
+//지난 날짜 판단 (오늘보다 과거면 true)
+export const isPastDate = (date) => toMonthDay(date) < toMonthDay(TODAY);
 
 //날짜 + 검색어로 주문 목록 필터링
 export const filterOrders = (orderData, dateFilter, searchQuery) => {

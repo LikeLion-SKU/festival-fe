@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 
 import { login } from '@/api/auth';
 import CheckIcon from '@/assets/icons/admin/check_red_icon.svg?react';
@@ -14,8 +14,10 @@ export default function AdminLogin() {
   const [isFail, setIsFail] = useState(false);
   const navigate = useNavigate();
   const passwordInputRef = useRef(null);
+  const { setIsLoading } = useOutletContext() ?? {};
 
   const onClicklogin = async () => {
+    setIsLoading?.(true);
     try {
       await login({ departmentName: department.departmentName, password });
 
@@ -25,6 +27,8 @@ export default function AdminLogin() {
       console.log('로그인 실패 : ' + error);
       setIsFail(true);
       passwordInputRef.current?.focus();
+    } finally {
+      setIsLoading?.(false);
     }
   };
 
@@ -71,7 +75,7 @@ export default function AdminLogin() {
           width="21.5rem"
           height="3.25rem"
           color={department && password ? '#FE5F54' : '#C9C9C9'}
-          onClick={department && password ? onClicklogin : ''}
+          onClick={department && password ? onClicklogin : () => {}}
           buttonName="로그인"
         />
       </div>
