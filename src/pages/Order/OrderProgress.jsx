@@ -4,6 +4,7 @@ import { useNavigate, useOutletContext } from 'react-router';
 import OrderButtonBox from '@/components/Order/OrderEntry/OrderButtonBox';
 import FoodNavbar from '@/components/Order/OrderProgress/FoodNavbar';
 import MenuSection from '@/components/Order/OrderProgress/MenuSection';
+import Loading from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import OrderHeader from '@/components/common/OrderHeader';
 
@@ -22,6 +23,7 @@ function OrderProgress() {
     onIncrease,
     onDecrease,
     onReset,
+    isMenuLoading,
   } = useOutletContext();
 
   const [activeCategory, setActiveCategory] = useState('메인');
@@ -67,7 +69,8 @@ function OrderProgress() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col h-full bg-white relative">
+      {isMenuLoading && <Loading />}
       <div className="shrink-0">
         <OrderHeader
           title={departmentName}
