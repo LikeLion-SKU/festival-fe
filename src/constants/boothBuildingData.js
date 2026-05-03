@@ -1,7 +1,7 @@
 import BoothImagePlaceholder from '@/assets/images/booth_image.svg';
 
 /**
- * 건물별 부스 학과명으로 가나다순 정렬 (혜인/은주1/은주2/청운/대일은 부스 번호 순)
+ * 건물별 부스 카드는 학과명 가나다순 정렬 (`getSortedBoothRowsByBuilding`).
  * locationDetail은 추후 부스별 상세 주소로 교체 해야 함
  */
 
@@ -70,20 +70,6 @@ function sortByDepartmentKo(rows) {
   });
 }
 
-/** 혜인/은주1/은주2/청운/대일은 지도 마커 번호 순 */
-function sortByBuildingRules(buildingId, rows) {
-  if (
-    buildingId === 'hyein' ||
-    buildingId === 'eunju1' ||
-    buildingId === 'eunju2' ||
-    buildingId === 'cheongun' ||
-    buildingId === 'daeil'
-  ) {
-    return [...rows].sort((a, b) => (a.boothNumber ?? 999) - (b.boothNumber ?? 999));
-  }
-  return sortByDepartmentKo(rows);
-}
-
 /**
  * 건물 id 기준 정렬된 부스 행 (지도 모달 / 메인 부스 등에서 공통 사용)
  * @param {string} buildingId
@@ -92,7 +78,7 @@ function sortByBuildingRules(buildingId, rows) {
 export function getSortedBoothRowsByBuilding(buildingId) {
   const raw = RAW_DEPARTMENTS_BY_BUILDING[buildingId];
   if (!raw?.length) return [];
-  const sorted = sortByBuildingRules(buildingId, raw);
+  const sorted = sortByDepartmentKo(raw);
   return sorted.map((row, index) => ({
     ...row,
     id: `${buildingId}-${row.department}-${index}`,
