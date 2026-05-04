@@ -1,4 +1,9 @@
-export default function OrderHeader({ title, showBackButton = false, onBack }) {
+export default function OrderHeader({
+  title,
+  titleClassName = '',
+  showBackButton = false,
+  onBack,
+}) {
   return (
     <div className="relative flex h-14 w-full items-center justify-center px-5 mt-10">
       {showBackButton && (
@@ -26,7 +31,9 @@ export default function OrderHeader({ title, showBackButton = false, onBack }) {
           </svg>
         </button>
       )}
-      <h1 className="text-[18px] font-semibold leading-normal tracking-[-0.45px] text-[#1A1A1A]">
+      <h1
+        className={`text-[18px] font-semibold leading-normal tracking-[-0.45px] text-[#1A1A1A] ${titleClassName}`}
+      >
         {title}
       </h1>
     </div>
