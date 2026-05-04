@@ -20,6 +20,7 @@ export default function Banner({
   useVariant1TextLayoutForVariant2 = false,
   artistOffsetClass = '',
   artistSizeClass = '',
+  teamOffsetClass = '',
   showRightImageSlot = false,
   rightImageSlotSrc = '',
   rightImageSlotOffsetClass = '',
@@ -61,7 +62,7 @@ export default function Banner({
                   ? 'mr-[1.3rem] origin-right rotate-[5deg]'
                   : 'ml-[1.3rem] origin-left -rotate-[3deg]'
                 : ''
-          }`}
+          } ${teamOffsetClass}`}
             >
               {team.trim()}
             </p>

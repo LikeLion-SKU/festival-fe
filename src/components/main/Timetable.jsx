@@ -113,7 +113,7 @@ export default function Timetable() {
         ref={bannerListRef}
         className="mx-auto mt-[1.5rem] flex w-full max-w-[24rem] flex-col gap-[0.05rem]"
       >
-        {(TIMETABLE_DAY_BANNERS[selectedDay] ?? []).map((banner, index, banners) => {
+        {(TIMETABLE_DAY_BANNERS[selectedDay] ?? []).map((banner, index) => {
           const isVariant2 = banner.variant === 2;
           const isVariant1 = banner.variant === 1;
           const isRightAligned = index % 2 === 1;
@@ -128,13 +128,19 @@ export default function Timetable() {
                 ? '!ml-[0.6rem]'
                 : '!ml-[2.5rem]'
               : '',
-            banner.id === 6 ? '!translate-x-[1.2rem]' : '',
+            selectedDay === 'day2' && banner.id === 6
+              ? '!-translate-x-[0.2rem]'
+              : selectedDay === 'day3' && banner.id === 6
+                ? '!translate-x-[1.2rem]'
+                : '',
             banner.id === 7 ? '!-translate-x-[0.8rem]' : '',
           ].join(' ');
           const isSmallArtistText =
             (selectedDay === 'day2' && (banner.id === 1 || banner.id === 5)) ||
             (selectedDay === 'day3' && (banner.id === 4 || banner.id === 7));
           const artistSizeClass = isSmallArtistText ? '!text-[1.15rem]' : '';
+          const teamOffsetClass =
+            selectedDay === 'day2' && banner.id === 5 ? '!-translate-y-[0.25rem]' : '';
 
           return (
             <div
@@ -149,7 +155,7 @@ export default function Timetable() {
                   transform: isBannerSequenceStarted ? undefined : 'translateY(100px)',
                   willChange: 'opacity, transform',
                   animation: isBannerSequenceStarted
-                    ? `timetable-banner-rise 700ms cubic-bezier(0.22,1,0.36,1) ${(banners.length - 1 - index) * 90}ms both`
+                    ? `timetable-banner-rise 1200ms cubic-bezier(0.22,1,0.36,1) ${index * 170}ms both`
                     : 'none',
                 }}
                 className="transform-gpu"
@@ -168,6 +174,7 @@ export default function Timetable() {
                   useVariant1TextLayoutForVariant2={false}
                   artistOffsetClass={artistOffsetClass}
                   artistSizeClass={artistSizeClass}
+                  teamOffsetClass={teamOffsetClass}
                   showRightImageSlot={isVariant1}
                   rightImageSlotSrc={isVariant1 ? Singer1 : ''}
                   rightImageSlotOffsetClass={rightImageSlotOffsetClass}
