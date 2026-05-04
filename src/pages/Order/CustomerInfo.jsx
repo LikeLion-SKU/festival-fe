@@ -112,8 +112,8 @@ function CustomerInfo() {
       />
       <Modal
         isOpen={showConfirmModal}
-        cancelText="뒤로가기"
-        confirmText="요청하기"
+        cancelText="다시 확인"
+        confirmText="주문 요청"
         isConfirmDisabled={isSubmitting}
         onCancel={() => setShowConfirmModal(false)}
         onConfirm={async () => {
@@ -146,8 +146,8 @@ function CustomerInfo() {
           }
         }}
       >
-        <p className="font-medium">주문을 요청하면 되돌릴 수 없습니다.</p>
-        <p className="font-medium">진행하시겠습니까?</p>
+        <p className="font-medium">주문을 요청할까요?</p>
+        <p className="font-medium">주문 요청 후에는 취소가 불가능해요.</p>
       </Modal>
     </div>
   );
