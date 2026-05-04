@@ -23,9 +23,6 @@ import { LINEUP_DAY_GROUPS } from '@/constants/lineupDummyData';
 const LINEUP_TEXT_GLOBAL_OFFSET_Y = '2.2rem';
 const LINEUP_TEXT_GLOBAL_TILT = -4;
 
-const LINEUP_AUTO_ROTATE_INTERVAL_MS = 5200;
-/** 버튼 혹은 스와이프 후 자동 재생은 이 간격만큼 건너뜀 — 직후 자동 전진이 역방향 조작과 겹치지 않게 함*/
-const LINEUP_AUTO_ROTATE_PAUSE_AFTER_MANUAL_MS = LINEUP_AUTO_ROTATE_INTERVAL_MS;
 const LINEUP_SWIPE_OFFSET_PX = 52;
 const LINEUP_SWIPE_VELOCITY_MIN = 380;
 /** 스냅 복귀 시 반대 방향 velocity 오판 방지 — 속도만으로 넘길 때 남은 변위 방향과 일치해야 함 */
@@ -142,6 +139,10 @@ function LineupCardFace({ item }) {
 }
 
 export default function Lineup() {
+  /** 라인업 자동 회전 속도*/
+  const lineupAutoRotateIntervalMs = 4700;
+  const lineupAutoRotatePauseAfterManualMs = lineupAutoRotateIntervalMs;
+
   const leftNavIds = useMemo(() => LINEUP_DAY_GROUPS[0].items.map((it) => it.id), []);
   const rightNavIds = useMemo(() => LINEUP_DAY_GROUPS[1].items.map((it) => it.id), []);
   const itemById = useMemo(() => {
@@ -192,7 +193,7 @@ export default function Lineup() {
   const iconOpacity = useScrollDrivenOpacity(iconBlockRef, MAIN_SECTION_ICON_SCROLL_FADE);
 
   const pauseAutoRotateAfterUserGesture = () => {
-    suppressAutoRotateUntilRef.current = Date.now() + LINEUP_AUTO_ROTATE_PAUSE_AFTER_MANUAL_MS;
+    suppressAutoRotateUntilRef.current = Date.now() + lineupAutoRotatePauseAfterManualMs;
   };
 
   /** 네비 버튼: 드래그 종료 오판 방지 + 자동 회전과 동시 충돌 방지 */
@@ -325,10 +326,16 @@ export default function Lineup() {
           cursorRight: (s.cursorRight + 1) % rightNavIds.length,
         };
       });
-    }, LINEUP_AUTO_ROTATE_INTERVAL_MS);
+    }, lineupAutoRotateIntervalMs);
 
     return () => clearInterval(id);
-  }, [hasManyCards, reduceMotion, leftNavIds.length, rightNavIds.length]);
+  }, [
+    hasManyCards,
+    reduceMotion,
+    leftNavIds.length,
+    rightNavIds.length,
+    lineupAutoRotateIntervalMs,
+  ]);
 
   const onCarouselDragEnd = (_, info) => {
     if (reduceMotion || !hasManyCards) return;
@@ -400,7 +407,7 @@ export default function Lineup() {
   return (
     <section
       id="lineup"
-      className="relative min-h-[41rem] overflow-hidden bg-[#141414] px-[3.65625rem] pt-[0rem]"
+      className="relative min-h-[34.1rem] overflow-hidden bg-[#141414] px-[3.65625rem] pt-[0rem]"
     >
       <div
         aria-hidden="true"
