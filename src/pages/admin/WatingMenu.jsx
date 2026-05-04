@@ -27,7 +27,8 @@ export default function WaitingMenu() {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [toast, setToast] = useState({ visible: false, message: '' });
   const queryClient = useQueryClient();
-  const { notifyOrderStatus, clearCount, setIsLoading } = useOutletContext() ?? {};
+  const { notifyOrderStatus, clearCount, setIsLoading, setScrollContainer } =
+    useOutletContext() ?? {};
 
   useEffect(() => {
     clearCount?.('wait');
@@ -130,7 +131,10 @@ export default function WaitingMenu() {
   return (
     <div className="flex h-full w-full bg-[#EFEFEF] justify-center">
       {orderData.length > 0 ? (
-        <div className="flex flex-col w-full gap-2 overflow-auto no-scrollbar py-7 px-5">
+        <div
+          ref={setScrollContainer}
+          className="flex flex-col w-full gap-2 overflow-auto no-scrollbar py-7 px-5"
+        >
           {orderData.map((data) => (
             <OrderCard
               key={data.orderId}

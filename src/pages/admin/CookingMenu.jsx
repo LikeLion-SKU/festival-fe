@@ -34,7 +34,8 @@ export default function CookingMenu() {
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [expandedIds, setExpandedIds] = useState(() => new Set());
   const queryClient = useQueryClient();
-  const { notifyOrderStatus, clearCount, setIsLoading } = useOutletContext() ?? {};
+  const { notifyOrderStatus, clearCount, setIsLoading, setScrollContainer } =
+    useOutletContext() ?? {};
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [toast, setToast] = useState({ visible: false, message: '' });
 
@@ -276,7 +277,7 @@ export default function CookingMenu() {
       </div>
 
       {orderData.length > 0 /* 조리 중인 주문들 리스트 */ ? (
-        <div className="overflow-auto w-full no-scrollbar pb-7 px-5">
+        <div ref={setScrollContainer} className="overflow-auto w-full no-scrollbar pb-7 px-5">
           <button
             type="button"
             onClick={toggleAll}
