@@ -155,7 +155,7 @@ export default function Timetable() {
                   transform: isBannerSequenceStarted ? undefined : 'translateY(100px)',
                   willChange: 'opacity, transform',
                   animation: isBannerSequenceStarted
-                    ? `timetable-banner-rise 700ms cubic-bezier(0.22,1,0.36,1) ${index * 90}ms both`
+                    ? `timetable-banner-rise 880ms cubic-bezier(0.22,1,0.36,1) ${index * 170}ms both`
                     : 'none',
                 }}
                 className="transform-gpu"

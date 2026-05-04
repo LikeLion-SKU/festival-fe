@@ -91,7 +91,7 @@ export default function Safety() {
                 </p>
               ))}
             </div>
-            <div className="pt-[0.4rem] -translate-x-[2.5rem] text-left text-[0.75rem] font-normal leading-[1.46] tracking-[-0.01rem] text-white [font-family:Pretendard]">
+            <div className="pt-[0.4rem] -translate-x-[2.6rem] text-left text-[0.75rem] font-normal leading-[1.46] tracking-[-0.01rem] text-white [font-family:Pretendard]">
               {AED_ROWS.map(([building, place]) => (
                 <p key={`${building}-${place}-detail`} className="m-0 whitespace-nowrap">
                   {place}
