@@ -1,17 +1,7 @@
+import { Link } from 'react-router-dom';
+
 import clsx from 'clsx';
 
-/**
- * 부스 안내 지도 하단 모달용 카드
- * @param {{
- *   imageSrc?: string;
- *   locationDetail: string;
- *   departmentName: string;
- *   boothNumber?: number | string;
- *   boothNumberEnd?: number;
- *   className?: string;
- *   variant?: 'sheet' | 'search';
- * }} props
- */
 export default function BoothCard({
   imageSrc,
   locationDetail,
@@ -20,6 +10,7 @@ export default function BoothCard({
   boothNumberEnd,
   className,
   variant = 'sheet',
+  to,
 }) {
   const heightClass = variant === 'search' ? 'h-[168px]' : 'h-[119px]';
   const subtitleSize = variant === 'search' ? 'text-[14px]' : 'text-[12px]';
@@ -32,12 +23,12 @@ export default function BoothCard({
   const badgePadding = variant === 'search' ? 'min-h-8 px-3 py-1' : 'min-h-7 px-2 py-0.5';
   const showBadge = badgeText != null && String(badgeText).trim() !== '';
 
-  return (
+  const article = (
     <article
       className={clsx(
         'relative box-border min-w-0 max-w-full overflow-hidden bg-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]',
         heightClass,
-        className
+        !to && className
       )}
     >
       {showBadge && (
@@ -84,4 +75,20 @@ export default function BoothCard({
       </div>
     </article>
   );
+
+  if (to) {
+    return (
+      <Link
+        to={to}
+        className={clsx(
+          'block min-w-0 max-w-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40',
+          className
+        )}
+      >
+        {article}
+      </Link>
+    );
+  }
+
+  return article;
 }
