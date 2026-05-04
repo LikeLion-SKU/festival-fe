@@ -3,6 +3,7 @@ import { Outlet, useParams } from 'react-router';
 
 import { getBoothInfo } from '@/api/booth';
 import { getOrderAvailableMenus } from '@/api/boothMenu';
+import Toast from '@/components/common/Toast';
 
 function Order() {
   const { boothId } = useParams();
@@ -13,6 +14,7 @@ function Order() {
   const [foodData, setFoodData] = useState([]);
   const [menuLoadedBoothId, setMenuLoadedBoothId] = useState(null);
   const isMenuLoading = menuLoadedBoothId !== boothId;
+  const [errorToast, setErrorToast] = useState({ visible: false, message: '' });
   const [quantities, setQuantities] = useState(() => {
     const saved = sessionStorage.getItem('orderQuantities');
     return saved ? JSON.parse(saved) : {};
@@ -23,6 +25,16 @@ function Order() {
     setLang(code);
   };
 
+  const showError = (error) => {
+    const status = error?.response?.status;
+    if (status === 404) return;
+    const message =
+      status >= 500
+        ? '서버 오류가 발생했어요. 잠시 후 다시 시도해주세요.'
+        : '데이터를 불러오는 중 오류가 발생했어요.';
+    setErrorToast({ visible: true, message });
+  };
+
   useEffect(() => {
     getBoothInfo(boothId, lang)
       .then((res) => {
@@ -30,7 +42,7 @@ function Order() {
         setBoothInfo(data);
         sessionStorage.setItem('departmentName', data.departmentName);
       })
-      .catch(console.error)
+      .catch(showError)
       .finally(() => setLoadedKey(`${boothId}-${lang}`));
   }, [boothId, lang]);
 
@@ -50,7 +62,7 @@ function Order() {
         );
         setFoodData(flat);
       })
-      .catch(console.error)
+      .catch(showError)
       .finally(() => setMenuLoadedBoothId(boothId));
   }, [boothId]);
 
@@ -107,33 +119,41 @@ function Order() {
   }, []);
 
   return (
-    <Outlet
-      context={{
-        boothId,
-        boothName: boothInfo?.boothName ?? '',
-        departmentName: boothInfo?.departmentName ?? '',
-        location: boothInfo?.locationDetail ?? '',
-        isOpen: boothInfo?.open ?? false,
-        content: boothInfo?.description ?? '',
-        thumbnailUrl: boothInfo?.thumbnailUrl ?? null,
-        images: boothInfo?.detailImages?.map((d) => d.imageUrl) ?? [],
-        dayMenus: boothInfo?.menus?.day ?? [],
-        nightMenus: boothInfo?.menus?.night ?? [],
-        orderAvailable: boothInfo?.orderAvailable ?? false,
-        buttonName: '주문하러 가기',
-        foodData,
-        quantities,
-        onSelect: handleSelect,
-        onIncrease: handleIncrease,
-        onRemove: handleRemove,
-        onDecrease: handleDecrease,
-        lang,
-        isLoading,
-        isMenuLoading,
-        onReset: handleReset,
-        onLangChange: handleLangChange,
-      }}
-    />
+    <>
+      <Toast
+        visible={errorToast.visible}
+        message={errorToast.message}
+        icon="warning"
+        onClose={() => setErrorToast({ visible: false, message: '' })}
+      />
+      <Outlet
+        context={{
+          boothId,
+          boothName: boothInfo?.boothName ?? '',
+          departmentName: boothInfo?.departmentName ?? '',
+          location: boothInfo?.locationDetail ?? '',
+          isOpen: boothInfo?.open ?? false,
+          content: boothInfo?.description ?? '',
+          thumbnailUrl: boothInfo?.thumbnailUrl ?? null,
+          images: boothInfo?.detailImages?.map((d) => d.imageUrl) ?? [],
+          dayMenus: boothInfo?.menus?.day ?? [],
+          nightMenus: boothInfo?.menus?.night ?? [],
+          orderAvailable: boothInfo?.orderAvailable ?? false,
+          buttonName: '주문하러 가기',
+          foodData,
+          quantities,
+          onSelect: handleSelect,
+          onIncrease: handleIncrease,
+          onRemove: handleRemove,
+          onDecrease: handleDecrease,
+          lang,
+          isLoading,
+          isMenuLoading,
+          onReset: handleReset,
+          onLangChange: handleLangChange,
+        }}
+      />
+    </>
   );
 }
 
