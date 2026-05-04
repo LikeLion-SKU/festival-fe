@@ -20,6 +20,7 @@ export default function OrderCard({
   onToggleItem,
   isOpen: isOpenProp,
   onOpenChange,
+  isNew = false,
 }) {
   const [internalOpen, setInternalOpen] = useState(false);
 
@@ -33,7 +34,11 @@ export default function OrderCard({
   };
 
   return (
-    <div className="flex flex-col items-center rounded-[10px] border border-[#EFEFEF] bg-white px-5 py-4">
+    <div
+      className={`flex flex-col items-center rounded-[10px] border border-[#EFEFEF] px-5 py-4 ${
+        isNew ? 'bg-[#FFDDDB]' : 'bg-white'
+      }`}
+    >
       <div /* 주문 카드 접혀있을 때 */
         className="flex h-7 w-full items-center justify-between"
         onClick={toggleOpen}
@@ -47,13 +52,21 @@ export default function OrderCard({
           {!isOpen && (
             <div className="flex items-center gap-1">
               {tableNumber != 0 && (
-                <div className="flex h-7 min-w-8.5 items-center justify-center rounded-[5px] bg-[#F6F6F6] px-2 py-1">
+                <div
+                  className={`flex h-7 min-w-8.5 items-center justify-center rounded-[5px] px-2 py-1 ${
+                    isNew ? 'bg-[#FFBBB8]' : 'bg-[#F6F6F6]'
+                  }`}
+                >
                   <p className="text-[12px] font-medium leading-[1.6] text-[#252525]">
                     {numOfPeople}명
                   </p>
                 </div>
               )}
-              <div className="flex h-7 max-w-17 items-center justify-center rounded-[5px] bg-[#F6F6F6] px-2 py-1">
+              <div
+                className={`flex h-7 max-w-17 items-center justify-center rounded-[5px] px-2 py-1 ${
+                  isNew ? 'bg-[#FFBBB8]' : 'bg-[#F6F6F6]'
+                }`}
+              >
                 <p className="whitespace-nowrap text-[12px] font-medium leading-[1.6] text-[#252525]">
                   {orderTime} 주문
                 </p>

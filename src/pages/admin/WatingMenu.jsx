@@ -26,9 +26,19 @@ export default function WaitingMenu() {
   const [reason, setReason] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [toast, setToast] = useState({ visible: false, message: '' });
+  const [newOrderIds, setNewOrderIds] = useState(() => new Set());
   const queryClient = useQueryClient();
   const { notifyOrderStatus, clearCount, setIsLoading, setScrollContainer } =
     useOutletContext() ?? {};
+
+  const markSeen = (orderId) => {
+    setNewOrderIds((prev) => {
+      if (!prev.has(orderId)) return prev;
+      const next = new Set(prev);
+      next.delete(orderId);
+      return next;
+    });
+  };
 
   useEffect(() => {
     clearCount?.('wait');
@@ -53,6 +63,11 @@ export default function WaitingMenu() {
         ...(prev ?? {}),
         data: [...(prev?.data ?? []), newOrder],
       }));
+      setNewOrderIds((prev) => {
+        const next = new Set(prev);
+        next.add(newOrder.orderId);
+        return next;
+      });
     };
 
     const handleNotification = (event) => {
@@ -136,24 +151,26 @@ export default function WaitingMenu() {
           className="flex flex-col w-full gap-2 overflow-auto no-scrollbar py-7 px-5"
         >
           {orderData.map((data) => (
-            <OrderCard
-              key={data.orderId}
-              tableNumber={data.tableNumber}
-              numOfPeople={data.numOfPeople}
-              orderTime={data.orderTime}
-              customerName={data.customerName}
-              customerPhoneNumber={data.customerPhoneNumber}
-              orderItems={data.orderItems}
-              totalOrderPrice={data.totalOrderPrice}
-              onConfirm={() => {
-                setSelectedOrderId(data.orderId);
-                setModal('confirm');
-              }}
-              onCancel={() => {
-                setSelectedOrderId(data.orderId);
-                setModal('cancelReason');
-              }}
-            />
+            <div key={data.orderId} className="w-full" onClick={() => markSeen(data.orderId)}>
+              <OrderCard
+                tableNumber={data.tableNumber}
+                numOfPeople={data.numOfPeople}
+                orderTime={data.orderTime}
+                customerName={data.customerName}
+                customerPhoneNumber={data.customerPhoneNumber}
+                orderItems={data.orderItems}
+                totalOrderPrice={data.totalOrderPrice}
+                isNew={newOrderIds.has(data.orderId)}
+                onConfirm={() => {
+                  setSelectedOrderId(data.orderId);
+                  setModal('confirm');
+                }}
+                onCancel={() => {
+                  setSelectedOrderId(data.orderId);
+                  setModal('cancelReason');
+                }}
+              />
+            </div>
           ))}
         </div>
       ) : isPending ? (
