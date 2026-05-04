@@ -22,7 +22,8 @@ export default function AdminLogin() {
   const onClicklogin = async () => {
     setIsLoading?.(true);
     try {
-      await login({ departmentName: department.departmentName, password });
+      const res = await login({ departmentName: department.departmentName, password });
+      if (res.data?.boothId) localStorage.setItem('boothId', res.data.boothId);
 
       setIsFail(false);
       setShowSplash(true);
