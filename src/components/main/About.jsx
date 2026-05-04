@@ -25,7 +25,7 @@ export default function About() {
   return (
     <section
       id="about"
-      className="relative min-h-[85rem] overflow-hidden bg-[#141414] px-[3.65625rem] pt-[3.75rem]"
+      className="relative overflow-hidden bg-[#141414] px-[3.65625rem] pb-[4.5rem] pt-[3.75rem]"
     >
       <img
         src={AboutFire}
@@ -82,7 +82,7 @@ export default function About() {
           <p className="text-center text-[1.125rem] leading-[1.2] [font-family:Sekuya]">CAST</p>
           <CastCreditsAnimation rows={CAST_ROWS} />
         </div>
-        <div className="mt-[8rem] -mx-[1rem] flex w-[calc(100%+2rem)] flex-col gap-[0.55rem]">
+        <div className="mt-[2.45rem] -mx-[1rem] flex w-[calc(100%+2rem)] flex-col gap-[0.55rem]">
           <button
             type="button"
             onClick={() => navigate('/made-by')}
