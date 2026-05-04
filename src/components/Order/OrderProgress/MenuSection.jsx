@@ -2,6 +2,7 @@ import Garbage from '@/assets/icons/garbage.svg?react';
 import Minus from '@/assets/icons/minus.svg?react';
 import Noodle from '@/assets/icons/noodle.svg';
 import Plus from '@/assets/icons/plus.svg?react';
+import { getLangFontClass } from '@/utils/langFont';
 
 const CATEGORY_LABELS = { main: '메인', side: '사이드', drink: '음료' };
 const CATEGORY_ORDER = ['main', 'side', 'drink'];
@@ -14,7 +15,9 @@ function MenuSection({
   onSelect,
   onIncrease,
   onDecrease,
+  lang,
 }) {
+  const fontClass = getLangFontClass(lang);
   const grouped = CATEGORY_ORDER.reduce((acc, cat) => {
     acc[cat] = foodData.filter((item) => item.category === cat);
     return acc;
@@ -47,7 +50,7 @@ function MenuSection({
                       isSoldOut
                         ? 'bg-disable-gray py-5 cursor-default'
                         : qty
-                          ? 'bg-gray-100 py-5 cursor-pointer'
+                          ? 'bg-gray-100 pt-4 pb-5 cursor-pointer'
                           : 'py-2 cursor-pointer'
                     }`}
                     onClick={() => !qty && !isSoldOut && onSelect(key)}
@@ -58,14 +61,14 @@ function MenuSection({
                           src={item.iconImageUrl || item.image || Noodle}
                           className={`w-10 h-10 rounded-lg object-cover ${isSoldOut ? 'opacity-50' : ''}`}
                         />
-                        <div className="flex flex-col flex-1 gap-2">
+                        <div className="flex flex-col flex-1 gap-1.5">
                           <div
-                            className={`font-medium ${isSoldOut ? 'text-gray-500' : 'text-black-1000'}`}
+                            className={`font-medium ${isSoldOut ? 'text-gray-500' : 'text-black-1000'} ${fontClass}`}
                           >
                             {item.name}
                             {isSoldOut && <span>(품절)</span>}
                           </div>
-                          <div className="text-xs text-gray-400">{item.description}</div>
+                          <div className="text-xs text-gray-400 pr-5">{item.description}</div>
                         </div>
                       </div>
                       <div
