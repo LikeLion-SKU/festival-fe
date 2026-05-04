@@ -7,6 +7,7 @@ import MenuSection from '@/components/Order/OrderProgress/MenuSection';
 import Loading from '@/components/common/Loading';
 import Modal from '@/components/common/Modal';
 import OrderHeader from '@/components/common/OrderHeader';
+import { getLangFontClass } from '@/utils/langFont';
 
 const CATEGORY_MAP = { 메인: 'main', 사이드: 'side', 음료: 'drink' };
 const CATEGORY_ORDER = ['main', 'side', 'drink'];
@@ -17,6 +18,7 @@ function OrderProgress() {
   const {
     boothId,
     departmentName,
+    lang,
     foodData,
     quantities,
     onSelect,
@@ -74,6 +76,7 @@ function OrderProgress() {
       <div className="shrink-0">
         <OrderHeader
           title={departmentName}
+          titleClassName={getLangFontClass(lang)}
           showBackButton
           onBack={() => (hasSelection ? setShowBackModal(true) : navigate(-1))}
         />
@@ -92,6 +95,7 @@ function OrderProgress() {
           onSelect={onSelect}
           onIncrease={onIncrease}
           onDecrease={onDecrease}
+          lang={lang}
         />
         <div className="h-25" />
       </div>

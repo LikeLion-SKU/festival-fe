@@ -127,6 +127,7 @@ function Order() {
         onIncrease: handleIncrease,
         onRemove: handleRemove,
         onDecrease: handleDecrease,
+        lang,
         isLoading,
         isMenuLoading,
         onReset: handleReset,

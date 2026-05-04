@@ -2,6 +2,7 @@ import Garbage from '@/assets/icons/garbage.svg?react';
 import Minus from '@/assets/icons/minus.svg?react';
 import Noodle from '@/assets/icons/noodle.svg';
 import Plus from '@/assets/icons/plus.svg?react';
+import { getLangFontClass } from '@/utils/langFont';
 
 const CATEGORY_LABELS = { main: '메인', side: '사이드', drink: '음료' };
 const CATEGORY_ORDER = ['main', 'side', 'drink'];
@@ -14,7 +15,9 @@ function MenuSection({
   onSelect,
   onIncrease,
   onDecrease,
+  lang,
 }) {
+  const fontClass = getLangFontClass(lang);
   const grouped = CATEGORY_ORDER.reduce((acc, cat) => {
     acc[cat] = foodData.filter((item) => item.category === cat);
     return acc;
@@ -60,7 +63,7 @@ function MenuSection({
                         />
                         <div className="flex flex-col flex-1 gap-1.5">
                           <div
-                            className={`font-medium ${isSoldOut ? 'text-gray-500' : 'text-black-1000'}`}
+                            className={`font-medium ${isSoldOut ? 'text-gray-500' : 'text-black-1000'} ${fontClass}`}
                           >
                             {item.name}
                             {isSoldOut && <span>(품절)</span>}
