@@ -15,6 +15,12 @@ import { BOOTH_CARDS, BUILDINGS } from '@/constants/mainDummyData';
 
 const MAIN_BOOTH_CARDS_PER_BUILDING = 4;
 
+const BOOTH_SPREAD_MS = 1580;
+const BOOTH_SPREAD_EASE = 'cubic-bezier(0.22,1,0.36,1)';
+/** opacity는 카드별로 지정해지면 진해지니까 그룹 자체로 적용시킴*/
+const BOOTH_STACKED_GROUP_OPACITY = 0.9;
+
+/** 스프레드 시작: 중앙에서 카드들이 모인 상태*/
 function getBoothCardCenterTransform(index) {
   switch (index) {
     case 0:
@@ -28,6 +34,11 @@ function getBoothCardCenterTransform(index) {
     default:
       return 'translate3d(0, 55%, 0) scale(0.86)';
   }
+}
+
+/** 짧은 간격으로 순차적으로  */
+function getBoothCardScatterDelayMs(index) {
+  return Math.round(index * 38);
 }
 
 function getTitleLines(title) {
@@ -169,7 +180,18 @@ export default function Booth() {
       className="relative min-h-[46rem] overflow-hidden bg-[#141414] px-[1.5rem] pb-[9.0rem] pt-[2.5rem]"
     >
       <style>{`
-        @keyframes booth-card-scatter {
+        @keyframes booth-card-spread-opacity {
+          from {
+            opacity: ${BOOTH_STACKED_GROUP_OPACITY};
+          }
+          52% {
+            opacity: 0.92;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        @keyframes booth-card-spread-transform {
           from {
             transform: var(--booth-from-transform);
           }
@@ -228,23 +250,33 @@ export default function Booth() {
           </div>
         </div>
 
-        <div ref={cardsGridRef} className="grid w-full grid-cols-2 gap-x-4 gap-y-4">
-          {visibleCards.map((card, index) => (
-            <div
-              key={card.id}
-              style={{
-                '--booth-from-transform': getBoothCardCenterTransform(index),
-                willChange: 'transform, opacity',
-                transform: isCardsSettled ? undefined : getBoothCardCenterTransform(index),
-                animation: isCardsSettled
-                  ? `booth-card-scatter 1650ms cubic-bezier(0.22,1,0.36,1) ${index * 72}ms both`
-                  : 'none',
-              }}
-              className="transform-gpu opacity-100"
-            >
-              <BoothCard image={card.image} subtitle={card.subtitle} title={card.title} />
-            </div>
-          ))}
+        <div
+          className="transform-gpu will-change-[opacity]"
+          style={{
+            opacity: isCardsSettled ? undefined : BOOTH_STACKED_GROUP_OPACITY,
+            animation: isCardsSettled
+              ? `booth-card-spread-opacity ${BOOTH_SPREAD_MS}ms ${BOOTH_SPREAD_EASE} 0ms both`
+              : 'none',
+          }}
+        >
+          <div ref={cardsGridRef} className="grid w-full grid-cols-2 gap-x-4 gap-y-4">
+            {visibleCards.map((card, index) => (
+              <div key={card.id} className="transform-gpu">
+                <div
+                  style={{
+                    '--booth-from-transform': getBoothCardCenterTransform(index),
+                    willChange: 'transform',
+                    transform: isCardsSettled ? undefined : getBoothCardCenterTransform(index),
+                    animation: isCardsSettled
+                      ? `booth-card-spread-transform ${BOOTH_SPREAD_MS}ms ${BOOTH_SPREAD_EASE} ${getBoothCardScatterDelayMs(index)}ms both`
+                      : 'none',
+                  }}
+                >
+                  <BoothCard image={card.image} subtitle={card.subtitle} title={card.title} />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         <button
