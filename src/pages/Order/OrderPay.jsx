@@ -43,7 +43,7 @@ function OrderPay() {
   return (
     <div className="flex flex-col h-full bg-white">
       <div className="shrink-0">
-        <OrderHeader title="결제하기" showBackButton onBack={() => navigate(-1)} />
+        <OrderHeader title="결제하기" />
       </div>
 
       <div className="flex-1 overflow-y-auto min-h-0 px-5 flex flex-col items-center pt-12 gap-2.5">
