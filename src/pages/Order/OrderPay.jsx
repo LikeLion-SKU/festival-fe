@@ -34,7 +34,7 @@ function OrderPay() {
   }, []);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(accountNumber);
+    navigator.clipboard.writeText(accountNumber.replace(/-/g, ''));
     setShowCopyToast(true);
     clearTimeout(copyTimerRef.current);
     copyTimerRef.current = setTimeout(() => setShowCopyToast(false), 2000);
