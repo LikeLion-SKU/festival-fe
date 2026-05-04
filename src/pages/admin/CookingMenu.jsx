@@ -249,24 +249,30 @@ export default function CookingMenu() {
           <OpenButton open={summaryOpen} />
         </button>
 
-        {summaryOpen /* 주문 요약 오픈시 박스 */ && (
-          <div className="flex flex-wrap gap-2 pb-2.5 pt-1">
-            {orderData.length > 0 ? (
-              orderData.map((data) => (
-                <TableOrderCard
-                  key={data.orderId}
-                  tableNumber={data.tableNumber}
-                  checkedCount={data.orderItemUnits?.filter((u) => u.isServed).length ?? 0}
-                  totalCount={data.orderItemUnits?.length ?? 0}
-                />
-              ))
-            ) : (
-              <p className="font-semibold mx-auto my-5 text-deep-gray">
-                현재 요약된 주문이 없습니다!
-              </p>
-            )}
+        <div /* 주문 요약 오픈시 박스 */
+          className={`grid transition-[grid-template-rows] duration-300 ease-out ${
+            summaryOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+          }`}
+        >
+          <div className="overflow-hidden">
+            <div className="flex flex-wrap gap-2 pb-2.5 pt-1">
+              {orderData.length > 0 ? (
+                orderData.map((data) => (
+                  <TableOrderCard
+                    key={data.orderId}
+                    tableNumber={data.tableNumber}
+                    checkedCount={data.orderItemUnits?.filter((u) => u.isServed).length ?? 0}
+                    totalCount={data.orderItemUnits?.length ?? 0}
+                  />
+                ))
+              ) : (
+                <p className="font-semibold mx-auto my-5 text-deep-gray">
+                  현재 요약된 주문이 없습니다!
+                </p>
+              )}
+            </div>
           </div>
-        )}
+        </div>
       </div>
 
       {orderData.length > 0 /* 조리 중인 주문들 리스트 */ ? (
