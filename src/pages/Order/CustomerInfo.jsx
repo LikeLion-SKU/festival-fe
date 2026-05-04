@@ -6,6 +6,7 @@ import InputField from '@/components/Order/CustomerInfo/InputField';
 import OrderButtonBox from '@/components/Order/OrderEntry/OrderButtonBox';
 import Modal from '@/components/common/Modal';
 import OrderHeader from '@/components/common/OrderHeader';
+import Toast from '@/components/common/Toast';
 
 const formatPhone = (digits) => {
   if (digits.length <= 3) return digits;
@@ -28,6 +29,7 @@ function CustomerInfo() {
   const idempotencyKey = useRef(crypto.randomUUID());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [errorToast, setErrorToast] = useState({ visible: false, message: '' });
   const [name, setName] = useState('');
   const [headCount, setHeadCount] = useState('');
   const [tableNumber, setTableNumber] = useState('');
@@ -112,8 +114,8 @@ function CustomerInfo() {
       />
       <Modal
         isOpen={showConfirmModal}
-        cancelText="뒤로가기"
-        confirmText="요청하기"
+        cancelText="다시 확인"
+        confirmText="주문 요청"
         isConfirmDisabled={isSubmitting}
         onCancel={() => setShowConfirmModal(false)}
         onConfirm={async () => {
@@ -141,14 +143,28 @@ function CustomerInfo() {
             sessionStorage.removeItem('orderCart');
             navigate(`/order/${boothId}/pay`, { state: { orderResponse: res.data, orderType } });
           } catch (error) {
-            console.error('주문 생성 실패:', error);
             setIsSubmitting(false);
+            const status = error?.response?.status;
+            if (status === 404) return;
+            const message =
+              status === 409
+                ? '이미 처리된 주문이에요.'
+                : status >= 500
+                  ? '서버 오류가 발생했어요. 잠시 후 다시 시도해주세요.'
+                  : '주문 중 오류가 발생했어요. 다시 시도해주세요.';
+            setErrorToast({ visible: true, message });
           }
         }}
       >
-        <p className="font-medium">주문을 요청하면 되돌릴 수 없습니다.</p>
-        <p className="font-medium">진행하시겠습니까?</p>
+        <p className="font-medium">주문을 요청할까요?</p>
+        <p className="font-medium">주문 요청 후에는 취소가 불가능해요.</p>
       </Modal>
+      <Toast
+        visible={errorToast.visible}
+        message={errorToast.message}
+        icon="warning"
+        onClose={() => setErrorToast({ visible: false, message: '' })}
+      />
     </div>
   );
 }

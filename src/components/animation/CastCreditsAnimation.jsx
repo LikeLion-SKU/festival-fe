@@ -1,6 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 const CAST_CREDITS_SCROLL_PX_PER_SEC = 18;
+/** 크레딧 뷰포트 전체 여백 */
+const CAST_VIEWPORT_HEIGHT_CLASS = 'h-[8rem]';
 
 function CastCreditRow({ row }) {
   return (
@@ -149,7 +151,7 @@ export default function CastCreditsAnimation({ rows }) {
   return (
     <div
       ref={castViewportRef}
-      className="mt-[3rem] h-[14rem] overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_12%,black_88%,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,transparent,black_12%,black_88%,transparent)]"
+      className={`mt-[3rem] ${CAST_VIEWPORT_HEIGHT_CLASS} overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_12%,black_88%,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,transparent,black_12%,black_88%,transparent)]`}
     >
       <div
         style={{
@@ -169,13 +171,13 @@ export default function CastCreditsAnimation({ rows }) {
           {rows.map((row) => (
             <CastCreditRow key={row.role} row={row} />
           ))}
-          <div aria-hidden className="h-[14rem] shrink-0" />
+          <div aria-hidden className={`${CAST_VIEWPORT_HEIGHT_CLASS} shrink-0`} />
         </div>
         <div aria-hidden>
           {rows.map((row) => (
             <CastCreditRow key={`dup-${row.role}`} row={row} />
           ))}
-          <div aria-hidden className="h-[14rem] shrink-0" />
+          <div aria-hidden className={`${CAST_VIEWPORT_HEIGHT_CLASS} shrink-0`} />
         </div>
       </div>
     </div>

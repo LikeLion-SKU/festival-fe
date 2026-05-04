@@ -8,10 +8,13 @@ import DepartmentBox from '@/components/Admin/AdminLogin/DepartmentBox';
 import PasswordBox from '@/components/Admin/AdminLogin/PasswordBox';
 import OrderButton from '@/components/common/OrderButton';
 
+import LoginSplash from './LoginSplash';
+
 export default function AdminLogin() {
   const [department, setDepartment] = useState('');
   const [password, setPassword] = useState('');
   const [isFail, setIsFail] = useState(false);
+  const [showSplash, setShowSplash] = useState(false);
   const navigate = useNavigate();
   const passwordInputRef = useRef(null);
   const { setIsLoading } = useOutletContext() ?? {};
@@ -23,7 +26,8 @@ export default function AdminLogin() {
       if (res.data?.boothId) localStorage.setItem('boothId', res.data.boothId);
 
       setIsFail(false);
-      navigate('/admin/waiting');
+      setShowSplash(true);
+      setTimeout(() => navigate('/admin/waiting'), 3000);
     } catch (error) {
       console.log('로그인 실패 : ' + error);
       setIsFail(true);
@@ -80,6 +84,8 @@ export default function AdminLogin() {
           buttonName="로그인"
         />
       </div>
+
+      {showSplash && <LoginSplash />}
     </div>
   );
 }

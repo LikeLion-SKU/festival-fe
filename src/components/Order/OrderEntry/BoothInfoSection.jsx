@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import Skeleton from '@/components/common/Skeleton';
+import { getLangFontClass } from '@/utils/langFont';
 
 const CONTENT_LIMIT = 150;
 
@@ -13,6 +14,7 @@ function BoothInfoSection({
   images,
   isLoading,
   isQR,
+  lang,
 }) {
   const [expanded, setExpanded] = useState(false);
   const isLong = content?.length > CONTENT_LIMIT;
@@ -21,6 +23,7 @@ function BoothInfoSection({
   const textPrimary = isQR ? 'text-black' : 'text-white';
   const textSecondary = isQR ? 'text-deep-gray' : 'text-white/70';
   const textLabel = isQR ? 'text-text-gray' : 'text-[#C9C9C9]';
+  const fontClass = getLangFontClass(lang);
 
   return (
     <div className="relative px-7 mt-18">
@@ -28,7 +31,7 @@ function BoothInfoSection({
         {isLoading ? (
           <Skeleton className="h-7 w-40" />
         ) : (
-          <div className={`text-2xl font-bold ${textPrimary}`}>{boothName}</div>
+          <div className={`text-2xl font-bold ${textPrimary} ${fontClass}`}>{boothName}</div>
         )}
         {isLoading ? (
           <Skeleton className="w-12 h-6" />
@@ -51,7 +54,9 @@ function BoothInfoSection({
         {isLoading ? (
           <Skeleton className="w-24 h-5" />
         ) : (
-          <div className={`h-5 text-sm font-medium ${textSecondary}`}>{departmentName}</div>
+          <div className={`h-5 text-sm font-medium ${textSecondary} ${fontClass}`}>
+            {departmentName}
+          </div>
         )}
       </div>
       <div className="relative flex mt-1.5 gap-3">
@@ -62,7 +67,7 @@ function BoothInfoSection({
           <div className={`h-5 text-sm font-medium ${textSecondary}`}>{location}</div>
         )}
       </div>
-      <div className={`relative mt-7 text-xs font-normal ${textSecondary}`}>
+      <div className={`relative mt-7 text-xs font-normal ${textSecondary} ${fontClass}`}>
         {isLoading ? (
           <div className="flex flex-col gap-2">
             <Skeleton className="h-4 w-full" />

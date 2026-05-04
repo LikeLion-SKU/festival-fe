@@ -25,6 +25,7 @@ function OrderEntry() {
     dayMenus,
     orderAvailable,
     onLangChange,
+    lang,
     isLoading,
   } = useOutletContext();
 
@@ -65,6 +66,7 @@ function OrderEntry() {
         isOpen={isOpen}
         content={content}
         images={images}
+        lang={lang}
         isLoading={isLoading}
         isQR={isQR}
       />
