@@ -43,9 +43,9 @@ export default function Pokpung({
       )}
       aria-hidden
     >
-      <div className="relative w-[3.75rem] overflow-visible pb-[1.125rem] pt-1">
+      <div className="relative w-[5.25rem] overflow-visible pb-[1.5rem] pt-1">
         <svg
-          className="mx-auto block h-[5.25rem] w-[4.05rem]"
+          className="mx-auto block h-[6.15rem] w-[5.5rem]"
           viewBox={viewBox}
           fill="none"
           aria-hidden
@@ -81,7 +81,7 @@ export default function Pokpung({
             strokeLinecap="round"
           />
         </svg>
-        <span className="absolute bottom-0 left-1/2 rotate-[0.5deg] w-[max-content] max-w-[6rem] -translate-x-[18px] -translate-y-[30px] text-center text-[0.5625rem] font-semibold leading-tight tracking-[-0.03em] text-[#E66A5C] [font-family:Pretendard]">
+        <span className="absolute bottom-0 left-1/2 w-[max-content] max-w-[8rem] -translate-x-[22px] -translate-y-[38px] rotate-[0.5deg] text-center text-[0.6875rem] font-semibold leading-tight tracking-[-0.03em] text-[#E66A5C] [font-family:Pretendard]">
           폭풍의 언덕
         </span>
       </div>

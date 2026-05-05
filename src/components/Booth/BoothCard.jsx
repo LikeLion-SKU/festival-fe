@@ -1,34 +1,80 @@
+import { Link } from 'react-router-dom';
+
 import clsx from 'clsx';
 
-/**
- * 부스 안내 지도 하단 모달용 카드 (피그마 4071:12056 계열)
- * @param {{
- *   imageSrc?: string;
- *   locationDetail: string;
- *   departmentName: string;
- *   className?: string;
- *   variant?: 'sheet' | 'search';
- * }} props
- */
 export default function BoothCard({
   imageSrc,
-  locationDetail,
+  location,
   departmentName,
+  boothNumbers,
+  boothNumber,
+  boothNumberEnd,
   className,
   variant = 'sheet',
+  to,
 }) {
   const heightClass = variant === 'search' ? 'h-[168px]' : 'h-[119px]';
   const subtitleSize = variant === 'search' ? 'text-[14px]' : 'text-[12px]';
   const titleSize = variant === 'search' ? 'text-[24px]' : 'text-[16px]';
+  const badgeFont = variant === 'search' ? 'text-[14px]' : 'text-[11px]';
+  const badgePadding = variant === 'search' ? 'min-h-8 px-3 py-1' : 'min-h-7 px-2 py-0.5';
 
-  return (
+  const labelList = (() => {
+    if (Array.isArray(boothNumbers) && boothNumbers.length > 0) {
+      const fromApi = boothNumbers.map((n) => String(n).trim()).filter((s) => s.length > 0);
+      if (fromApi.length > 0) return fromApi;
+    }
+    if (boothNumber != null && boothNumberEnd != null && boothNumberEnd > boothNumber) {
+      const start = Number(boothNumber);
+      const end = Number(boothNumberEnd);
+      if (
+        Number.isFinite(start) &&
+        Number.isFinite(end) &&
+        Number.isInteger(start) &&
+        Number.isInteger(end)
+      ) {
+        const list = [];
+        for (let n = start; n <= end; n++) list.push(String(n));
+        return list.length > 0 ? list : [`${boothNumber}~${boothNumberEnd}`];
+      }
+      return [`${boothNumber}~${boothNumberEnd}`];
+    }
+    if (boothNumber != null && String(boothNumber).trim() !== '') {
+      return [String(boothNumber)];
+    }
+    return [];
+  })();
+  const showBadge = labelList.length > 0;
+
+  const article = (
     <article
       className={clsx(
         'relative box-border min-w-0 max-w-full overflow-hidden bg-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]',
         heightClass,
-        className
+        !to && className
       )}
     >
+      {showBadge && (
+        <div
+          className="pointer-events-none absolute left-2 top-2 z-[3] flex max-w-[calc(100%-1rem)] flex-wrap items-start justify-start gap-1 [font-family:Pretendard]"
+          aria-hidden
+        >
+          {labelList.map((text, i) => (
+            <div
+              key={`${text}-${i}`}
+              className={clsx(
+                'inline-flex shrink-0 items-center justify-center bg-[#333333]/95',
+                badgePadding,
+                badgeFont
+              )}
+            >
+              <span className="font-bold leading-none tracking-[-0.02em] whitespace-nowrap text-white">
+                {text}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
       <img
         src={imageSrc}
         alt=""
@@ -46,7 +92,7 @@ export default function BoothCard({
             subtitleSize
           )}
         >
-          {locationDetail}
+          {location}
         </p>
         <p
           className={clsx(
@@ -59,4 +105,20 @@ export default function BoothCard({
       </div>
     </article>
   );
+
+  if (to) {
+    return (
+      <Link
+        to={to}
+        className={clsx(
+          'block min-w-0 max-w-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40',
+          className
+        )}
+      >
+        {article}
+      </Link>
+    );
+  }
+
+  return article;
 }

@@ -1,19 +1,43 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 
+import { getAllBooth } from '@/api/booth';
 import backgroundImg from '@/assets/images/about-fire2.svg';
 import BoothPlaceholderImg from '@/assets/images/booth_image.svg';
 import BoothCard from '@/components/Booth/BoothCard';
 import BoothMap from '@/components/Booth/BoothMap';
 import PageHeader from '@/components/common/PageHeader';
 import SearchInput from '@/components/common/SearchInput';
-import {
-  getAllBoothRowsInMapTabOrder,
-  getSortedBoothRowsByBuilding,
-} from '@/constants/boothBuildingData';
+import { BUILDING_ID_TO_API_LOCATION, formatBoothLocationKo } from '@/constants/boothBuildingData';
 import { BUILDINGS } from '@/constants/mainDummyData';
+
+function normalizeBoothList(payload) {
+  if (payload == null) return [];
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload.data)) return payload.data;
+  if (Array.isArray(payload.content)) return payload.content;
+  if (Array.isArray(payload.booths)) return payload.booths;
+  return [];
+}
+
+function sortBoothRowsByDepartmentKo(rows) {
+  return [...rows].sort((a, b) =>
+    String(a.departmentName ?? '').localeCompare(String(b.departmentName ?? ''), 'ko', {
+      sensitivity: 'base',
+    })
+  );
+}
+
+/** GET /booths 응답의 boothNumbers 배열을 카드 라벨용으로 바꿈 */
+function normalizeBoothNumbersFromApi(item) {
+  const raw = item?.boothNumbers;
+  if (!Array.isArray(raw) || raw.length === 0) return undefined;
+  const cleaned = raw.map((n) => String(n).trim()).filter((s) => s.length > 0);
+  return cleaned.length > 0 ? cleaned : undefined;
+}
 
 const BUILDING_BUTTON_ORDER = ['hyein', 'eunju1', 'eunju2', 'cheongun', 'daeil'];
 
@@ -25,33 +49,109 @@ export default function BoothMapPage() {
   const [searchMode, setSearchMode] = useState(false);
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const touchStartY = useRef(0);
+  const sheetPanelRef = useRef(null);
+
+  /** 지도/배경 페이지가 밀리거나 움직이지 않도록 */
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const prev = {
+      htmlOverflow: html.style.overflow,
+      bodyOverflow: body.style.overflow,
+      htmlOb: html.style.overscrollBehavior,
+      bodyOb: body.style.overscrollBehavior,
+    };
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    html.style.overscrollBehavior = 'none';
+    body.style.overscrollBehavior = 'none';
+    return () => {
+      html.style.overflow = prev.htmlOverflow;
+      body.style.overflow = prev.bodyOverflow;
+      html.style.overscrollBehavior = prev.htmlOb;
+      body.style.overscrollBehavior = prev.bodyOb;
+    };
+  }, []);
+
+  /** 시트에서 스크롤 목록이 아닌 영역의 세로 드래그가 뷰포트로 전달되지 않게 */
+  useEffect(() => {
+    const panel = sheetPanelRef.current;
+    if (!panel) return;
+
+    const onTouchMove = (e) => {
+      const scrollEl = panel.querySelector('[data-booth-sheet-scroll]');
+      if (scrollEl?.contains(e.target)) return;
+      e.preventDefault();
+    };
+
+    panel.addEventListener('touchmove', onTouchMove, { passive: false });
+    return () => panel.removeEventListener('touchmove', onTouchMove);
+  }, []);
 
   const orderedBuildingButtons = useMemo(() => {
     const map = new Map(BUILDINGS.map((item) => [item.id, item]));
     return BUILDING_BUTTON_ORDER.map((id) => map.get(id)).filter(Boolean);
   }, []);
 
-  const modalBoothRows = useMemo(() => {
-    let rows = activeBuildingId
-      ? getSortedBoothRowsByBuilding(activeBuildingId)
-      : getAllBoothRowsInMapTabOrder();
-    const q = search.trim().toLowerCase();
-    if (q) {
-      rows = rows.filter(
-        (r) => r.department.toLowerCase().includes(q) || r.locationDetail.toLowerCase().includes(q)
-      );
-    }
-    return rows;
-  }, [activeBuildingId, search]);
+  const apiLocation =
+    searchMode || !activeBuildingId ? undefined : BUILDING_ID_TO_API_LOCATION[activeBuildingId];
+
+  const {
+    data: boothListPayload,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ['boothList', apiLocation ?? 'all'],
+    queryFn: () => getAllBooth(apiLocation),
+  });
+
+  const boothRows = useMemo(() => {
+    const raw = normalizeBoothList(boothListPayload);
+    const mapped = raw.map((item, index) => ({
+      id: String(item.boothId ?? `idx-${index}`),
+      boothId: item.boothId,
+      thumbnailUrl: item.thumbnailUrl,
+      locationCode: String(item.location ?? '').trim(),
+      location: formatBoothLocationKo(item.location),
+      locationDescription: item.locationDescription ?? '',
+      departmentName: item.departmentName ?? '',
+      boothNumbers: normalizeBoothNumbersFromApi(item),
+    }));
+    return sortBoothRowsByDepartmentKo(mapped);
+  }, [boothListPayload]);
+
+  const searchQ = search.trim().toLowerCase();
+
+  const sheetBoothRows = useMemo(() => {
+    if (!searchQ) return boothRows;
+    return boothRows.filter((r) => {
+      const matchDept = r.departmentName.toLowerCase().includes(searchQ);
+      const matchLoc =
+        r.location.toLowerCase().includes(searchQ) ||
+        r.locationCode.toLowerCase().includes(searchQ) ||
+        r.locationDescription.toLowerCase().includes(searchQ);
+      const matchNum =
+        Array.isArray(r.boothNumbers) &&
+        r.boothNumbers.some((n) => String(n).toLowerCase().includes(searchQ));
+      return matchDept || matchLoc || matchNum;
+    });
+  }, [boothRows, searchQ]);
 
   /** 검색 오버레이: 건물 탭 무관하게 전체 부스 중 검색 */
   const searchOverlayRows = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return [];
-    return getAllBoothRowsInMapTabOrder().filter(
-      (r) => r.department.toLowerCase().includes(q) || r.locationDetail.toLowerCase().includes(q)
-    );
-  }, [search]);
+    if (!searchQ) return [];
+    return boothRows.filter((r) => {
+      const matchDept = r.departmentName.toLowerCase().includes(searchQ);
+      const matchLoc =
+        r.location.toLowerCase().includes(searchQ) ||
+        r.locationCode.toLowerCase().includes(searchQ) ||
+        r.locationDescription.toLowerCase().includes(searchQ);
+      const matchNum =
+        Array.isArray(r.boothNumbers) &&
+        r.boothNumbers.some((n) => String(n).toLowerCase().includes(searchQ));
+      return matchDept || matchLoc || matchNum;
+    });
+  }, [boothRows, searchQ]);
 
   const sectionBgStyle = searchMode
     ? { backgroundColor: '#121212' }
@@ -67,6 +167,7 @@ export default function BoothMapPage() {
     <section
       className={clsx(
         'relative min-h-dvh overflow-hidden text-white',
+        !searchMode && 'overscroll-none',
         searchMode && 'flex flex-col'
       )}
       style={sectionBgStyle}
@@ -124,6 +225,14 @@ export default function BoothMapPage() {
             >
               {!search.trim() ? (
                 <div className="min-h-[min(50vh,24rem)]" aria-hidden />
+              ) : isPending ? (
+                <p className="py-12 text-center text-sm text-white/50 [font-family:Pretendard]">
+                  불러오는 중…
+                </p>
+              ) : isError ? (
+                <p className="py-12 text-center text-sm text-white/50 [font-family:Pretendard]">
+                  부스 목록을 불러오지 못했습니다.
+                </p>
               ) : searchOverlayRows.length === 0 ? (
                 <p className="py-12 text-center text-sm text-white/50 [font-family:Pretendard]">
                   검색 결과가 없습니다.
@@ -134,9 +243,11 @@ export default function BoothMapPage() {
                     <li key={row.id} className="min-w-0">
                       <BoothCard
                         variant="search"
-                        imageSrc={BoothPlaceholderImg}
-                        locationDetail={row.locationDetail}
-                        departmentName={row.department}
+                        to={row.boothId != null ? `/order/${row.boothId}` : undefined}
+                        imageSrc={row.thumbnailUrl || BoothPlaceholderImg}
+                        location={row.location}
+                        departmentName={row.departmentName}
+                        boothNumbers={row.boothNumbers}
                       />
                     </li>
                   ))}
@@ -155,8 +266,9 @@ export default function BoothMapPage() {
         aria-hidden={searchMode}
       >
         <div
-          className={`pointer-events-auto flex h-[28rem] w-full min-w-0 max-w-[450px] flex-col rounded-t-[2.875rem] border border-white/15 bg-gradient-to-b from-[rgba(26,26,26,0.92)] to-[rgba(16,16,16,0.96)] pb-[calc(1rem+env(safe-area-inset-bottom,0px))] pt-8 transition-transform duration-300 ${
-            sheetExpanded ? 'translate-y-[0%]' : 'translate-y-[70%]'
+          ref={sheetPanelRef}
+          className={`pointer-events-auto flex h-[28rem] w-full min-w-0 max-w-[450px] flex-col overscroll-contain rounded-t-[2.875rem] border border-white/15 bg-gradient-to-b from-[rgba(26,26,26,0.92)] to-[rgba(16,16,16,0.96)] pb-[calc(1rem+env(safe-area-inset-bottom,0px))] pt-8 transition-transform duration-300 ${
+            sheetExpanded ? 'translate-y-[0%]' : 'translate-y-[82%]'
           }`}
           onTouchStart={(e) => {
             touchStartY.current = e.touches[0].clientY;
@@ -192,19 +304,32 @@ export default function BoothMapPage() {
               })}
             </div>
           </div>
-          <div className="mx-[27px] mt-5 min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden pb-2 [-webkit-overflow-scrolling:touch]">
-            {modalBoothRows.length === 0 ? (
+          <div
+            data-booth-sheet-scroll
+            className="mx-[27px] mt-5 min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain pb-2 [-webkit-overflow-scrolling:touch]"
+          >
+            {isPending ? (
+              <p className="py-8 text-center text-sm text-white/50 [font-family:Pretendard]">
+                불러오는 중…
+              </p>
+            ) : isError ? (
+              <p className="py-8 text-center text-sm text-white/50 [font-family:Pretendard]">
+                부스 목록을 불러오지 못했습니다.
+              </p>
+            ) : sheetBoothRows.length === 0 ? (
               <p className="py-8 text-center text-sm text-white/50 [font-family:Pretendard]">
                 {search.trim() ? '검색 결과가 없습니다.' : '등록된 부스 목록이 없습니다.'}
               </p>
             ) : (
               <div className="grid min-w-0 grid-cols-2 gap-x-3 gap-y-4">
-                {modalBoothRows.map((row) => (
+                {sheetBoothRows.map((row) => (
                   <BoothCard
                     key={row.id}
-                    imageSrc={BoothPlaceholderImg}
-                    locationDetail={row.locationDetail}
-                    departmentName={row.department}
+                    to={row.boothId != null ? `/order/${row.boothId}` : undefined}
+                    imageSrc={row.thumbnailUrl || BoothPlaceholderImg}
+                    location={row.location}
+                    departmentName={row.departmentName}
+                    boothNumbers={row.boothNumbers}
                   />
                 ))}
               </div>

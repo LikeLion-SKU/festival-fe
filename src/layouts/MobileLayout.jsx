@@ -1,12 +1,21 @@
-import { Outlet, useOutletContext } from 'react-router';
+import { useState } from 'react';
+import { Outlet, ScrollRestoration } from 'react-router';
+
+import Loading from '@/components/common/Loading';
 
 export default function MobileLayout() {
-  const context = useOutletContext(); // OrderLayout이 준 context 받기
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   return (
-    <div className="bg-gray-50 h-full">
-      <div className="mx-auto w-full max-w-[450px] h-full bg-white shadow-lg">
-        <Outlet context={context} />
+    <main className="flex h-full flex-col">
+      <div className="bg-gray-50 min-h-0 flex-1">
+        <div className="relative mx-auto w-full max-w-112.5 h-full bg-white shadow-lg">
+          <Outlet context={{ onModalChange: setIsModalOpen, isModalOpen, setIsLoading }} />
+          {isLoading && <Loading />}
+        </div>
       </div>
-    </div>
+      <ScrollRestoration />
+    </main>
   );
 }
