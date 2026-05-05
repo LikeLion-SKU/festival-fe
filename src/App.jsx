@@ -66,6 +66,32 @@ const router = createBrowserRouter([
       { path: '/login', lazy: page(() => import('@/pages/admin/AdminLogin')) },
     ],
   },
+  {
+    //헤더 없는 사용자 페이지
+    Component: MobileLayout,
+    children: [
+      { path: '/', lazy: page(() => import('@/pages/Main')) },
+      { path: '/menu', lazy: page(() => import('@/pages/Menu')) },
+      { path: '/made-by', lazy: page(() => import('@/pages/MadeBy')) },
+      {
+        path: '/order/:boothId',
+        Component: Order,
+        children: [
+          { index: true, lazy: page(() => import('@/pages/Order/OrderEntry')) },
+          { path: 'progress', lazy: page(() => import('@/pages/Order/OrderProgress')) },
+          { path: 'confirm', lazy: page(() => import('@/pages/Order/OrderConfirm')) },
+          { path: 'customer-info', lazy: page(() => import('@/pages/Order/CustomerInfo')) },
+          { path: 'pay', lazy: page(() => import('@/pages/Order/OrderPay')) },
+          { path: 'complete', lazy: page(() => import('@/pages/Order/OrderComplete')) },
+        ],
+      },
+    ],
+  },
+  {
+    //헤더 없는 관리자 페이지
+    Component: AdminLayout,
+    children: [{ path: '/login', lazy: page(() => import('@/pages/admin/AdminLogin')) }],
+  },
 ]);
 
 function App() {
