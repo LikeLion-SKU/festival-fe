@@ -1,18 +1,23 @@
 import horseImg from '@/assets/icons/horse.svg';
 
-const DAY_MAP = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+const DAY_MAP = {
+  MONDAY: 'MON',
+  TUESDAY: 'TUE',
+  WEDNESDAY: 'WED',
+  THURSDAY: 'THU',
+  FRIDAY: 'FRI',
+  SATURDAY: 'SAT',
+  SUNDAY: 'SUN',
+};
 
-function formatDate(dateTimeStr) {
-  const date = new Date(dateTimeStr);
-  if (isNaN(date)) return { date: '-', day: '-' };
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const dayNum = String(date.getDate()).padStart(2, '0');
-  const day = DAY_MAP[date.getDay()];
-  return { date: `${month}.${dayNum}`, day };
+function formatDate(foundDate, dayOfWeek) {
+  if (!foundDate) return { date: '--', day: '--' };
+  const [, month, day] = foundDate.split('-');
+  return { date: `${month}.${day}`, day: DAY_MAP[dayOfWeek] ?? '--' };
 }
 
 export default function LostItemCard({ item, onClick, onManage, isAdmin, className }) {
-  const { date, day } = formatDate(item.foundAt);
+  const { date, day } = formatDate(item.foundDate, item.dayOfWeek);
 
   return (
     <button
@@ -42,7 +47,7 @@ export default function LostItemCard({ item, onClick, onManage, isAdmin, classNa
             없음
           </div>
         )}
-        {item.status === 'claimed' && (
+        {item.returned && (
           <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-[0.5rem]">
             <img src={horseImg} alt="수령 완료" className="w-[3rem] h-[3rem]" />
             <p
@@ -81,7 +86,7 @@ export default function LostItemCard({ item, onClick, onManage, isAdmin, classNa
             className="text-[#C9C9C9] text-[0.875rem] font-semibold"
             style={{ letterSpacing: '-0.025em', lineHeight: '1.25rem' }}
           >
-            {item.foundLocation}
+            {item.foundPlace}
           </span>
         </p>
       </div>

@@ -4,11 +4,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import AdminLayout from '@/layouts/AdminLayout';
 import MobileLayout from '@/layouts/MobileLayout';
-import OrderLayout from '@/layouts/OrderLayout';
-import RootLayout from '@/layouts/RootLayout';
 import Order from '@/pages/Order/Order';
 import AdminMain from '@/pages/admin/AdminMain';
-import ProtectedRoute from '@/router/ProtectedRoute';
 
 const page = (importFn) => () => importFn().then((m) => ({ Component: m.default }));
 
@@ -20,57 +17,53 @@ const queryClient = new QueryClient({
 
 const router = createBrowserRouter([
   {
-    //헤더가 있는 디자인 페이지
-    Component: RootLayout,
+    //모바일 레이아웃 - 사용자 페이지
+    Component: MobileLayout,
     children: [
+      { path: '/', lazy: page(() => import('@/pages/Main')) },
+      { path: '/menu', lazy: page(() => import('@/pages/Menu')) },
+      { path: '/made-by', lazy: page(() => import('@/pages/MadeBy')) },
+      { path: '/lost-items', lazy: page(() => import('@/pages/LostItem/LostItem')) },
       {
-        Component: MobileLayout,
+        path: '/lost-items/new',
+        lazy: page(() => import('@/pages/LostItem/LostItemRegister')),
+      },
+      {
+        path: '/lost-items/:id/edit',
+        lazy: page(() => import('@/pages/LostItem/LostItemEdit')),
+      },
+      { path: '/lost-items/:id', lazy: page(() => import('@/pages/LostItem/LostItemDetail')) },
+      { path: '/booth-map', lazy: page(() => import('@/pages/Booth/BoothMap')) },
+      {
+        path: '/order/:boothId',
+        Component: Order,
         children: [
-          { path: '/lost-items', lazy: page(() => import('@/pages/LostItem/LostItem')) },
-          {
-            path: '/lost-items/new',
-            lazy: page(() => import('@/pages/LostItem/LostItemRegister')),
-          },
-          {
-            path: '/lost-items/:id/edit',
-            lazy: page(() => import('@/pages/LostItem/LostItemEdit')),
-          },
-          { path: '/lost-items/:id', lazy: page(() => import('@/pages/LostItem/LostItemDetail')) },
-          { path: '/booth-map', lazy: page(() => import('@/pages/Booth/BoothMap')) },
+          { index: true, lazy: page(() => import('@/pages/Order/OrderEntry')) },
+          { path: 'progress', lazy: page(() => import('@/pages/Order/OrderProgress')) },
+          { path: 'confirm', lazy: page(() => import('@/pages/Order/OrderConfirm')) },
+          { path: 'customer-info', lazy: page(() => import('@/pages/Order/CustomerInfo')) },
+          { path: 'pay', lazy: page(() => import('@/pages/Order/OrderPay')) },
+          { path: 'complete', lazy: page(() => import('@/pages/Order/OrderComplete')) },
         ],
       },
     ],
   },
   {
-    //헤더 있는 주문 시스템 레이아웃
-    Component: OrderLayout,
+    //관리자 레이아웃 (헤더 + 컨테이너 통합)
+    Component: AdminLayout,
     children: [
       {
-        Component: MobileLayout,
-        children: [],
-      },
-      {
-        Component: AdminLayout,
+        path: '/admin',
+        Component: AdminMain,
         children: [
-          //{ path: '', lazy: page(() => import('파일 경로')) },
-          {
-            Component: ProtectedRoute,
-            children: [
-              {
-                path: '/admin',
-                Component: AdminMain,
-                children: [
-                  { path: 'waiting', lazy: page(() => import('@/pages/admin/WatingMenu')) },
-                  { path: 'cooking', lazy: page(() => import('@/pages/admin/CookingMenu')) },
-                  { path: 'complete', lazy: page(() => import('@/pages/admin/CompleteMenu')) },
-                  { path: 'cancel', lazy: page(() => import('@/pages/admin/CancelMenu')) },
-                  { path: 'menu', lazy: page(() => import('@/pages/admin/ManagementMenu')) },
-                ],
-              },
-            ],
-          },
+          { path: 'waiting', lazy: page(() => import('@/pages/admin/WatingMenu')) },
+          { path: 'cooking', lazy: page(() => import('@/pages/admin/CookingMenu')) },
+          { path: 'complete', lazy: page(() => import('@/pages/admin/CompleteMenu')) },
+          { path: 'cancel', lazy: page(() => import('@/pages/admin/CancelMenu')) },
+          { path: 'menu', lazy: page(() => import('@/pages/admin/ManagementMenu')) },
         ],
       },
+      { path: '/login', lazy: page(() => import('@/pages/admin/AdminLogin')) },
     ],
   },
   {
