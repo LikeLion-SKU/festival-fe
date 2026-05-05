@@ -132,7 +132,9 @@ function Order() {
           boothId,
           boothName: boothInfo?.boothName ?? '',
           departmentName: boothInfo?.departmentName ?? '',
+
           location: formatBoothLocationKo(boothInfo?.location ?? boothInfo?.locationDetail ?? ''),
+
           isOpen: boothInfo?.open ?? false,
           content: boothInfo?.description ?? '',
           thumbnailUrl: boothInfo?.thumbnailUrl ?? null,
