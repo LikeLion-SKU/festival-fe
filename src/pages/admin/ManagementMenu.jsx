@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { getBoothOrderMenus, updateMenuPrice, updateMenuSoldOut } from '@/api/booth';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
 import Noodle from '@/assets/icons/noodle.svg';
 import BottomSheet from '@/components/Admin/BottomSheet';
@@ -10,66 +11,6 @@ const CATEGORIES = [
   { key: 'main', label: '메인' },
   { key: 'side', label: '사이드' },
   { key: 'drink', label: '음료' },
-];
-
-const initialMenuData = [
-  {
-    image: Noodle,
-    name: '닭발&주먹밥',
-    description: '매콤한 닭발과 든든한 주먹밥 세트',
-    price: 8000,
-    category: 'main',
-  },
-  {
-    image: Noodle,
-    name: '김치우동',
-    description: '칼칼한 김치가 들어간 따뜻한 우동',
-    price: 5000,
-    category: 'main',
-  },
-  {
-    image: Noodle,
-    name: '김치전',
-    description: '바삭하게 구운 김치전',
-    price: 3000,
-    category: 'main',
-  },
-  {
-    image: Noodle,
-    name: '어묵우동',
-    description: '부드러운 어묵과 우동의 조합',
-    price: 10000,
-    category: 'main',
-  },
-  {
-    image: Noodle,
-    name: '어묵탕',
-    description: '시원하고 깔끔한 어묵탕',
-    price: 7000,
-    category: 'main',
-  },
-  { image: Noodle, name: '짜계치', description: '짜계치', price: 8000, category: 'side' },
-  {
-    image: Noodle,
-    name: '주먹밥',
-    description: '주먹으로 만든 밥. 우하하',
-    price: 3000,
-    category: 'side',
-  },
-  {
-    image: Noodle,
-    name: '슬러시(포도/대)',
-    description: '여름엔 무조건 슬러쉬지',
-    price: 3000,
-    category: 'drink',
-  },
-  {
-    image: Noodle,
-    name: '제로 콜라',
-    description: '시원한 음료수',
-    price: 1000,
-    category: 'drink',
-  },
 ];
 
 function ChevronIcon({ open }) {
@@ -322,8 +263,34 @@ function CategorySection({
 }
 
 export default function MenuManagement() {
-  const [menus, setMenus] = useState(initialMenuData);
+  const [menus, setMenus] = useState([]);
   const [editing, setEditing] = useState(null);
+
+  useEffect(() => {
+    getBoothOrderMenus()
+      .then((res) => {
+        const data = res.data;
+        const all = [
+          ...(data.main ?? []).map((m) => ({
+            ...m,
+            category: 'main',
+            image: m.iconImageUrl ?? Noodle,
+          })),
+          ...(data.side ?? []).map((m) => ({
+            ...m,
+            category: 'side',
+            image: m.iconImageUrl ?? Noodle,
+          })),
+          ...(data.drink ?? []).map((m) => ({
+            ...m,
+            category: 'drink',
+            image: m.iconImageUrl ?? Noodle,
+          })),
+        ];
+        setMenus(all);
+      })
+      .catch((e) => console.error('메뉴 조회 실패:', e?.response ?? e));
+  }, []);
   const [soldOutTarget, setSoldOutTarget] = useState(null);
   const [toastVisible, setToastVisible] = useState(false);
   const [toastShow, setToastShow] = useState(false);
@@ -337,12 +304,26 @@ export default function MenuManagement() {
 
   const handleCloseEdit = () => setEditing(null);
 
-  const handleConfirmEdit = (item, newPrice) => {
+  const handleConfirmEdit = async (item, newPrice) => {
+    if (item.menuId != null) {
+      try {
+        await updateMenuPrice(item.menuId, newPrice);
+      } catch (e) {
+        console.error('가격 수정 실패:', e?.response ?? e);
+      }
+    }
     setMenus((prev) => prev.map((m) => (m === item ? { ...m, price: newPrice } : m)));
     setEditing(null);
   };
 
-  const handleConfirmSoldOut = () => {
+  const handleConfirmSoldOut = async () => {
+    if (soldOutTarget.menuId != null) {
+      try {
+        await updateMenuSoldOut(soldOutTarget.menuId, true);
+      } catch (e) {
+        console.error('품절 처리 실패:', e?.response ?? e);
+      }
+    }
     setMenus((prev) => prev.map((m) => (m === soldOutTarget ? { ...m, soldOut: true } : m)));
     setSoldOutTarget(null);
     showToast('상품이 품절 처리되었어요.');
@@ -356,7 +337,14 @@ export default function MenuManagement() {
     setTimeout(() => setToastVisible(false), 1400);
   };
 
-  const handleResume = (item) => {
+  const handleResume = async (item) => {
+    if (item.menuId != null) {
+      try {
+        await updateMenuSoldOut(item.menuId, false);
+      } catch (e) {
+        console.error('판매 재개 실패:', e?.response ?? e);
+      }
+    }
     setMenus((prev) => prev.map((m) => (m === item ? { ...m, soldOut: false } : m)));
     showToast('상품이 추가되었어요.');
   };
