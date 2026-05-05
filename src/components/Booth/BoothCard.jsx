@@ -4,8 +4,9 @@ import clsx from 'clsx';
 
 export default function BoothCard({
   imageSrc,
-  locationDetail,
+  location,
   departmentName,
+  boothNumbers,
   boothNumber,
   boothNumberEnd,
   className,
@@ -15,13 +16,35 @@ export default function BoothCard({
   const heightClass = variant === 'search' ? 'h-[168px]' : 'h-[119px]';
   const subtitleSize = variant === 'search' ? 'text-[14px]' : 'text-[12px]';
   const titleSize = variant === 'search' ? 'text-[24px]' : 'text-[16px]';
-  const badgeText =
-    boothNumber != null && boothNumberEnd != null && boothNumberEnd > boothNumber
-      ? `${boothNumber}~${boothNumberEnd}`
-      : boothNumber;
   const badgeFont = variant === 'search' ? 'text-[14px]' : 'text-[11px]';
   const badgePadding = variant === 'search' ? 'min-h-8 px-3 py-1' : 'min-h-7 px-2 py-0.5';
-  const showBadge = badgeText != null && String(badgeText).trim() !== '';
+
+  const labelList = (() => {
+    if (Array.isArray(boothNumbers) && boothNumbers.length > 0) {
+      const fromApi = boothNumbers.map((n) => String(n).trim()).filter((s) => s.length > 0);
+      if (fromApi.length > 0) return fromApi;
+    }
+    if (boothNumber != null && boothNumberEnd != null && boothNumberEnd > boothNumber) {
+      const start = Number(boothNumber);
+      const end = Number(boothNumberEnd);
+      if (
+        Number.isFinite(start) &&
+        Number.isFinite(end) &&
+        Number.isInteger(start) &&
+        Number.isInteger(end)
+      ) {
+        const list = [];
+        for (let n = start; n <= end; n++) list.push(String(n));
+        return list.length > 0 ? list : [`${boothNumber}~${boothNumberEnd}`];
+      }
+      return [`${boothNumber}~${boothNumberEnd}`];
+    }
+    if (boothNumber != null && String(boothNumber).trim() !== '') {
+      return [String(boothNumber)];
+    }
+    return [];
+  })();
+  const showBadge = labelList.length > 0;
 
   const article = (
     <article
@@ -33,16 +56,23 @@ export default function BoothCard({
     >
       {showBadge && (
         <div
-          className={clsx(
-            'pointer-events-none absolute left-2 top-2 z-[2] inline-flex max-w-[calc(100%-1rem)] shrink-0 items-center justify-center bg-[#333333]/95 [font-family:Pretendard]',
-            badgePadding,
-            badgeFont
-          )}
+          className="pointer-events-none absolute left-2 top-2 z-[3] flex max-w-[calc(100%-1rem)] flex-wrap items-start justify-start gap-1 [font-family:Pretendard]"
           aria-hidden
         >
-          <span className="font-bold leading-none tracking-[-0.02em] whitespace-nowrap text-white">
-            {badgeText}
-          </span>
+          {labelList.map((text, i) => (
+            <div
+              key={`${text}-${i}`}
+              className={clsx(
+                'inline-flex shrink-0 items-center justify-center bg-[#333333]/95',
+                badgePadding,
+                badgeFont
+              )}
+            >
+              <span className="font-bold leading-none tracking-[-0.02em] whitespace-nowrap text-white">
+                {text}
+              </span>
+            </div>
+          ))}
         </div>
       )}
       <img
@@ -62,7 +92,7 @@ export default function BoothCard({
             subtitleSize
           )}
         >
-          {locationDetail}
+          {location}
         </p>
         <p
           className={clsx(

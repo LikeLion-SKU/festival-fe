@@ -4,6 +4,7 @@ import { Outlet, useParams } from 'react-router';
 import { getBoothInfo } from '@/api/booth';
 import { getOrderAvailableMenus } from '@/api/boothMenu';
 import Toast from '@/components/common/Toast';
+import { formatBoothLocationKo } from '@/constants/boothBuildingData';
 
 function Order() {
   const { boothId } = useParams();
@@ -131,7 +132,9 @@ function Order() {
           boothId,
           boothName: boothInfo?.boothName ?? '',
           departmentName: boothInfo?.departmentName ?? '',
-          location: boothInfo?.locationDetail ?? '',
+
+          location: formatBoothLocationKo(boothInfo?.location ?? boothInfo?.locationDetail ?? ''),
+
           isOpen: boothInfo?.open ?? false,
           content: boothInfo?.description ?? '',
           thumbnailUrl: boothInfo?.thumbnailUrl ?? null,

@@ -65,6 +65,13 @@ export default function AdminMain() {
 
   const [counts, setCounts] = useState(INITIAL_COUNTS);
   const selectedRef = useRef(selected);
+  const outerScrollRef = useRef(null);
+  const [pageScrollEl, setPageScrollEl] = useState(null);
+
+  const handleScrollTop = () => {
+    const target = pageScrollEl ?? outerScrollRef.current;
+    target?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   useEffect(() => {
     selectedRef.current = selected;
@@ -91,7 +98,7 @@ export default function AdminMain() {
   }, []);
 
   const childContext = useMemo(
-    () => ({ ...context, notifyOrderStatus, clearCount }),
+    () => ({ ...context, notifyOrderStatus, clearCount, setScrollContainer: setPageScrollEl }),
     [context, notifyOrderStatus, clearCount]
   );
 
@@ -100,7 +107,7 @@ export default function AdminMain() {
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="relative flex flex-col h-full">
       <nav className="flex w-full items-start border-b border-[#E5E5E5] bg-white mt-4">
         {NAV_ITEMS.map((item) => (
           <NavButton
@@ -114,9 +121,26 @@ export default function AdminMain() {
           />
         ))}
       </nav>
-      <div className="flex-1 overflow-auto">
+      <div ref={outerScrollRef} className="flex-1 overflow-auto">
         <Outlet context={childContext} />
       </div>
+      <button
+        type="button"
+        onClick={handleScrollTop}
+        aria-label="맨 위로"
+        className="absolute bottom-5 right-5 flex size-11 items-center justify-center rounded-full bg-white shadow-[0_0_4px_0_rgba(0,0,0,0.25)]"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M12 19V5" stroke="#7F7F7F" strokeWidth="1.6" strokeLinecap="round" />
+          <path
+            d="M5 12L12 5L19 12"
+            stroke="#7F7F7F"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
     </div>
   );
 }

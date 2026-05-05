@@ -28,6 +28,10 @@ export default function Intro() {
   const videoRef = useRef(null);
   const hasStoppedRef = useRef(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
+  /** 리로드나 재라우팅 시 새 media 요소로 캐시된 재생 위치 섞임 방지 */
+  const [videoMountKey] = useState(
+    () => globalThis.crypto?.randomUUID?.() ?? `intro-video-${Date.now()}`
+  );
 
   useEffect(() => {
     const el = videoRef.current;
@@ -35,15 +39,48 @@ export default function Intro() {
 
     el.muted = true;
     el.defaultMuted = true;
-    el.currentTime = 0;
     hasStoppedRef.current = false;
-    const tryPlay = () => {
+
+    let kicked = false;
+    const playFromStart = () => {
+      if (kicked) return;
+      kicked = true;
+      el.currentTime = 0;
+      hasStoppedRef.current = false;
       el.play().catch(() => {});
     };
 
-    tryPlay();
-    const timer = window.setTimeout(tryPlay, 120);
-    return () => window.clearTimeout(timer);
+    const onReady = () => playFromStart();
+    el.addEventListener('canplay', onReady, { once: true });
+    el.addEventListener('loadeddata', onReady, { once: true });
+    el.load();
+
+    const tryPlay = () => {
+      el.play().catch(() => {});
+    };
+    const retryTimer = window.setTimeout(tryPlay, 160);
+
+    return () => {
+      el.removeEventListener('canplay', onReady);
+      el.removeEventListener('loadeddata', onReady);
+      window.clearTimeout(retryTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    const onPageShow = (e) => {
+      if (!e.persisted) return;
+      const el = videoRef.current;
+      if (!el) return;
+      hasStoppedRef.current = false;
+      setVideoLoaded(false);
+      el.pause();
+      el.currentTime = 0;
+      el.load();
+      el.play().catch(() => {});
+    };
+    window.addEventListener('pageshow', onPageShow);
+    return () => window.removeEventListener('pageshow', onPageShow);
   }, []);
 
   return (
@@ -55,6 +92,7 @@ export default function Intro() {
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 bg-[#121212]" />
       )}
       <video
+        key={videoMountKey}
         ref={videoRef}
         autoPlay
         muted
@@ -62,7 +100,7 @@ export default function Intro() {
         loop={false}
         playsInline
         controls={false}
-        preload="metadata"
+        preload="auto"
         disablePictureInPicture
         controlsList="nodownload noplaybackrate noremoteplayback"
         onLoadedData={(e) => {

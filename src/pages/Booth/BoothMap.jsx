@@ -11,7 +11,7 @@ import BoothCard from '@/components/Booth/BoothCard';
 import BoothMap from '@/components/Booth/BoothMap';
 import PageHeader from '@/components/common/PageHeader';
 import SearchInput from '@/components/common/SearchInput';
-import { BUILDING_ID_TO_API_LOCATION } from '@/constants/boothBuildingData';
+import { BUILDING_ID_TO_API_LOCATION, formatBoothLocationKo } from '@/constants/boothBuildingData';
 import { BUILDINGS } from '@/constants/mainDummyData';
 
 function normalizeBoothList(payload) {
@@ -29,6 +29,14 @@ function sortBoothRowsByDepartmentKo(rows) {
       sensitivity: 'base',
     })
   );
+}
+
+/** GET /booths 응답의 boothNumbers 배열을 카드 라벨용으로 바꿈 */
+function normalizeBoothNumbersFromApi(item) {
+  const raw = item?.boothNumbers;
+  if (!Array.isArray(raw) || raw.length === 0) return undefined;
+  const cleaned = raw.map((n) => String(n).trim()).filter((s) => s.length > 0);
+  return cleaned.length > 0 ? cleaned : undefined;
 }
 
 const BUILDING_BUTTON_ORDER = ['hyein', 'eunju1', 'eunju2', 'cheongun', 'daeil'];
@@ -103,8 +111,11 @@ export default function BoothMapPage() {
       id: String(item.boothId ?? `idx-${index}`),
       boothId: item.boothId,
       thumbnailUrl: item.thumbnailUrl,
-      locationDetail: item.locationDetail ?? '',
+      locationCode: String(item.location ?? '').trim(),
+      location: formatBoothLocationKo(item.location),
+      locationDescription: item.locationDescription ?? '',
       departmentName: item.departmentName ?? '',
+      boothNumbers: normalizeBoothNumbersFromApi(item),
     }));
     return sortBoothRowsByDepartmentKo(mapped);
   }, [boothListPayload]);
@@ -113,21 +124,33 @@ export default function BoothMapPage() {
 
   const sheetBoothRows = useMemo(() => {
     if (!searchQ) return boothRows;
-    return boothRows.filter(
-      (r) =>
-        r.departmentName.toLowerCase().includes(searchQ) ||
-        r.locationDetail.toLowerCase().includes(searchQ)
-    );
+    return boothRows.filter((r) => {
+      const matchDept = r.departmentName.toLowerCase().includes(searchQ);
+      const matchLoc =
+        r.location.toLowerCase().includes(searchQ) ||
+        r.locationCode.toLowerCase().includes(searchQ) ||
+        r.locationDescription.toLowerCase().includes(searchQ);
+      const matchNum =
+        Array.isArray(r.boothNumbers) &&
+        r.boothNumbers.some((n) => String(n).toLowerCase().includes(searchQ));
+      return matchDept || matchLoc || matchNum;
+    });
   }, [boothRows, searchQ]);
 
   /** 검색 오버레이: 건물 탭 무관하게 전체 부스 중 검색 */
   const searchOverlayRows = useMemo(() => {
     if (!searchQ) return [];
-    return boothRows.filter(
-      (r) =>
-        r.departmentName.toLowerCase().includes(searchQ) ||
-        r.locationDetail.toLowerCase().includes(searchQ)
-    );
+    return boothRows.filter((r) => {
+      const matchDept = r.departmentName.toLowerCase().includes(searchQ);
+      const matchLoc =
+        r.location.toLowerCase().includes(searchQ) ||
+        r.locationCode.toLowerCase().includes(searchQ) ||
+        r.locationDescription.toLowerCase().includes(searchQ);
+      const matchNum =
+        Array.isArray(r.boothNumbers) &&
+        r.boothNumbers.some((n) => String(n).toLowerCase().includes(searchQ));
+      return matchDept || matchLoc || matchNum;
+    });
   }, [boothRows, searchQ]);
 
   const sectionBgStyle = searchMode
@@ -222,8 +245,9 @@ export default function BoothMapPage() {
                         variant="search"
                         to={row.boothId != null ? `/order/${row.boothId}` : undefined}
                         imageSrc={row.thumbnailUrl || BoothPlaceholderImg}
-                        locationDetail={row.locationDetail}
+                        location={row.location}
                         departmentName={row.departmentName}
+                        boothNumbers={row.boothNumbers}
                       />
                     </li>
                   ))}
@@ -303,8 +327,9 @@ export default function BoothMapPage() {
                     key={row.id}
                     to={row.boothId != null ? `/order/${row.boothId}` : undefined}
                     imageSrc={row.thumbnailUrl || BoothPlaceholderImg}
-                    locationDetail={row.locationDetail}
+                    location={row.location}
                     departmentName={row.departmentName}
+                    boothNumbers={row.boothNumbers}
                   />
                 ))}
               </div>

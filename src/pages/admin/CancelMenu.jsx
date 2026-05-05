@@ -24,7 +24,8 @@ export default function CancelMenu() {
   const [toast, setToast] = useState({ visible: false, message: '' });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { notifyOrderStatus, clearCount, setIsLoading } = useOutletContext() ?? {};
+  const { notifyOrderStatus, clearCount, setIsLoading, setScrollContainer } =
+    useOutletContext() ?? {};
 
   useEffect(() => {
     clearCount?.('cancel');
@@ -122,7 +123,10 @@ export default function CancelMenu() {
       />
 
       {filtered.length > 0 ? (
-        <div className="flex flex-col w-full gap-2 overflow-auto no-scrollbar px-5 py-5">
+        <div
+          ref={setScrollContainer}
+          className="flex flex-col w-full gap-2 overflow-auto no-scrollbar px-5 py-5"
+        >
           {filtered.map((data) => (
             <CompletedOrderCard /* 취소 주문 카드 */
               key={data.orderId}
