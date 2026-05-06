@@ -6,7 +6,7 @@ export default function SimpleNotFound() {
   return (
     <div className="flex min-h-full w-full items-center justify-center bg-white px-6">
       <div className="flex flex-col items-center text-center">
-        <p className="text-[80px] font-black leading-none text-[#FE5F54] [font-family:Pretendard]">
+        <p className="text-[60px] font-black leading-[1.3] tracking-[0%] text-[#FE5F54] [font-family:'NeueHaasGrotDisp']">
           404
         </p>
         <p className="mt-2 text-[1.125rem] font-bold text-[#1A1A1A] [font-family:Pretendard]">
