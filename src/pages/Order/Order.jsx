@@ -5,6 +5,7 @@ import { getBoothInfo } from '@/api/booth';
 import { getOrderAvailableMenus } from '@/api/boothMenu';
 import Toast from '@/components/common/Toast';
 import { formatBoothLocationKo } from '@/constants/boothBuildingData';
+import NotFound from '@/pages/NotFound';
 
 function Order() {
   const { boothId } = useParams();
@@ -15,6 +16,7 @@ function Order() {
   const [foodData, setFoodData] = useState([]);
   const [menuLoadedBoothId, setMenuLoadedBoothId] = useState(null);
   const isMenuLoading = menuLoadedBoothId !== boothId;
+  const [boothNotFound, setBoothNotFound] = useState(false);
   const [errorToast, setErrorToast] = useState({ visible: false, message: '' });
   const [quantities, setQuantities] = useState(() => {
     const saved = sessionStorage.getItem('orderQuantities');
@@ -28,7 +30,10 @@ function Order() {
 
   const showError = (error) => {
     const status = error?.response?.status;
-    if (status === 404) return;
+    if (status === 404 || status === 400) {
+      setBoothNotFound(true);
+      return;
+    }
     const message =
       status >= 500
         ? '서버 오류가 발생했어요. 잠시 후 다시 시도해주세요.'
@@ -118,6 +123,8 @@ function Order() {
       sessionStorage.removeItem('orderResponse');
     };
   }, []);
+
+  if (boothNotFound) return <NotFound />;
 
   return (
     <>

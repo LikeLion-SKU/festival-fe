@@ -44,8 +44,10 @@ const router = createBrowserRouter([
           { path: 'customer-info', lazy: page(() => import('@/pages/Order/CustomerInfo')) },
           { path: 'pay', lazy: page(() => import('@/pages/Order/OrderPay')) },
           { path: 'complete', lazy: page(() => import('@/pages/Order/OrderComplete')) },
+          { path: '*', lazy: page(() => import('@/pages/OrderNotFound')) },
         ],
       },
+      { path: '*', lazy: page(() => import('@/pages/NotFound')) },
     ],
   },
   {
@@ -61,6 +63,7 @@ const router = createBrowserRouter([
           { path: 'complete', lazy: page(() => import('@/pages/admin/CompleteMenu')) },
           { path: 'cancel', lazy: page(() => import('@/pages/admin/CancelMenu')) },
           { path: 'menu', lazy: page(() => import('@/pages/admin/ManagementMenu')) },
+          { path: '*', lazy: page(() => import('@/pages/OrderNotFound')) },
         ],
       },
       { path: '/login', lazy: page(() => import('@/pages/admin/AdminLogin')) },
