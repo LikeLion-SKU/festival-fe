@@ -6,7 +6,7 @@ const PUBLIC_API_BASE_URL = BASE_URL;
 const PRIVATE_API_BASE_URL = BASE_URL;
 const REQUEST_TIMEOUT = 10000; // 10초
 const REFRESH_ENDPOINT = '/auth/refresh';
-const LOGIN_PATH = '/admin/login';
+const LOGIN_PATH = '/login';
 
 // ─── Axios 인스턴스 생성 유틸 ────────────────────────
 const createApiInstance = (baseURL, options = {}) =>
