@@ -16,13 +16,13 @@ export default function NotFound() {
       />
       <div className="relative z-10 flex flex-col items-center text-center">
         <img src={HatIcon} alt="" aria-hidden="true" className="h-[24px] w-[36px] object-contain" />
-        <p className="mt-1 text-[52px] font-black italic leading-[1.3] tracking-[0%] text-white [font-family:Pretendard]">
+        <p className="mt-1 text-[52px] font-black italic leading-[1.3] tracking-[0%] text-white [font-family:'NeueHaasGrotDisp']">
           404
         </p>
-        <p className="mt-1 text-[1.375rem] font-medium italic tracking-[0%] text-white [font-family:Pretendard]">
+        <p className="mt-1 text-[1.375rem] font-medium italic tracking-[0%] text-white [font-family:'NeueHaasGrotDisp']">
           NOT FOUND in the system
         </p>
-        <p className="text-[1rem] font-medium italic tracking-[0%] text-white [font-family:Pretendard]">
+        <p className="text-[1rem] font-medium italic tracking-[0%] text-white [font-family:'NeueHaasGrotDisp']">
           404 the new era, era
         </p>
         <p className="mt-1 text-[1rem] text-white [font-family:Pretendard]">...</p>
