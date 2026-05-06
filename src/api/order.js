@@ -24,7 +24,6 @@ export const subscribeOrder = (sseSubscribeType) => {
     eventSource.close();
     try {
       await publicApi.post('/auth/refresh');
-      window.location.reload();
     } catch {
       window.location.href = '/login';
     }
