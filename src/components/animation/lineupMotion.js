@@ -11,6 +11,7 @@ const LINEUP_SLOT_STYLE = {
     rotateZDeg: -6,
     scale: 0.94,
     blurPx: 2,
+    brightness: 0.68,
     opacity: 0.95,
     zIndex: 2,
   },
@@ -22,6 +23,7 @@ const LINEUP_SLOT_STYLE = {
     rotateZDeg: 0.85,
     scale: 1,
     blurPx: 0,
+    brightness: 1,
     opacity: 1,
     zIndex: 5,
   },
@@ -33,6 +35,7 @@ const LINEUP_SLOT_STYLE = {
     rotateZDeg: 18,
     scale: 0.94,
     blurPx: 2,
+    brightness: 0.68,
     opacity: 0.95,
     zIndex: 2,
   },
@@ -43,6 +46,9 @@ export const LINEUP_TWEEN_TRANSITION = { type: 'tween', duration: 0.22, ease: [0
 
 export function animateForSlot(position, stageShiftX = 0) {
   const slot = LINEUP_SLOT_STYLE[position];
+  const filterChunks = [];
+  if (slot.blurPx > 0) filterChunks.push(`blur(${slot.blurPx}px)`);
+  if (typeof slot.brightness === 'number') filterChunks.push(`brightness(${slot.brightness})`);
   return {
     x: slot.x + stageShiftX,
     y: slot.y,
@@ -51,7 +57,7 @@ export function animateForSlot(position, stageShiftX = 0) {
     rotateZ: slot.rotateZDeg,
     scale: slot.scale,
     opacity: slot.opacity,
-    filter: slot.blurPx > 0 ? `blur(${slot.blurPx}px)` : 'none',
+    filter: filterChunks.length > 0 ? filterChunks.join(' ') : 'none',
     zIndex: slot.zIndex,
   };
 }
