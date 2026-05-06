@@ -14,6 +14,10 @@ import Footer from '@/layouts/Footer.jsx';
 export default function Main() {
   const navigate = useNavigate();
 
+  const handleMenuClick = () => {
+    navigate('/menu');
+  };
+
   return (
     <div className="min-h-dvh bg-[#121212]">
       <div className="mx-auto w-full max-w-[450px] min-h-dvh">
@@ -30,8 +34,8 @@ export default function Main() {
         <Footer />
       </div>
 
-      <div className="fixed z-50 left-1/2 -translate-x-1/2" style={{ bottom: '2.75rem' }}>
-        <MenuButton onClick={() => navigate('/menu')} />
+      <div className="fixed z-[100] left-1/2 -translate-x-1/2" style={{ bottom: '2.75rem' }}>
+        <MenuButton onClick={handleMenuClick} />
       </div>
     </div>
   );

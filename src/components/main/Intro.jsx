@@ -127,10 +127,22 @@ export default function Intro() {
       </video>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[8rem]"
+        className={`pointer-events-none absolute inset-0 z-[3] transition-opacity duration-150 ${
+          videoLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
         style={{
           background:
-            'linear-gradient(180deg, rgba(18,18,18,0) 0%, rgba(18,18,18,0) 22%, rgba(0,0,0,0.1) 40%, rgba(18,18,18,0.38) 58%, rgba(18,18,18,0.80) 80%, rgba(18,18,18,0.94) 88%,rgba(0,0,0,1) 100%, #121212 100%)',
+            'linear-gradient(187.071deg, rgb(31, 6, 5) 1%, rgb(213, 39, 45) 24%, rgba(255, 120, 0, 0) 40%)',
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute inset-0 z-[4] transition-opacity duration-150 ${
+          videoLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(18,18,18,0) 0%, rgba(18,18,18,0) 72%, rgba(151,35,42,0.72) 92%, rgba(0,0,0,0.95) 99%)',
         }}
       />
       <div className="relative z-[10] flex flex-1 flex-col items-center justify-between">

@@ -79,7 +79,7 @@ export default function Safety() {
         className="relative z-10 mt-[1.75rem] -mx-[2rem] w-[calc(100%+4rem)]"
       >
         <div className="mt-[0.8rem] h-px w-full bg-white/70" />
-        <div className="py-[1.15rem]">
+        <div className="pt-[1.61rem] pb-[1.15rem]">
           <div className="grid grid-cols-[7.5rem_4.6rem_1fr] items-start gap-x-[0.8rem]">
             <p className="whitespace-nowrap pt-[0.4rem] pl-[1rem] text-left text-[0.875rem] font-extrabold leading-[1.35] tracking-[-0.01rem] text-white [font-family:Pretendard]">
               AED 위치 안내
@@ -101,7 +101,7 @@ export default function Safety() {
           </div>
         </div>
         <div className="mt-[0.75rem] h-px w-full bg-white/70" />
-        <div className="py-[1.15rem]">
+        <div className="pt-[1.61rem] pb-[1.15rem]">
           <div className="grid grid-cols-[6.1rem_1fr] items-start gap-x-[0.8rem]">
             <p className="pt-[0.4rem] pl-[1rem] text-left text-[0.875rem] font-extrabold leading-[1.35] tracking-[-0.01rem] text-white [font-family:Pretendard]">
               대피로 안내
