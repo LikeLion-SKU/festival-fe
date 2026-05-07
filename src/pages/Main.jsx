@@ -90,7 +90,7 @@ export default function Main() {
           transition: 'opacity 0.5s ease, transform 0.5s ease',
         }}
       >
-        <MenuButton onClick={() => navigate('/menu')} />
+        <MenuButton onClick={() => navigate('/menu', { state: { from: '/' } })} />
       </div>
     </div>
   );
