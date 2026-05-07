@@ -184,32 +184,28 @@ export default function BoothMapPage() {
       )}
       style={sectionBgStyle}
     >
+      <PageHeader
+        title="부스 안내"
+        to="/"
+        onBack={() => {
+          if (searchMode) {
+            setSearchMode(false);
+            setSearch('');
+            setActiveBuildingId(null);
+            return;
+          }
+          navigate('/');
+        }}
+      />
+
       <div
         className={clsx(
-          'mx-auto flex w-full max-w-[450px] flex-col px-4 pt-[max(3.25rem,calc(env(safe-area-inset-top)+0.5rem))]',
+          'mx-auto flex w-full max-w-[450px] flex-col px-4 pt-[max(5rem,calc(env(safe-area-inset-top)+2.75rem))]',
           searchMode
             ? 'min-h-0 flex-1 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))]'
             : 'pb-[11.5rem]'
         )}
       >
-        <div className="relative min-h-[2.75rem] shrink-0">
-          <PageHeader
-            title="부스 안내"
-            to="/"
-            fixed={false}
-            top="0rem"
-            onBack={() => {
-              if (searchMode) {
-                setSearchMode(false);
-                setSearch('');
-                setActiveBuildingId(null);
-                return;
-              }
-              navigate('/');
-            }}
-          />
-        </div>
-
         <div className="mt-5 shrink-0 px-1">
           <SearchInput
             placeholder="학과명으로 부스 검색"
@@ -269,7 +265,7 @@ export default function BoothMapPage() {
 
       <div
         className={clsx(
-          'pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center transition-opacity duration-200',
+          'pointer-events-none fixed inset-x-0 bottom-2 z-50 flex justify-center transition-opacity duration-200',
           searchMode && 'invisible opacity-0'
         )}
         aria-hidden={searchMode}
@@ -317,6 +313,48 @@ export default function BoothMapPage() {
             }
           }}
         >
+          {!sheetExpanded && (
+            <div
+              className="pointer-events-none absolute inset-x-0 -top-14 flex flex-col items-center gap-1"
+              aria-hidden
+            >
+              <style>{`
+                @keyframes hint-float {
+                  0%   { opacity: 0;    transform: translateY(6px); }
+                  40%  { opacity: 0.55; transform: translateY(0px); }
+                  70%  { opacity: 0.55; transform: translateY(0px); }
+                  100% { opacity: 0;    transform: translateY(-6px); }
+                }
+                .hint-arrow { animation: hint-float 1.6s ease-in-out infinite; }
+                .hint-arrow-delay { animation: hint-float 1.6s ease-in-out infinite 0.25s; }
+              `}</style>
+              <svg className="hint-arrow" width="20" height="12" viewBox="0 0 20 12" fill="none">
+                <polyline
+                  points="2,10 10,2 18,10"
+                  stroke="white"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <svg
+                className="hint-arrow-delay"
+                width="20"
+                height="12"
+                viewBox="0 0 20 12"
+                fill="none"
+              >
+                <polyline
+                  points="2,10 10,2 18,10"
+                  stroke="white"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+          )}
+
           <div className="mx-[27px] min-w-0 shrink-0">
             <div className="flex w-full min-w-0 flex-nowrap items-stretch gap-1.5 sm:gap-2">
               {orderedBuildingButtons.map((item) => {
