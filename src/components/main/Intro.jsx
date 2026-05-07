@@ -86,7 +86,7 @@ export default function Intro() {
   return (
     <section
       id="intro"
-      className="relative flex min-h-[48rem] flex-col bg-[#121212] px-[1.5rem] pb-[5rem] pt-[6.1875rem]"
+      className="relative flex min-h-[48rem] flex-col bg-[#121212] px-[1.5rem] pb-[5rem] pt-[4.5rem]"
     >
       {!videoLoaded && (
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 bg-[#121212]" />
@@ -119,7 +119,8 @@ export default function Intro() {
           }
         }}
         aria-hidden="true"
-        className={`pointer-events-none absolute inset-0 z-0 h-full w-full object-cover transition-opacity duration-150 ${
+        style={{ top: '-12px' }}
+        className={`pointer-events-none absolute inset-x-0 bottom-0 z-0 h-full w-full object-cover transition-opacity duration-150 ${
           videoLoaded ? 'opacity-100' : 'opacity-0'
         }`}
       >
