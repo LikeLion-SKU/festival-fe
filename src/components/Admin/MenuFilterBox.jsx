@@ -33,7 +33,7 @@ export default function MenuFilterBox({
               key={f.key}
               type="button"
               onClick={() => onDateFilterChange(f.key)}
-              className={`w-14 h-8 rounded-lg px-3 text-[13px] font-medium ${
+              className={`w-14 h-9 rounded-md px-3 text-[13px] font-medium ${
                 active ? 'bg-[#FF756C] text-white' : 'bg-[#F6F6F6] text-[#7F7F7F]'
               }`}
             >
@@ -53,7 +53,7 @@ export default function MenuFilterBox({
           value={searchQuery}
           onChange={(e) => onSearchQueryChange(e.target.value)}
           placeholder="이름 또는 전화번호로 검색"
-          className="flex-1 bg-transparent text-[14px] text-[#222] placeholder:text-[#A0A0A0] outline-none"
+          className="flex-1 h-11 bg-transparent text-[14px] text-[#222] placeholder:text-[#A0A0A0] outline-none"
         />
       </div>
     </div>
