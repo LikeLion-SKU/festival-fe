@@ -25,6 +25,12 @@ function MenuSection({
 
   return (
     <div className="px-4 py-5 flex flex-col gap-6">
+      <style>{`
+        @keyframes expand-controls {
+          from { max-height: 0; opacity: 0; }
+          to   { max-height: 60px; opacity: 1; }
+        }
+      `}</style>
       {CATEGORY_ORDER.map((cat) => (
         <div key={cat} ref={sectionRefs[cat]}>
           <div
@@ -78,30 +84,35 @@ function MenuSection({
                       </div>
                     </div>
                     {qty && !isSoldOut && (
-                      <div className="flex justify-end items-center gap-2 mt-3">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onDecrease(key);
-                          }}
-                          className="w-7 h-7 rounded-full bg-white shadow flex items-center justify-center text-gray-400"
-                        >
-                          {qty === 1 ? (
-                            <Garbage className="w-2 h-2" />
-                          ) : (
-                            <Minus className="w-2 h-2" />
-                          )}
-                        </button>
-                        <span className="text-sm font-medium w-4 text-center">{qty}</span>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onIncrease(key);
-                          }}
-                          className="w-7 h-7 rounded-full bg-white shadow flex items-center justify-center text-gray-400"
-                        >
-                          <Plus className="w-2 h-2" />
-                        </button>
+                      <div
+                        className="overflow-hidden"
+                        style={{ animation: 'expand-controls 0.25s ease-out forwards' }}
+                      >
+                        <div className="flex justify-end items-center gap-2 mt-3 mb-1">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDecrease(key);
+                            }}
+                            className="w-7 h-7 rounded-full bg-white shadow flex items-center justify-center text-gray-400"
+                          >
+                            {qty === 1 ? (
+                              <Garbage className="w-2.5 h-2.5" />
+                            ) : (
+                              <Minus className="w-2 h-2" />
+                            )}
+                          </button>
+                          <span className="text-sm font-medium w-4 text-center">{qty}</span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onIncrease(key);
+                            }}
+                            className="w-7 h-7 rounded-full bg-white shadow flex items-center justify-center text-gray-400"
+                          >
+                            <Plus className="w-2 h-2" />
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>

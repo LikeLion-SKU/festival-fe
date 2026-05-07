@@ -1,8 +1,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
-const CAST_CREDITS_SCROLL_PX_PER_SEC = 18;
+const CAST_CREDITS_SCROLL_PX_PER_SEC = 28;
 /** 크레딧 뷰포트 전체 여백 */
 const CAST_VIEWPORT_HEIGHT_CLASS = 'h-[8rem]';
+/** 반복 사이 간격 */
+const CAST_SEGMENT_GAP_CLASS = 'h-[3rem]';
 
 function CastCreditRow({ row }) {
   return (
@@ -24,9 +26,20 @@ function CastCreditRow({ row }) {
           row.role
         )}
       </p>
-      <p className="-ml-[-1.25rem] m-0 text-[0.75rem] font-semibold leading-[1.4] [font-family:Pretendard]">
-        {row.names}
-      </p>
+      <div className="-ml-[-1.25rem] m-0 text-[0.75rem] font-semibold leading-[1.4] [font-family:Pretendard]">
+        {(() => {
+          const names = row.names.split(', ');
+          const lines = [];
+          for (let i = 0; i < names.length; i += 2) {
+            lines.push(names.slice(i, i + 2).join(', '));
+          }
+          return lines.map((line) => (
+            <p key={line} className="m-0 whitespace-nowrap">
+              {line}
+            </p>
+          ));
+        })()}
+      </div>
     </div>
   );
 }
@@ -171,13 +184,13 @@ export default function CastCreditsAnimation({ rows }) {
           {rows.map((row) => (
             <CastCreditRow key={row.role} row={row} />
           ))}
-          <div aria-hidden className={`${CAST_VIEWPORT_HEIGHT_CLASS} shrink-0`} />
+          <div aria-hidden className={`${CAST_SEGMENT_GAP_CLASS} shrink-0`} />
         </div>
         <div aria-hidden>
           {rows.map((row) => (
             <CastCreditRow key={`dup-${row.role}`} row={row} />
           ))}
-          <div aria-hidden className={`${CAST_VIEWPORT_HEIGHT_CLASS} shrink-0`} />
+          <div aria-hidden className={`${CAST_SEGMENT_GAP_CLASS} shrink-0`} />
         </div>
       </div>
     </div>

@@ -8,17 +8,27 @@ import {
 } from '@/components/animation/useScrollDrivenOpacity';
 
 const INTRODUCE_LINES = [
-  '‘Ready, Set, Go!’는',
-  '출발 직전의 긴장감과 설렘,',
-  '그리고 폭발적인 시작을 상징하는 표현입니다.',
-  '서경대학교 학우들이 일상에서 벗어나',
-  '축제로 향하는 순간의 고조된 에너지와',
-  '기대감을 담아내고자 했습니다.',
-  '나아가 ‘Ready’는 준비의 축적,',
-  '‘Set’은 긴장이 최고조에 이르는 순간,',
-  ' ‘Go’는 모든 에너지가 터져 나오며,',
-  '축제가 본격적으로 질주하는 절정을 의미합니다.',
+  `‘Ready, Set, Go!’는`,
+  `출발 직전의 긴장감과 설렘, 폭발적인 시작을 상징하는 표현입니다.`,
+  `서경대학교 학우들이 일상에서 벗어나 축제로 향하는 순간의`,
+  `고조된 에너지와 기대감을 담아내고자 했습니다.`,
+  ``,
+  `‘Ready’는 준비의 축적, ‘Set’은 긴장이 최고조에 이르는 순간,`,
+  ` ‘Go’는 모든 에너지가 터져 나오며,`,
+  `축제가 본격적으로 질주하는 절정을 의미합니다.`,
 ];
+
+function renderLine(text) {
+  return text.split(/(Ready|Set|Go)/).map((part, j) =>
+    part === 'Ready' || part === 'Set' || part === 'Go' ? (
+      <span key={j} className="font-bold">
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+}
 
 export default function Introduce() {
   const iconBlockRef = useRef(null);
@@ -50,13 +60,17 @@ export default function Introduce() {
         <div
           ref={bodyBlockRef}
           style={{ opacity: bodyOpacity, willChange: 'opacity' }}
-          className="text-center text-[0.75rem] tracking-[-0.0225rem] text-[#fdfdfd] [font-family:Pretendard]"
+          className="font-medium text-center text-[0.75rem] tracking-[-0.0225rem] text-[#fdfdfd] [font-family:Pretendard]"
         >
-          {INTRODUCE_LINES.map((line) => (
-            <p key={line} className="m-0 leading-[1.3rem]">
-              {line}
-            </p>
-          ))}
+          {INTRODUCE_LINES.map((line, i) =>
+            line.trim() === '' ? (
+              <div key={i} style={{ height: '1.3rem' }} aria-hidden />
+            ) : (
+              <p key={i} className="m-0 leading-[1.3rem] whitespace-nowrap">
+                {renderLine(line)}
+              </p>
+            )
+          )}
         </div>
       </div>
     </section>
