@@ -21,8 +21,8 @@ export default defineConfig(({ mode }) => {
         registerType: 'autoUpdate',
         includeAssets: ['favicon.svg', 'icons/*.png'],
         manifest: {
-          name: '축제 정보 앱',
-          short_name: '축제',
+          name: '2026 대동제',
+          short_name: '2026 대동제',
           description: '축제 정보를 확인하세요',
           theme_color: '#6366f1',
           background_color: '#ffffff',
