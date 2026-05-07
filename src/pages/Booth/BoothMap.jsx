@@ -48,6 +48,16 @@ export default function BoothMapPage() {
   const [search, setSearch] = useState('');
   const [searchMode, setSearchMode] = useState(false);
   const [sheetExpanded, setSheetExpanded] = useState(false);
+  const [isHyeinFlashing, setIsHyeinFlashing] = useState(false);
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setIsHyeinFlashing(true), 500);
+    const t2 = setTimeout(() => setIsHyeinFlashing(false), 2900);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, []);
   const touchStartY = useRef(0);
   const sheetPanelRef = useRef(null);
   const sheetScrollRef = useRef(null);
@@ -184,6 +194,18 @@ export default function BoothMapPage() {
       )}
       style={sectionBgStyle}
     >
+      <style>{`
+        @keyframes hyein-panel-flash {
+          0%   { background-color: #121212; }
+          50%  { background-color: #8A2822; }
+          100% { background-color: #121212; }
+        }
+        @keyframes hyein-btn-flash {
+          0%   { opacity: 0; }
+          50%  { opacity: 1; }
+          100% { opacity: 0; }
+        }
+      `}</style>
       <PageHeader
         title="부스 안내"
         to="/"
@@ -219,6 +241,7 @@ export default function BoothMapPage() {
           <div className="mt-5 w-full shrink-0">
             <BoothMap
               activeBuildingId={activeBuildingId}
+              isHyeinFlashing={isHyeinFlashing}
               onSelectBuilding={(id) => setActiveBuildingId((prev) => (prev === id ? null : id))}
               onMapBackdropClick={() => setActiveBuildingId(null)}
             />
@@ -359,6 +382,7 @@ export default function BoothMapPage() {
             <div className="flex w-full min-w-0 flex-nowrap items-stretch gap-1.5 sm:gap-2">
               {orderedBuildingButtons.map((item) => {
                 const active = item.id === activeBuildingId;
+                const flashing = item.id === 'hyein' && isHyeinFlashing && !active;
                 return (
                   <button
                     key={item.id}
@@ -368,13 +392,24 @@ export default function BoothMapPage() {
                       setActiveBuildingId((prev) => (prev === item.id ? null : item.id))
                     }
                     className={clsx(
-                      'flex h-8 min-h-8 min-w-0 flex-[1_1_60px] items-center justify-center border border-solid px-1 text-[clamp(9px,2.6vw,12px)] font-medium leading-none tracking-[-0.02em] [font-family:Pretendard]',
+                      'relative overflow-hidden flex h-8 min-h-8 min-w-0 flex-[1_1_60px] items-center justify-center border border-solid px-1 text-[clamp(9px,2.6vw,12px)] font-medium leading-none tracking-[-0.02em] [font-family:Pretendard]',
                       active
                         ? 'border-[#C43A31] bg-[rgba(196,58,49,0.6)] text-[#FFDDDB]'
                         : 'border-[#595959] bg-[#353535] text-[#a0a0a0]'
                     )}
                   >
-                    <span className="block max-w-full truncate text-center">{item.label}</span>
+                    {flashing && (
+                      <span
+                        className="pointer-events-none absolute inset-0"
+                        style={{
+                          backgroundColor: '#8A2822',
+                          animation: 'hyein-btn-flash 1.2s ease-in 2 forwards',
+                        }}
+                      />
+                    )}
+                    <span className="relative z-10 block max-w-full truncate text-center">
+                      {item.label}
+                    </span>
                   </button>
                 );
               })}
