@@ -36,13 +36,13 @@ function BoothInfoSection({
         {isLoading ? (
           <Skeleton className="w-12 h-6" />
         ) : isOpen ? (
-          <div className="flex w-12 h-6 rounded-[5px] outline justify-center items-center bg-button-red-bg outline-button-red">
+          <div className="flex shrink-0 w-12 h-6 rounded-[5px] outline justify-center items-center bg-button-red-bg outline-button-red">
             <div className="text-center justify-start text-button-red text-xs font-semibold font-['Pretendard']">
               영업 중
             </div>
           </div>
         ) : (
-          <div className="flex w-12 h-6 rounded-[5px] outline justify-center items-center bg-button-gray-bg outline-button-gray">
+          <div className="flex shrink-0 w-12 h-6 rounded-[5px] outline justify-center items-center bg-button-gray-bg outline-button-gray">
             <div className="text-center justify-start text-button-gray text-xs font-semibold font-['Pretendard']">
               오픈 전
             </div>
