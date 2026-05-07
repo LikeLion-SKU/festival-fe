@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
+import Close from '@/assets/icons/close.svg?react';
 import Skeleton from '@/components/common/Skeleton';
 import { getLangFontClass } from '@/utils/langFont';
 
@@ -17,6 +18,8 @@ function BoothInfoSection({
   lang,
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
+  const touchStartX = useRef(null);
   const isLong = content?.length > CONTENT_LIMIT;
   const displayText = isLong && !expanded ? content.slice(0, CONTENT_LIMIT) : content;
 
@@ -24,6 +27,19 @@ function BoothInfoSection({
   const textSecondary = isQR ? 'text-deep-gray' : 'text-white/70';
   const textLabel = isQR ? 'text-text-gray' : 'text-[#C9C9C9]';
   const fontClass = getLangFontClass(lang);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) < 50) return;
+    if (diff > 0) setLightboxIndex((i) => Math.min(i + 1, images.length - 1));
+    else setLightboxIndex((i) => Math.max(i - 1, 0));
+    touchStartX.current = null;
+  };
 
   return (
     <div className="relative px-7 mt-18">
@@ -102,9 +118,47 @@ function BoothInfoSection({
               <Skeleton key={i} className="w-27.5 h-28 shrink-0" />
             ))
           : images.map((src, index) => (
-              <img className="w-27.5 h-28 rounded object-cover shrink-0" key={index} src={src} />
+              <img
+                key={index}
+                className="w-27.5 h-28 rounded object-cover shrink-0 cursor-pointer active:opacity-80 transition-opacity duration-100"
+                src={src}
+                onClick={() => setLightboxIndex(index)}
+              />
             ))}
       </div>
+
+      {lightboxIndex !== null && (
+        <div
+          className="fixed inset-0 z-100 bg-black/75 flex items-center justify-center"
+          onClick={() => setLightboxIndex(null)}
+        >
+          <div
+            className="w-80 h-80 relative bg-white overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            <img src={images[lightboxIndex]} className="w-full h-full object-cover" />
+            <Close
+              className="w-6 h-6 right-3 top-4 absolute cursor-pointer"
+              onClick={() => setLightboxIndex(null)}
+            />
+            {images.length > 1 && (
+              <div className="left-36 top-72.75 absolute inline-flex justify-start items-center gap-2">
+                {images.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setLightboxIndex(i)}
+                    className={`w-2 h-2 rounded-full transition-colors duration-200 ${
+                      i === lightboxIndex ? 'bg-gray-400' : 'bg-zinc-300'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
