@@ -14,8 +14,8 @@ export default function AdminLayout() {
   });
 
   return (
-    <div className="bg-gray-50 h-full flex flex-col">
-      <div className="relative mx-auto flex flex-col flex-1 w-full max-w-5xl h-full bg-white shadow-lg">
+    <div className=" h-full flex flex-col">
+      <div className="relative mx-auto flex flex-col flex-1 w-full max-w-5xl h-full bg-white">
         {headerConfig.title && (
           <OrderHeader
             title={headerConfig.title}
