@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import SkuLogo from '@/assets/icons/sku-logo.svg';
@@ -21,12 +21,54 @@ export default function About() {
   const navigate = useNavigate();
   const heroBlockRef = useRef(null);
   const heroOpacity = useScrollDrivenOpacity(heroBlockRef, MAIN_SECTION_ICON_SCROLL_FADE);
+  const [lionPhase, setLionPhase] = useState(null);
+  const lionTimerRef = useRef(null);
+
+  const handleLikelionClick = () => {
+    if (lionPhase) return;
+    setLionPhase('in');
+    lionTimerRef.current = setTimeout(() => {
+      setLionPhase('out');
+      window.open('https://skulikelion.com/', '_blank', 'noopener,noreferrer');
+      setTimeout(() => setLionPhase(null), 500);
+    }, 2000);
+  };
+
+  useEffect(() => () => clearTimeout(lionTimerRef.current), []);
 
   return (
     <section
       id="about"
       className="relative overflow-hidden bg-[#141414] px-[3.65625rem] pb-[4.5rem] pt-[3.75rem]"
     >
+      <style>{`
+        @keyframes lion-pop-in {
+          0%   { transform: scale(0.1) rotate(-15deg); opacity: 0; }
+          55%  { transform: scale(1.25) rotate(8deg);  opacity: 1; }
+          75%  { transform: scale(0.9)  rotate(-4deg); }
+          100% { transform: scale(1)   rotate(0deg);  opacity: 1; }
+        }
+      `}</style>
+      {lionPhase && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center pointer-events-none"
+          style={{
+            opacity: lionPhase === 'out' ? 0 : 1,
+            transition: lionPhase === 'out' ? 'opacity 0.5s ease' : 'none',
+          }}
+        >
+          <span
+            style={{
+              fontSize: '9rem',
+              display: 'block',
+              animation: 'lion-pop-in 0.85s cubic-bezier(0.22,1,0.36,1) both',
+              filter: 'drop-shadow(0 0 48px rgba(218,51,40,0.45))',
+            }}
+          >
+            🦁
+          </span>
+        </div>
+      )}
       <img
         src={AboutFire}
         alt=""
@@ -61,19 +103,24 @@ export default function About() {
           <span className="h-[0.3125rem] w-[0.3125rem] rounded-full bg-white opacity-30" />
         </div>
         <img src={SkuLogo} alt="SKU LIKELION 로고" className="mt-[3.125rem] h-[9rem] w-[9rem]" />
-        <p className="mt-[2rem] text-[1.125rem] leading-[1.2] text-[#fefefe] [font-family:Sekuya]">
+        <p className="mt-[2rem] text-[1.125rem] font-normal leading-[1.3] tracking-[0] text-[#ffffff] [font-family:Sekuya]">
           SKU LIKELION 14TH
         </p>
-        <p className="mt-[3.25rem] text-[0.75rem] font-regular leading-[1.6] text-[#fefefe] [font-family:Pretendard] whitespace-nowrap">
-          안녕하세요, 서경대학교 <span className="font-bold">멋쟁이사자처럼</span> 입니다.
+        <p className="mt-[3.25rem] text-[0.6875rem] font-regular leading-[1.4] tracking-[-0.04em] text-[#ffffff] [font-family:Pretendard] whitespace-nowrap">
+          안녕하세요, <span className="font-bold">서경대학교 멋쟁이사자처럼</span>입니다 🦁
         </p>
-        <div className="mt-[1rem] text-[0.75rem] font-regular leading-[1.6] text-[#fefefe] [font-family:Pretendard] whitespace-nowrap">
+        <div className="mt-[1rem] text-[0.6875rem] font-regular leading-[1.4] tracking-[-0.04em] text-[#ffffff] [font-family:Pretendard]">
+          <p className="m-0 whitespace-nowrap">저희 서비스를 이용해주셔서 정말 감사합니다!</p>
           <p className="m-0 whitespace-nowrap">
-            올해에도 여러분의 축제를 더 쉽고 편하게 만들어드리고자
+            덕분에 축제를 더 편하게 즐기셨다면 저희는 그것만으로도
           </p>
-          <p className="m-[-0.1rem] whitespace-nowrap">축제 페이지를 준비했습니다 ♡</p>
+          <p className="m-0 whitespace-nowrap">충분히 보람을 느낍니다.</p>
           <p className="mt-[1rem] whitespace-nowrap">
-            유용하게 사용해주시고 즐거운 축제 즐기시길 바랍니다 :)
+            여러분의 한 번의 방문, 한 번의 이용이 저희에게는 큰 힘이 되었습니다.
+          </p>
+          <p className="mt-[1rem] whitespace-nowrap">앞으로도 더 좋은 서비스로 찾아뵙겠습니다.</p>
+          <p className="m-0 whitespace-nowrap">
+            멋쟁이사자처럼의 활동도 많이 지켜봐 주세요! 감사합니다 😊
           </p>
         </div>
       </div>
@@ -92,10 +139,10 @@ export default function About() {
           </button>
           <button
             type="button"
-            onClick={() => navigate('/booth-map')}
+            onClick={handleLikelionClick}
             className="h-[3rem] w-full border border-[rgba(255,255,255,0.2)] bg-[rgba(34,34,34,0.72)] text-[1rem] font-semibold leading-none text-white [font-family:Pretendard]"
           >
-            부스 보러가기
+            멋쟁이사자 되기
           </button>
         </div>
       </div>

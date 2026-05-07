@@ -22,6 +22,8 @@ const EVACUATION_ROWS = [
   '혜인관, 은주관 사이 대일외고 방향',
 ];
 
+const AMBULANCE_ROWS = ['북악관 앞', '목요일 19:00~23:00', '금요일 20:00~24:00'];
+
 export default function Safety() {
   const iconBlockRef = useRef(null);
   const bodyBlockRef = useRef(null);
@@ -84,14 +86,14 @@ export default function Safety() {
             <p className="whitespace-nowrap pt-[0.4rem] pl-[1rem] text-left text-[0.875rem] font-extrabold leading-[1.35] tracking-[-0.01rem] text-white [font-family:Pretendard]">
               AED 위치 안내
             </p>
-            <div className="pt-[0.4rem] text-left text-[0.75rem] font-semibold leading-[1.46] tracking-[-0.01rem] text-white [font-family:Pretendard]">
+            <div className="pt-[0.4rem] text-left text-[0.75rem] font-semibold leading-[1.7] tracking-[-0.01rem] text-white [font-family:Pretendard]">
               {AED_ROWS.map(([building, place]) => (
                 <p key={`${building}-${place}`} className="m-0 whitespace-nowrap">
                   {building}
                 </p>
               ))}
             </div>
-            <div className="pt-[0.4rem] -translate-x-[2.6rem] text-left text-[0.75rem] font-normal leading-[1.46] tracking-[-0.01rem] text-white [font-family:Pretendard]">
+            <div className="pt-[0.4rem] -translate-x-[2.6rem] text-left text-[0.75rem] font-normal leading-[1.7] tracking-[-0.01rem] text-white [font-family:Pretendard]">
               {AED_ROWS.map(([building, place]) => (
                 <p key={`${building}-${place}-detail`} className="m-0 whitespace-nowrap">
                   {place}
@@ -106,8 +108,23 @@ export default function Safety() {
             <p className="pt-[0.4rem] pl-[1rem] text-left text-[0.875rem] font-extrabold leading-[1.35] tracking-[-0.01rem] text-white [font-family:Pretendard]">
               대피로 안내
             </p>
-            <div className="pl-[1.3rem] mt-[0.4rem] text-left text-[0.75rem] font-semibold leading-[1.46] tracking-[-0.01rem] text-white [font-family:Pretendard]">
+            <div className="pl-[1.3rem] mt-[0.4rem] text-left text-[0.75rem] font-semibold leading-[1.7] tracking-[-0.01rem] text-white [font-family:Pretendard]">
               {EVACUATION_ROWS.map((line) => (
+                <p key={line} className="m-0 whitespace-nowrap">
+                  {line}
+                </p>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="mt-[0.75rem] h-px w-full bg-white/70" />
+        <div className="pt-[1.61rem] pb-[1.15rem]">
+          <div className="grid grid-cols-[6.1rem_1fr] items-start gap-x-[0.8rem]">
+            <p className="whitespace-nowrap pt-[0.4rem] pl-[1rem] text-left text-[0.875rem] font-extrabold leading-[1.35] tracking-[-0.01rem] text-white [font-family:Pretendard]">
+              응급차 대기 안내
+            </p>
+            <div className="pl-[1.3rem] mt-[0.4rem] text-left text-[0.75rem] font-semibold leading-[1.7] tracking-[-0.01rem] text-white [font-family:Pretendard]">
+              {AMBULANCE_ROWS.map((line) => (
                 <p key={line} className="m-0 whitespace-nowrap">
                   {line}
                 </p>
