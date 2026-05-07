@@ -23,8 +23,7 @@ export default function MenuButton({ className, onClick, ariaLabel, variant = 'm
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 rounded-full"
         style={{
-          boxShadow: '0 0 8px rgba(255,255,255,0.22)',
-          filter: 'blur(1.2px)',
+          boxShadow: '0 0 10px 2px rgba(255,255,255,0.18)',
         }}
       />
       <span className="sr-only">{variant === 'close' ? 'close' : 'menu'}</span>

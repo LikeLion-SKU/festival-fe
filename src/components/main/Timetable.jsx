@@ -123,22 +123,20 @@ export default function Timetable() {
           const variant1ShiftClass = isVariant1 ? 'translate-x-[0.95rem]' : '';
           const variant2ShiftClass = isVariant2 ? '-translate-x-[0.95rem]' : '';
           const artistOffsetClass = [
-            isVariant1
-              ? selectedDay === 'day2' && (banner.id === 1 || banner.id === 5)
-                ? '!ml-[0.6rem]'
-                : '!ml-[2.5rem]'
-              : '',
+            isVariant1 ? (banner.bannerVariant === 3 ? '!-ml-[2rem]' : '!ml-[2.5rem]') : '',
+            selectedDay === 'day2' && banner.id === 1 ? '!translate-x-[0.25rem]' : '',
             selectedDay === 'day2' && banner.id === 6
               ? '!-translate-x-[0.2rem]'
               : selectedDay === 'day3' && banner.id === 6
                 ? '!translate-x-[1.2rem]'
                 : '',
-            banner.id === 7 ? '!-translate-x-[0.8rem]' : '',
           ].join(' ');
-          const isSmallArtistText =
-            (selectedDay === 'day2' && (banner.id === 1 || banner.id === 5)) ||
-            (selectedDay === 'day3' && (banner.id === 4 || banner.id === 7));
-          const artistSizeClass = isSmallArtistText ? '!text-[1.15rem]' : '';
+          const isSmallArtistText = selectedDay === 'day3' && banner.id === 4;
+          const artistSizeClass = isSmallArtistText
+            ? '!text-[1.15rem]'
+            : selectedDay === 'day3' && banner.id === 7
+              ? '!text-[1rem]'
+              : '';
           const teamOffsetClass =
             selectedDay === 'day2' && banner.id === 5 ? '!-translate-y-[0.25rem]' : '';
 
@@ -165,6 +163,7 @@ export default function Timetable() {
                   team={banner.team ?? ''}
                   time={banner.time}
                   variant={banner.variant}
+                  imageVariant={banner.bannerVariant}
                   reverse={isRightAligned}
                   mirrorImage={false}
                   tiltTimeBadgeLeft={false}

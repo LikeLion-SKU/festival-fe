@@ -153,6 +153,11 @@ export default function Lineup() {
     return m;
   }, []);
 
+  const [pressedLeft, setPressedLeft] = useState(false);
+  const [pressedRight, setPressedRight] = useState(false);
+  const pressLeftTimerRef = useRef(null);
+  const pressRightTimerRef = useRef(null);
+
   const [laneNav, setLaneNav] = useState(() => ({
     /** 버튼 혹은 스와이프 등 수동 조작 후에는 좌/우 동작만 */
     arrowOrSwipeUsed: false,
@@ -476,9 +481,18 @@ export default function Lineup() {
               e.stopPropagation();
               registerManualCarouselNav();
             }}
-            onClick={handleLeftLaneNav}
+            onClick={() => {
+              setPressedLeft(true);
+              clearTimeout(pressLeftTimerRef.current);
+              pressLeftTimerRef.current = setTimeout(() => setPressedLeft(false), 400);
+              handleLeftLaneNav();
+            }}
             aria-label="DAY 2 라인업 카드 순서 보기"
-            className="pointer-events-auto flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-full bg-white shadow-[0_4px_10px_rgba(0,0,0,0.25)] transition hover:bg-[#f5f5f5]"
+            className="pointer-events-auto flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.25)]"
+            style={{
+              background: pressedLeft ? '#2A2A2A' : '#ffffff',
+              transition: 'background-color 0.3s ease',
+            }}
           >
             <span
               aria-hidden="true"
@@ -491,9 +505,18 @@ export default function Lineup() {
               e.stopPropagation();
               registerManualCarouselNav();
             }}
-            onClick={handleRightLaneNav}
+            onClick={() => {
+              setPressedRight(true);
+              clearTimeout(pressRightTimerRef.current);
+              pressRightTimerRef.current = setTimeout(() => setPressedRight(false), 400);
+              handleRightLaneNav();
+            }}
             aria-label="DAY 3 라인업 카드 순서 보기"
-            className="pointer-events-auto flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-full bg-white shadow-[0_4px_10px_rgba(0,0,0,0.25)] transition hover:bg-[#f5f5f5]"
+            className="pointer-events-auto flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.25)]"
+            style={{
+              background: pressedRight ? '#2A2A2A' : '#ffffff',
+              transition: 'background-color 0.3s ease',
+            }}
           >
             <span
               aria-hidden="true"

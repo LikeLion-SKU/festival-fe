@@ -1,9 +1,11 @@
 import WhiteBanner1 from '@/assets/images/white-banner1.png';
 import WhiteBanner2 from '@/assets/images/white-banner2.png';
+import WhiteBanner3 from '@/assets/images/white-banner3.png';
 
 const BANNER_BACKGROUNDS = {
   1: WhiteBanner1,
   2: WhiteBanner2,
+  3: WhiteBanner3,
 };
 
 export default function Banner({
@@ -11,6 +13,7 @@ export default function Banner({
   team = '',
   time = '18:00 ~ 18:30',
   variant = 1,
+  imageVariant,
   reverse = false,
   mirrorImage = false,
   tiltTimeBadgeLeft = false,
@@ -31,7 +34,7 @@ export default function Banner({
   leftImageSlotOffsetClass = '',
   leftImageSlotRotateDeg = -8,
 }) {
-  const bannerImage = BANNER_BACKGROUNDS[variant] ?? WhiteBanner1;
+  const bannerImage = BANNER_BACKGROUNDS[imageVariant ?? variant] ?? WhiteBanner1;
   const timeSegments = time.split('★');
   const showTeam = Boolean(team?.trim());
 
@@ -68,7 +71,7 @@ export default function Banner({
             </p>
           ) : null}
           <p
-            className={`${showTeam ? 'mt-[0.3rem]' : ''} text-[1.85rem] font-black leading-none tracking-[0.02rem] text-[#cf3a23] ${
+            className={`${showTeam ? 'mt-[0.3rem]' : ''} whitespace-nowrap ${imageVariant === 3 ? 'text-[1.5rem]' : 'text-[1.862rem]'} font-extrabold leading-[1.4] tracking-[0] text-[#D53E27] [font-family:Pretendard] ${
               variant === 1 || (variant === 2 && useVariant1TextLayoutForVariant2)
                 ? reverse
                   ? 'mr-[3rem] origin-right rotate-[4.3deg]'
