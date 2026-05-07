@@ -75,7 +75,18 @@ function Order() {
         setFoodData(flat);
         sessionStorage.setItem('orderFoodData', JSON.stringify(flat));
       })
-      .catch(showError)
+      .catch((error) => {
+        const status = error?.response?.status;
+        if (status === 404) {
+          setBoothNotFound(true);
+          return;
+        }
+        const message =
+          status >= 500
+            ? '서버 오류가 발생했어요. 잠시 후 다시 시도해주세요.'
+            : '메뉴를 불러오는 중 오류가 발생했어요.';
+        setErrorToast({ visible: true, message });
+      })
       .finally(() => setMenuLoadedBoothId(boothId));
   }, [boothId, isQR]);
 
