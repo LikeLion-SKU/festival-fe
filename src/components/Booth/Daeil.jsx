@@ -90,7 +90,10 @@ export default function Daeil({
   const markerFill = active ? '#FF756C' : (hasBuildingSelection ?? true) ? '#FFDDDB' : '#FF958F';
   const buildingGlowClass = active ? 'z-30' : '';
   const buildingGlowStyle = active
-    ? { filter: 'drop-shadow(0 0 12px rgba(196,58,49,0.45))' }
+    ? {
+        filter:
+          'drop-shadow(0 0 12px rgba(196,58,49,0.24)) drop-shadow(0 0 28px rgba(196,58,49,0.16)) drop-shadow(0 0 44px rgba(196,58,49,0.10))',
+      }
     : undefined;
   const wrapperClass = clsx(
     'relative inline-flex flex-col items-center gap-[0.25rem] rotate-[262deg] origin-top scale-[1.15]',

@@ -109,11 +109,13 @@ function OrderProgress() {
         }}
         onConfirm={() => setShowBackModal(false)}
       >
-        <div className="flex gap-1.5">
-          <div className="font-semibold">뒤로 가면</div>
-          <div className="font-semibold text-order-button"> 담은 주문이 모두 사라집니다.</div>
+        <div className="gap-2.5">
+          <div className="flex gap-1.5">
+            <div className="font-semibold">뒤로 가면</div>
+            <div className="font-semibold text-order-button"> 담은 주문이 모두 사라집니다.</div>
+          </div>
+          <div className="font-semibold">그래도 뒤로 가시겠습니까?</div>
         </div>
-        <div className="font-semibold">그래도 뒤로 가시겠습니까?</div>
       </Modal>
       <OrderButtonBox
         buttonName={hasSelection ? `주문하기(${totalCount})` : '주문하기'}

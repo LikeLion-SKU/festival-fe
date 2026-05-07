@@ -314,7 +314,7 @@ export default function BoothMapPage() {
       >
         <div
           ref={sheetPanelRef}
-          className={`pointer-events-auto flex h-[28rem] w-full min-w-0 max-w-[450px] flex-col overscroll-contain rounded-t-[2.875rem] border border-white/15 bg-gradient-to-b from-[rgba(26,26,26,0.92)] to-[rgba(16,16,16,0.96)] pb-[calc(1rem+env(safe-area-inset-bottom,0px))] pt-8 transition-transform duration-300 ${
+          className={`pointer-events-auto flex h-[28rem] w-full min-w-0 max-w-[450px] flex-col overscroll-contain rounded-t-[1.75rem] border border-white/15 bg-gradient-to-b from-[rgba(26,26,26,0.92)] to-[rgba(16,16,16,0.96)] pb-[calc(1rem+env(safe-area-inset-bottom,0px))] pt-8 transition-transform duration-300 ${
             sheetExpanded ? 'translate-y-[0%]' : 'translate-y-[82%]'
           }`}
           onTouchStart={(e) => {
@@ -411,7 +411,7 @@ export default function BoothMapPage() {
                       setActiveBuildingId((prev) => (prev === item.id ? null : item.id))
                     }
                     className={clsx(
-                      'relative overflow-hidden flex h-8 min-h-8 min-w-0 flex-[1_1_60px] items-center justify-center border border-solid px-1 text-[clamp(9px,2.6vw,12px)] font-medium leading-none tracking-[-0.02em] [font-family:Pretendard]',
+                      'relative overflow-hidden flex h-8 min-h-8 min-w-0 flex-[1_1_60px] items-center justify-center border border-solid px-1 text-[clamp(12px,3vw,14px)] font-medium leading-none tracking-[-0.02em] [font-family:Pretendard]',
                       active
                         ? 'border-[#C43A31] bg-[rgba(196,58,49,0.6)] text-[#FFDDDB]'
                         : 'border-[#595959] bg-[#353535] text-[#a0a0a0]'

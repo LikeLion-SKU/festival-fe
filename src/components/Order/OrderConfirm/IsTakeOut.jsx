@@ -9,9 +9,9 @@ function IsTakeOut({ orderType, onTypeChange }) {
         <div className="flex">
           <span
             className={
-              orderType === 'takeout'
-                ? 'text-order-button font-medium'
-                : 'text-light-pink font-medium'
+              orderType === 'dine-in'
+                ? 'text-light-pink font-medium'
+                : 'text-order-button font-medium'
             }
           >
             매장
