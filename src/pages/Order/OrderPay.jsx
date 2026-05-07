@@ -24,13 +24,26 @@ function OrderPay() {
   } = orderResponse || {};
   const orderTypeLabel = orderType === 'dine-in' ? '매장' : '포장';
 
-  const [showToast, setShowToast] = useState(true);
+  const [showToast, setShowToast] = useState(() => {
+    const pending = sessionStorage.getItem('orderToastPending') === 'true';
+    sessionStorage.removeItem('orderToastPending');
+    return pending;
+  });
   const [showCopyToast, setShowCopyToast] = useState(false);
   const copyTimerRef = useRef(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowToast(false), 3000);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    window.history.pushState(null, '', window.location.href);
+    const handlePopState = () => {
+      window.history.pushState(null, '', window.location.href);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   const handleCopy = () => {
@@ -46,7 +59,7 @@ function OrderPay() {
         <OrderHeader title="결제하기" />
       </div>
 
-      <div className="flex-1 overflow-y-auto min-h-0 px-5 flex flex-col items-center pt-12 gap-2.5">
+      <div className="flex-1 overflow-y-auto min-h-0 px-5 flex flex-col items-center pt-12 pb-29 gap-2.5">
         <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 shrink-0">
           <img src={thumbnailUrl} className="w-full h-full object-cover" />
         </div>
@@ -65,7 +78,7 @@ function OrderPay() {
         <div className="w-full border border-gray-300 rounded-xl mt-20 px-5 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Shadow className="w-10 h-10" />
+              <Shadow className="w-10 h-10 -ml-1.5" />
               <div className="flex flex-col">
                 <span className="text-base font-medium text-gray-500">{customerName}</span>
                 <span className="text-sm font-medium text-gray-900">{customerPhoneNumber}</span>
