@@ -15,7 +15,10 @@ function Order() {
   const [loadedKey, setLoadedKey] = useState(null);
   const [lang, setLang] = useState(sessionStorage.getItem('language') || 'KO');
   const isLoading = loadedKey !== `${boothId}-${lang}`;
-  const [foodData, setFoodData] = useState([]);
+  const [foodData, setFoodData] = useState(() => {
+    const saved = sessionStorage.getItem('orderFoodData');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [menuLoadedBoothId, setMenuLoadedBoothId] = useState(null);
   const isMenuLoading = isQR && menuLoadedBoothId !== boothId;
   const [boothNotFound, setBoothNotFound] = useState(false);
@@ -70,6 +73,7 @@ function Order() {
           }))
         );
         setFoodData(flat);
+        sessionStorage.setItem('orderFoodData', JSON.stringify(flat));
       })
       .catch(showError)
       .finally(() => setMenuLoadedBoothId(boothId));
@@ -79,6 +83,7 @@ function Order() {
     setQuantities({});
     sessionStorage.removeItem('orderQuantities');
     sessionStorage.removeItem('orderCart');
+    sessionStorage.removeItem('orderFoodData');
   };
 
   const handleSelect = (key) => setQuantities((prev) => ({ ...prev, [key]: 1 }));
@@ -100,6 +105,7 @@ function Order() {
 
   useEffect(() => {
     sessionStorage.setItem('orderQuantities', JSON.stringify(quantities));
+    if (!foodData.length) return;
 
     const cart = Object.entries(quantities)
       .map(([key, qty]) => {
