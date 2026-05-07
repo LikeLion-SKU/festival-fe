@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
@@ -44,10 +44,14 @@ const BUILDING_BUTTON_ORDER = ['hyein', 'eunju1', 'eunju2', 'cheongun', 'daeil']
 /*헤더 + 검색바 + 부스 안내 지도 + 하단 모달창 */
 export default function BoothMapPage() {
   const navigate = useNavigate();
-  const [activeBuildingId, setActiveBuildingId] = useState(null);
-  const [search, setSearch] = useState('');
-  const [searchMode, setSearchMode] = useState(false);
-  const [sheetExpanded, setSheetExpanded] = useState(false);
+  const location = useLocation();
+  const persistedUiState = location.state?.boothMapUiState;
+  const [activeBuildingId, setActiveBuildingId] = useState(
+    persistedUiState?.activeBuildingId ?? null
+  );
+  const [search, setSearch] = useState(persistedUiState?.search ?? '');
+  const [searchMode, setSearchMode] = useState(persistedUiState?.searchMode ?? false);
+  const [sheetExpanded, setSheetExpanded] = useState(persistedUiState?.sheetExpanded ?? false);
   const [isHyeinFlashing, setIsHyeinFlashing] = useState(false);
 
   useEffect(() => {
@@ -58,6 +62,21 @@ export default function BoothMapPage() {
       clearTimeout(t2);
     };
   }, []);
+
+  // 뒤로 돌아왔을 때 바텀시트 상태 유지시킴
+  useEffect(() => {
+    navigate(location.pathname, {
+      replace: true,
+      state: {
+        boothMapUiState: {
+          activeBuildingId,
+          search,
+          searchMode,
+          sheetExpanded,
+        },
+      },
+    });
+  }, [activeBuildingId, navigate, location.pathname, search, searchMode, sheetExpanded]);
   const touchStartY = useRef(0);
   const sheetPanelRef = useRef(null);
   const sheetScrollRef = useRef(null);
