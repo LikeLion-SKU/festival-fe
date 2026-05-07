@@ -31,7 +31,7 @@ function InputField({
           value={value}
           onChange={onChange}
           onKeyDown={onKeyDown}
-          className={`w-full text-xl placeholder-gray-400 outline-none bg-transparent pr-7 ${textClass(state)}`}
+          className={`w-full text-xl placeholder-gray-400 font-medium outline-none bg-transparent pr-7 ${textClass(state)}`}
         />
         {state === 'valid' && (
           <CheckIcon className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5" />
