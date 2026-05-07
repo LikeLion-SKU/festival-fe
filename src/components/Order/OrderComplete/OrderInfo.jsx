@@ -73,7 +73,7 @@ function OrderInfo() {
 
       {/* 계좌 정보 */}
       <div className="bg-white px-7 py-5 flex items-center gap-2.5">
-        <AtmBlack className="w-10 h-10 shrink-0" />
+        <AtmBlack className="w-10 h-10 shrink-0 -ml-1.25" />
         <div className="flex-1 flex flex-col gap-1">
           <span className="text-base font-medium">{bankName}</span>
           <div className="flex justify-between items-center">
