@@ -6,7 +6,7 @@ export default function PageHeader({
   onBack,
   onTitleClick,
   rightElement,
-  top = '6dvh',
+  top = 'calc(6dvh - 16px)',
   className = '',
 }) {
   return (

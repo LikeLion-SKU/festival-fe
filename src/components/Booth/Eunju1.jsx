@@ -81,6 +81,10 @@ export default function Eunju1({
 }) {
   const panelBg = active ? BG_ACTIVE : BG_DEFAULT;
   const markerFill = active ? '#FF756C' : (hasBuildingSelection ?? true) ? '#FFDDDB' : '#FF958F';
+  const buildingGlowClass = active ? 'z-30' : '';
+  const buildingGlowStyle = active
+    ? { filter: 'drop-shadow(0 0 12px rgba(196,58,49,0.45))' }
+    : undefined;
   const wrapperClass = clsx(
     'relative inline-flex flex-col items-center origin-top scale-[1.15]',
     className
@@ -91,8 +95,7 @@ export default function Eunju1({
 
   const boxClass = clsx(
     'relative box-border flex h-[2.5rem] w-[11.65rem] shrink-0 appearance-none overflow-hidden border-2 border-solid border-[#C43A31] outline-none ring-0 transition-[background-color,box-shadow] duration-200 focus:outline-none focus-visible:outline-none',
-    onClick && 'cursor-pointer select-none',
-    active && 'z-30 shadow-[0_0_12px_rgba(196,58,49,0.45)]'
+    onClick && 'cursor-pointer select-none'
   );
 
   const labelClass = clsx(
@@ -172,16 +175,18 @@ export default function Eunju1({
             aria-label="은주1관"
             className="box-border border-0 bg-transparent p-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C43A31] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121212]"
           >
-            <div
-              className={boxClass}
-              style={{
-                backgroundColor: panelBg,
-                clipPath: CORNER_NOTCH,
-                WebkitClipPath: CORNER_NOTCH,
-              }}
-            >
-              {notchStroke}
-              {inner}
+            <div className={buildingGlowClass} style={buildingGlowStyle}>
+              <div
+                className={boxClass}
+                style={{
+                  backgroundColor: panelBg,
+                  clipPath: CORNER_NOTCH,
+                  WebkitClipPath: CORNER_NOTCH,
+                }}
+              >
+                {notchStroke}
+                {inner}
+              </div>
             </div>
           </button>
           <div className={markerHitClass} onClick={onClick}>
@@ -195,12 +200,18 @@ export default function Eunju1({
   return (
     <div className={wrapperClass}>
       <div className={buildingShellClass}>
-        <div
-          className={boxClass}
-          style={{ backgroundColor: panelBg, clipPath: CORNER_NOTCH, WebkitClipPath: CORNER_NOTCH }}
-        >
-          {notchStroke}
-          {inner}
+        <div className={buildingGlowClass}>
+          <div
+            className={boxClass}
+            style={{
+              backgroundColor: panelBg,
+              clipPath: CORNER_NOTCH,
+              WebkitClipPath: CORNER_NOTCH,
+            }}
+          >
+            {notchStroke}
+            {inner}
+          </div>
         </div>
         {markerRow}
       </div>

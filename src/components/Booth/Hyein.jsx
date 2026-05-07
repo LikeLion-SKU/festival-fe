@@ -85,6 +85,7 @@ function SideRectWithTicks({ active }) {
  */
 export default function Hyein({
   active = false,
+  isFlashing = false,
   onClick,
   onBoothMarkerClick,
   className,
@@ -92,6 +93,13 @@ export default function Hyein({
 }) {
   const panelBg = active ? BG_ACTIVE : BG_DEFAULT;
   const markerFill = active ? '#FF756C' : (hasBuildingSelection ?? true) ? '#FFDDDB' : '#FF958F';
+  const buildingGlowStyle = active
+    ? { filter: 'drop-shadow(0 0 12px rgba(196,58,49,0.45))' }
+    : undefined;
+  const boxStyle =
+    isFlashing && !active
+      ? { animation: 'hyein-panel-flash 1.2s ease-out 2 forwards' }
+      : { backgroundColor: panelBg, ...buildingGlowStyle };
   /** 건물·무대·마커 일괄 확대 (지도 상단 배치 기준) */
   const wrapperClass = clsx(
     'relative inline-flex origin-top scale-[1.15] flex-col items-center gap-[0.25rem]',
@@ -99,9 +107,9 @@ export default function Hyein({
   );
 
   const boxClass = clsx(
-    'relative box-border flex h-[2.5rem] w-[10.25rem] shrink-0 appearance-none overflow-hidden border-2 border-solid border-[#C43A31] outline-none ring-0 transition-[background-color,box-shadow] duration-200 focus:outline-none focus-visible:outline-none',
+    'relative box-border flex h-[2.5rem] w-[10.25rem] shrink-0 appearance-none overflow-hidden border-2 border-solid border-[#C43A31] outline-none ring-0 transition-[background-color] duration-200 focus:outline-none focus-visible:outline-none',
     onClick && 'cursor-pointer select-none',
-    active && 'z-30 shadow-[0_0_12px_rgba(196,58,49,0.45)]'
+    active && 'z-30'
   );
 
   const labelClass = clsx(
@@ -192,7 +200,7 @@ export default function Hyein({
           aria-label="혜인관"
           className="box-border border-0 bg-transparent p-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C43A31] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121212]"
         >
-          <div className={boxClass} style={{ backgroundColor: panelBg }}>
+          <div className={boxClass} style={boxStyle}>
             {inner}
           </div>
         </button>

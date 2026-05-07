@@ -148,7 +148,7 @@ export default function LostItem() {
 
       <div
         className="flex-1 overflow-hidden flex flex-col"
-        style={{ paddingTop: 'min(8rem, 16dvh)' }}
+        style={{ paddingTop: 'calc(min(8rem, 16dvh) - 16px)' }}
       >
         <div className="px-[1.25rem] flex flex-col gap-[1.25rem]">
           <SearchInput
@@ -157,9 +157,11 @@ export default function LostItem() {
             onChange={(e) => setQuery(e.target.value)}
             onSearch={handleSearch}
           />
-          <FilterTab tabs={DATE_TABS} selected={selectedDate} onChange={handleDateChange} />
+          <div className="-mt-[0.375rem]">
+            <FilterTab tabs={DATE_TABS} selected={selectedDate} onChange={handleDateChange} />
+          </div>
           <p
-            className="text-[#A0A0A0] text-[0.625rem] font-semibold"
+            className="text-[#A0A0A0] text-[0.625rem] font-semibold -mt-[0.625rem]"
             style={{ letterSpacing: '-0.025em', lineHeight: '0.875rem' }}
           >
             모든 분실물은 총학생회 부스에서 관리합니다.

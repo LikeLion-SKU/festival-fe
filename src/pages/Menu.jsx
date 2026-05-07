@@ -16,8 +16,7 @@ const RED_ICON_FILTER =
 
 /** 멋사 홈페이지 및 인스타그램 주소 */
 const LIKELION_HOME_URL = 'https://skulikelion.com/';
-const LIKELION_INSTAGRAM_URL =
-  'https://www.instagram.com/likelion_skuniv?igsh=MW81d3l0YWp1ZmRpZQ==';
+const LIKELION_INSTAGRAM_URL = 'https://www.instagram.com/likelion_skuniv';
 
 /** 제작자 페이지 이동 전 버튼 스타일 전환 시간 */
 const MADE_BY_NAV_DELAY_MS = 220;
