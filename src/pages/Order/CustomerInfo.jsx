@@ -30,6 +30,7 @@ function CustomerInfo() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [errorToast, setErrorToast] = useState({ visible: false, message: '' });
+  const [soldOutToast, setSoldOutToast] = useState(false);
   const [name, setName] = useState('');
   const [headCount, setHeadCount] = useState('');
   const [tableNumber, setTableNumber] = useState('');
@@ -156,6 +157,10 @@ function CustomerInfo() {
             setIsSubmitting(false);
             const status = error?.response?.status;
             if (status === 404) return;
+            if (status === 400) {
+              setSoldOutToast(true);
+              return;
+            }
             const message =
               status === 409
                 ? '이미 처리된 주문이에요.'
@@ -174,6 +179,18 @@ function CustomerInfo() {
         message={errorToast.message}
         icon="warning"
         onClose={() => setErrorToast({ visible: false, message: '' })}
+      />
+      <Toast
+        visible={soldOutToast}
+        message="품절된 상품이 있어서 재주문 부탁드립니다."
+        icon="warning"
+        duration={3000}
+        onClose={() => {
+          setSoldOutToast(false);
+          sessionStorage.removeItem('orderQuantities');
+          sessionStorage.removeItem('orderCart');
+          navigate(`/order/${boothId}`, { replace: true });
+        }}
       />
     </div>
   );
