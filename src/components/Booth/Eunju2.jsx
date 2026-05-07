@@ -116,7 +116,8 @@ export default function Eunju2({
   const shellFrameClass = clsx(
     'relative box-border h-[2.35rem] w-[12.35rem] shrink-0 border-2 border-solid border-[#C43A31] transition-[background-color,box-shadow,transform] duration-200',
     onClick && 'cursor-pointer select-none',
-    active && 'z-30 shadow-[0_0_12px_rgba(196,58,49,0.45)]'
+    active &&
+      'z-30 shadow-[0_0_12px_rgba(196,58,49,0.24),0_0_28px_rgba(196,58,49,0.16),0_0_44px_rgba(196,58,49,0.10)]'
   );
 
   const buildingShellClass = clsx(

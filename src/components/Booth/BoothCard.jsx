@@ -16,8 +16,8 @@ export default function BoothCard({
   const heightClass = variant === 'search' ? 'h-[168px]' : 'h-[119px]';
   const subtitleSize = variant === 'search' ? 'text-[14px]' : 'text-[12px]';
   const titleSize = variant === 'search' ? 'text-[24px]' : 'text-[16px]';
-  const badgeFont = variant === 'search' ? 'text-[14px]' : 'text-[11px]';
-  const badgePadding = variant === 'search' ? 'min-h-8 px-3 py-1' : 'min-h-7 px-2 py-0.5';
+  const badgeFont = variant === 'search' ? 'text-[14px]' : 'text-[14px]';
+  const badgeBoxSize = variant === 'search' ? 'h-8 w-8' : 'h-7 w-7';
 
   const labelList = (() => {
     if (Array.isArray(boothNumbers) && boothNumbers.length > 0) {
@@ -64,11 +64,11 @@ export default function BoothCard({
               key={`${text}-${i}`}
               className={clsx(
                 'inline-flex shrink-0 items-center justify-center bg-[#333333]/95',
-                badgePadding,
+                badgeBoxSize,
                 badgeFont
               )}
             >
-              <span className="font-bold leading-none tracking-[-0.02em] whitespace-nowrap text-white">
+              <span className="font-bold leading-none tracking-[-0.02em] whitespace-nowrap text-[#FF756C]">
                 {text}
               </span>
             </div>
