@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Outlet, useParams } from 'react-router';
+import { Outlet, useParams, useSearchParams } from 'react-router';
 
 import { getBoothInfo } from '@/api/booth';
 import { getOrderAvailableMenus } from '@/api/boothMenu';
@@ -9,13 +9,15 @@ import NotFound from '@/pages/NotFound';
 
 function Order() {
   const { boothId } = useParams();
+  const [searchParams] = useSearchParams();
+  const isQR = searchParams.get('entry') === 'qr';
   const [boothInfo, setBoothInfo] = useState(null);
   const [loadedKey, setLoadedKey] = useState(null);
   const [lang, setLang] = useState(sessionStorage.getItem('language') || 'KO');
   const isLoading = loadedKey !== `${boothId}-${lang}`;
   const [foodData, setFoodData] = useState([]);
   const [menuLoadedBoothId, setMenuLoadedBoothId] = useState(null);
-  const isMenuLoading = menuLoadedBoothId !== boothId;
+  const isMenuLoading = isQR && menuLoadedBoothId !== boothId;
   const [boothNotFound, setBoothNotFound] = useState(false);
   const [errorToast, setErrorToast] = useState({ visible: false, message: '' });
   const [quantities, setQuantities] = useState(() => {
@@ -53,6 +55,7 @@ function Order() {
   }, [boothId, lang]);
 
   useEffect(() => {
+    if (!isQR) return;
     getOrderAvailableMenus(boothId)
       .then((res) => {
         const flat = Object.entries(res.data).flatMap(([category, items]) =>
@@ -70,7 +73,7 @@ function Order() {
       })
       .catch(showError)
       .finally(() => setMenuLoadedBoothId(boothId));
-  }, [boothId]);
+  }, [boothId, isQR]);
 
   const handleReset = () => {
     setQuantities({});

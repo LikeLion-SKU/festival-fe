@@ -66,6 +66,10 @@ export default function Cheongun({
 }) {
   const panelBg = active ? BG_ACTIVE : BG_DEFAULT;
   const markerFill = active ? '#FF756C' : (hasBuildingSelection ?? true) ? '#FFDDDB' : '#FF958F';
+  const buildingGlowClass = active ? 'z-30' : '';
+  const buildingGlowStyle = active
+    ? { filter: 'drop-shadow(0 0 12px rgba(196,58,49,0.45))' }
+    : undefined;
   const wrapperClass = clsx(
     'relative inline-flex flex-col items-center gap-[0.25rem] rotate-[-72deg] origin-top scale-[1.15]',
     className
@@ -73,8 +77,7 @@ export default function Cheongun({
 
   const frameClass = clsx(
     'relative box-border h-[2.55rem] w-[6.05rem] shrink-0 appearance-none overflow-hidden bg-[#C43A31] p-[2px] outline-none ring-0 transition-[box-shadow] duration-200 focus:outline-none focus-visible:outline-none',
-    onClick && 'cursor-pointer select-none',
-    active && 'z-30 shadow-[0_0_12px_rgba(196,58,49,0.45)]'
+    onClick && 'cursor-pointer select-none'
   );
 
   const labelClass = clsx(
@@ -153,6 +156,32 @@ export default function Cheongun({
         aria-label="청운관"
         className={wrapperClass}
       >
+        <div className={buildingGlowClass} style={buildingGlowStyle}>
+          <div
+            className={frameClass}
+            style={{ clipPath: CORNER_NOTCH, WebkitClipPath: CORNER_NOTCH }}
+          >
+            <div
+              className="relative h-full w-full overflow-hidden"
+              style={{
+                backgroundColor: panelBg,
+                clipPath: CORNER_NOTCH,
+                WebkitClipPath: CORNER_NOTCH,
+                transition: 'background-color 0.2s',
+              }}
+            >
+              {inner}
+            </div>
+          </div>
+        </div>
+        {markerRow}
+      </button>
+    );
+  }
+
+  return (
+    <div className={wrapperClass}>
+      <div className={buildingGlowClass}>
         <div
           className={frameClass}
           style={{ clipPath: CORNER_NOTCH, WebkitClipPath: CORNER_NOTCH }}
@@ -163,24 +192,11 @@ export default function Cheongun({
               backgroundColor: panelBg,
               clipPath: CORNER_NOTCH,
               WebkitClipPath: CORNER_NOTCH,
+              transition: 'background-color 0.2s',
             }}
           >
             {inner}
           </div>
-        </div>
-        {markerRow}
-      </button>
-    );
-  }
-
-  return (
-    <div className={wrapperClass}>
-      <div className={frameClass} style={{ clipPath: CORNER_NOTCH, WebkitClipPath: CORNER_NOTCH }}>
-        <div
-          className="relative h-full w-full overflow-hidden"
-          style={{ backgroundColor: panelBg, clipPath: CORNER_NOTCH, WebkitClipPath: CORNER_NOTCH }}
-        >
-          {inner}
         </div>
       </div>
       {markerRow}

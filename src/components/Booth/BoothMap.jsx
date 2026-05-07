@@ -16,7 +16,12 @@ const BOOTH_MAP_DESIGN_HEIGHT = (BOOTH_MAP_DESIGN_WIDTH * 360) / 335;
  * 부스 지도 영역
  * @param {{ activeBuildingId?: string; onSelectBuilding?: (id: string) => void; onMapBackdropClick?: () => void }} props
  */
-export default function BoothMap({ activeBuildingId, onSelectBuilding, onMapBackdropClick }) {
+export default function BoothMap({
+  activeBuildingId,
+  isHyeinFlashing = false,
+  onSelectBuilding,
+  onMapBackdropClick,
+}) {
   const containerRef = useRef(null);
   const [zoom, setZoom] = useState(1);
 
@@ -86,6 +91,7 @@ export default function BoothMap({ activeBuildingId, onSelectBuilding, onMapBack
               <div className="pointer-events-auto absolute left-[50%] top-[5%] z-[2] -translate-x-1/2">
                 <Hyein
                   active={activeBuildingId === 'hyein'}
+                  isFlashing={isHyeinFlashing}
                   hasBuildingSelection={activeBuildingId != null}
                   onClick={() => onSelectBuilding?.('hyein')}
                 />
