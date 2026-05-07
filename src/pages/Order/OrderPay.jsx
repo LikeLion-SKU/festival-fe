@@ -78,7 +78,7 @@ function OrderPay() {
         <div className="w-full border border-gray-300 rounded-xl mt-20 px-5 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Shadow className="w-10 h-10" />
+              <Shadow className="w-10 h-10 -ml-1.5" />
               <div className="flex flex-col">
                 <span className="text-base font-medium text-gray-500">{customerName}</span>
                 <span className="text-sm font-medium text-gray-900">{customerPhoneNumber}</span>
