@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Lottie from 'lottie-react/build/index.es.js';
@@ -35,17 +35,22 @@ export default function CookingMenu() {
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [expandedIds, setExpandedIds] = useState(() => new Set());
   const [newOrderIds, setNewOrderIds] = useState(() => new Set());
-  const [hasNewWaiting, setHasNewWaiting] = useState(false);
+  const [hasNewCooking, setHasNewCooking] = useState(false);
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const { notifyOrderStatus, clearCount, setIsLoading, setScrollContainer } =
     useOutletContext() ?? {};
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [toast, setToast] = useState({ visible: false, message: '' });
+  const cardRefs = useRef(new Map());
 
-  const handleGotoWaiting = () => {
-    setHasNewWaiting(false);
-    navigate('/admin/waiting');
+  const handleScrollToNew = () => {
+    setHasNewCooking(false);
+    const firstNewOrder = orderData.find((d) => newOrderIds.has(d.orderId));
+    if (!firstNewOrder) return;
+    cardRefs.current.get(firstNewOrder.orderId)?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
   };
 
   const markSeen = (orderId) => {
@@ -85,13 +90,13 @@ export default function CookingMenu() {
         next.add(newOrder.orderId);
         return next;
       });
+      setHasNewCooking(true);
     };
 
     const handleNotification = (event) => {
       //다른 페이지 새로운 데이터 추가시 표시
       const { orderStatus } = JSON.parse(event.data);
       notifyOrderStatus?.(orderStatus);
-      if (orderStatus === 'WAITING') setHasNewWaiting(true);
     };
 
     const handleUnitStatus = (event) => {
@@ -315,7 +320,15 @@ export default function CookingMenu() {
 
           <div className="flex flex-col gap-2 overflow-auto no-scrollbar pb-7">
             {orderData.map((data) => (
-              <div key={data.orderId} className="w-full" onClick={() => markSeen(data.orderId)}>
+              <div
+                key={data.orderId}
+                ref={(el) => {
+                  if (el) cardRefs.current.set(data.orderId, el);
+                  else cardRefs.current.delete(data.orderId);
+                }}
+                className="w-full"
+                onClick={() => markSeen(data.orderId)}
+              >
                 <OrderCard
                   variant="cooking"
                   tableNumber={data.tableNumber}
@@ -348,8 +361,8 @@ export default function CookingMenu() {
         </div>
       )}
 
-      {hasNewWaiting /* 새로운 대기 주문 알림 배너 */ && (
-        <NewOrderSignal onClick={handleGotoWaiting} />
+      {hasNewCooking /* 새로운 조리 주문 알림 배너 */ && (
+        <NewOrderSignal onClick={handleScrollToNew} />
       )}
 
       <BottomSheet /* 미완성 주문 완료 모달 */
