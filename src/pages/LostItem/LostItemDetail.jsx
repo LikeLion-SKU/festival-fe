@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { getLostItemDetail } from '@/api/lostItem';
@@ -34,7 +34,7 @@ function ArrowButton({ direction, onClick, disabled }) {
       style={{
         width: '40px',
         height: '40px',
-        background: isLeft ? '#ffffff' : '#3a3a3a',
+        background: '#ffffff',
         boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
       }}
     >
@@ -62,6 +62,17 @@ export default function LostItemDetail() {
   }, [id]);
 
   const images = item?.imageUrls ?? [];
+  const touchStartX = useRef(0);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e) => {
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) < 40) return;
+    if (diff > 0 && imgIndex < images.length - 1) setImgIndex((i) => i + 1);
+    if (diff < 0 && imgIndex > 0) setImgIndex((i) => i - 1);
+  };
 
   return (
     <div
@@ -82,9 +93,35 @@ export default function LostItemDetail() {
       <div className="flex-1 flex flex-col pt-[8rem] px-[1.25rem]">
         {/* 이미지 캐러셀 */}
         <div className="relative w-full aspect-square">
-          <div className="w-full h-full overflow-hidden bg-white/10">
+          <div
+            className="w-full h-full overflow-hidden bg-white/10"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
             {images.length > 0 ? (
-              <img src={images[imgIndex]} alt={item.name} className="w-full h-full object-cover" />
+              <div
+                className="flex h-full"
+                style={{
+                  width: `${images.length * 100}%`,
+                  transform: `translateX(-${(imgIndex / images.length) * 100}%)`,
+                  transition: 'transform 0.3s ease',
+                }}
+              >
+                {images.map((src, i) => (
+                  <div
+                    key={i}
+                    className="h-full shrink-0"
+                    style={{ width: `${100 / images.length}%` }}
+                  >
+                    <img
+                      src={src}
+                      alt={`${item.name} ${i + 1}`}
+                      className="w-full h-full object-cover"
+                      draggable={false}
+                    />
+                  </div>
+                ))}
+              </div>
             ) : (
               <div className="w-full h-full flex items-center justify-center text-[#A0A0A0] text-[0.75rem]">
                 이미지 없음

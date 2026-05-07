@@ -87,7 +87,7 @@ function OrderEntry() {
             className="relative z-1"
             buttonName={buttonName}
             isActive={orderAvailable}
-            onClick={() => navigate(`/order/${boothId}/progress`)}
+            onClick={() => orderAvailable && navigate(`/order/${boothId}/progress`)}
           />
         </>
       ) : (
