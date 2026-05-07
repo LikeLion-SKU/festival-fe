@@ -59,7 +59,7 @@ function OrderPay() {
         <OrderHeader title="결제하기" />
       </div>
 
-      <div className="flex-1 overflow-y-auto min-h-0 px-5 flex flex-col items-center pt-12 gap-2.5">
+      <div className="flex-1 overflow-y-auto min-h-0 px-5 flex flex-col items-center pt-12 pb-29 gap-2.5">
         <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 shrink-0">
           <img src={thumbnailUrl} className="w-full h-full object-cover" />
         </div>
