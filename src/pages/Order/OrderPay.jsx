@@ -24,13 +24,26 @@ function OrderPay() {
   } = orderResponse || {};
   const orderTypeLabel = orderType === 'dine-in' ? '매장' : '포장';
 
-  const [showToast, setShowToast] = useState(true);
+  const [showToast, setShowToast] = useState(() => {
+    const pending = sessionStorage.getItem('orderToastPending') === 'true';
+    sessionStorage.removeItem('orderToastPending');
+    return pending;
+  });
   const [showCopyToast, setShowCopyToast] = useState(false);
   const copyTimerRef = useRef(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowToast(false), 3000);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    window.history.pushState(null, '', window.location.href);
+    const handlePopState = () => {
+      window.history.pushState(null, '', window.location.href);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   const handleCopy = () => {

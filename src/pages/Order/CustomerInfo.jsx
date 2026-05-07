@@ -141,7 +141,11 @@ function CustomerInfo() {
             sessionStorage.removeItem('orderResponse');
             sessionStorage.removeItem('orderQuantities');
             sessionStorage.removeItem('orderCart');
-            navigate(`/order/${boothId}/pay`, { state: { orderResponse: res.data, orderType } });
+            sessionStorage.setItem('orderToastPending', 'true');
+            navigate(`/order/${boothId}/pay`, {
+              state: { orderResponse: res.data, orderType },
+              replace: true,
+            });
           } catch (error) {
             setIsSubmitting(false);
             const status = error?.response?.status;
