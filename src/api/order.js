@@ -1,4 +1,4 @@
-import { APIService, publicApi } from './api';
+import { APIService } from './api';
 
 export const createOrder = (boothId, idempotencyKey, orderData) =>
   APIService.public.post(`/booths/${boothId}/orders`, orderData, {
@@ -17,19 +17,8 @@ export const getWaitingMenu = async () => {
 // 직접 리프레시를 시도하고, 실패 시 로그인 페이지로 보냄.
 export const subscribeOrder = (sseSubscribeType) => {
   const url = `/api/orders/subscribe?sseSubscribeType=${encodeURIComponent(sseSubscribeType)}`;
-  const eventSource = new EventSource(url, { withCredentials: true });
 
-  eventSource.addEventListener('error', async () => {
-    if (eventSource.readyState !== EventSource.CLOSED) return;
-    eventSource.close();
-    try {
-      await publicApi.post('/auth/refresh');
-    } catch {
-      window.location.href = '/login';
-    }
-  });
-
-  return eventSource;
+  return new EventSource(url, { withCredentials: true });
 };
 
 export const patchChangeOrderStatus = async (orderId, orderStatus) => {

@@ -282,7 +282,7 @@ export default function Booth() {
         <button
           type="button"
           onClick={() => navigate('/booth-map')}
-          className="mt-4 flex h-[3.25rem] w-full shrink-0 items-center justify-center border border-solid border-white bg-[rgba(255,255,255,0.15)] px-4 py-[0.875rem] text-base font-semibold leading-6 tracking-[-0.025rem] text-white shadow-[1px_1px_0px_rgba(0,0,0,0.12)]"
+          className="mt-4 flex h-[3.25rem] w-full shrink-0 items-center justify-center border border-solid border-white bg-[rgba(255,255,255,0.12)] px-4 py-[0.875rem] text-base font-semibold leading-6 tracking-[-0.025rem] text-white shadow-[1px_1px_0px_rgba(0,0,0,0.12)] backdrop-blur-[5px] backdrop-saturate-85"
         >
           한눈에 보기
         </button>

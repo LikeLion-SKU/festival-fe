@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 
 import HatIcon from '@/assets/icons/hat.svg';
 import HorseIcon from '@/assets/icons/horse.svg';
@@ -20,6 +21,7 @@ import SeohyeonImg from '@/assets/images/seohyeon.png';
 import SieonImg from '@/assets/images/sieon.png';
 import UnzoImg from '@/assets/images/unzo.png';
 import YeongjinImg from '@/assets/images/yeongjin.png';
+import MenuButton from '@/components/common/Button/MenuButton';
 import PageHeader from '@/components/common/PageHeader';
 import Footer from '@/layouts/Footer';
 
@@ -60,12 +62,12 @@ const CORE_MEMBERS = [
   { name: '길서현', role: '사무국장 공공 23' },
   { name: '박승아', role: '홍보국장 라디 21' },
   { name: '윤정현', role: '대외협력국장 전자 22' },
-  { name: '전은율', role: '복지국장 뷰테 24' },
+  { name: '전은율', role: '복지국장 코뷰 24' },
   { name: '김동훈', role: '운영집행국장 글비 23' },
   { name: '김승준', role: '미래교육국장 경영 21' },
   { name: '엄태윤', role: '홍보부장 비디 22' },
   { name: '심소민', role: '홍보부장 라디 22' },
-  { name: '곽서인', role: '복지부장 화공 25' },
+  { name: '곽서인', role: '복지부장 환화공 25' },
   { name: '노유승', role: '운영집행부장 미융IT 25' },
   { name: '황시준', role: '미래교육부장 군사 23' },
   { name: '박수빈', role: '대외협력국원 미융 26' },
@@ -194,6 +196,8 @@ function PersonGrid({ members }) {
 }
 
 export default function MadeBy() {
+  const navigate = useNavigate();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -281,31 +285,6 @@ export default function MadeBy() {
             <p className="m-0">멋쟁이사자처럼의 활동도 많이 지켜봐 주세요!</p>
             <p className="mt-[1rem] m-0">감사합니다 😊</p>
           </div>
-          <button
-            type="button"
-            aria-label="메뉴 열기"
-            className="mt-[4.25rem] flex h-[3.4375rem] w-[3.4375rem] items-center justify-center overflow-hidden rounded-[12.5rem] relative"
-            style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid transparent',
-              ...stagger(820),
-            }}
-          >
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 rounded-full"
-              style={{ boxShadow: '0 0 8px rgba(255,255,255,0.22)', filter: 'blur(1.2px)' }}
-            />
-            <span className="sr-only">menu</span>
-            <span
-              aria-hidden="true"
-              className="relative z-10 flex h-[2rem] w-[2rem] flex-col items-center justify-center gap-[0.3125rem]"
-            >
-              <span className="h-[0.125rem] w-[1.3rem] rounded-full bg-[#DA3328]" />
-              <span className="h-[0.125rem] w-[1.3rem] rounded-full bg-[#DA3328]" />
-              <span className="h-[0.125rem] w-[1.3rem] rounded-full bg-[#DA3328]" />
-            </span>
-          </button>
         </div>
 
         {/* PROJECT LEADER */}
@@ -442,6 +421,9 @@ export default function MadeBy() {
         </section>
 
         <Footer />
+      </div>
+      <div className="fixed z-50 left-1/2 -translate-x-1/2" style={{ bottom: '2.75rem' }}>
+        <MenuButton onClick={() => navigate('/menu')} />
       </div>
     </div>
   );

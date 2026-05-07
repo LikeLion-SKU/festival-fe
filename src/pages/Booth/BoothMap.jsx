@@ -51,7 +51,7 @@ export default function BoothMapPage() {
   const touchStartY = useRef(0);
   const sheetPanelRef = useRef(null);
 
-  /** 지도/배경 페이지가 밀리거나 움직이지 않도록 */
+  /** 지도 화면에서는 배경 스크롤 잠금, 검색 화면에서는 결과 스크롤 허용 */
   useEffect(() => {
     const html = document.documentElement;
     const body = document.body;
@@ -61,22 +61,29 @@ export default function BoothMapPage() {
       htmlOb: html.style.overscrollBehavior,
       bodyOb: body.style.overscrollBehavior,
     };
-    html.style.overflow = 'hidden';
-    body.style.overflow = 'hidden';
-    html.style.overscrollBehavior = 'none';
-    body.style.overscrollBehavior = 'none';
+    if (searchMode) {
+      html.style.overflow = '';
+      body.style.overflow = '';
+      html.style.overscrollBehavior = '';
+      body.style.overscrollBehavior = '';
+    } else {
+      html.style.overflow = 'hidden';
+      body.style.overflow = 'hidden';
+      html.style.overscrollBehavior = 'none';
+      body.style.overscrollBehavior = 'none';
+    }
     return () => {
       html.style.overflow = prev.htmlOverflow;
       body.style.overflow = prev.bodyOverflow;
       html.style.overscrollBehavior = prev.htmlOb;
       body.style.overscrollBehavior = prev.bodyOb;
     };
-  }, []);
+  }, [searchMode]);
 
   /** 시트에서 스크롤 목록이 아닌 영역의 세로 드래그가 뷰포트로 전달되지 않게 */
   useEffect(() => {
     const panel = sheetPanelRef.current;
-    if (!panel) return;
+    if (!panel || searchMode) return;
 
     const onTouchMove = (e) => {
       const scrollEl = panel.querySelector('[data-booth-sheet-scroll]');
@@ -86,7 +93,7 @@ export default function BoothMapPage() {
 
     panel.addEventListener('touchmove', onTouchMove, { passive: false });
     return () => panel.removeEventListener('touchmove', onTouchMove);
-  }, []);
+  }, [searchMode]);
 
   const orderedBuildingButtons = useMemo(() => {
     const map = new Map(BUILDINGS.map((item) => [item.id, item]));
@@ -166,7 +173,8 @@ export default function BoothMapPage() {
   return (
     <section
       className={clsx(
-        'relative min-h-dvh overflow-hidden text-white',
+        'relative min-h-dvh text-white',
+        !searchMode && 'overflow-hidden',
         !searchMode && 'overscroll-none',
         searchMode && 'flex flex-col'
       )}
@@ -219,10 +227,7 @@ export default function BoothMapPage() {
 
         {searchMode && (
           <div className="mt-5 flex min-h-0 flex-1 flex-col overflow-hidden">
-            <div
-              className="min-h-0 flex-1 overflow-y-auto [-webkit-overflow-scrolling:touch] pb-2"
-              onMouseDown={(e) => e.preventDefault()}
-            >
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain pb-2 [-webkit-overflow-scrolling:touch] [touch-action:pan-y]">
               {!search.trim() ? (
                 <div className="min-h-[min(50vh,24rem)]" aria-hidden />
               ) : isPending ? (
