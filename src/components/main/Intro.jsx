@@ -39,7 +39,16 @@ export default function Intro() {
 
     el.muted = true;
     el.defaultMuted = true;
+    el.playsInline = true;
+    el.setAttribute('muted', '');
+    el.setAttribute('playsinline', '');
+    el.setAttribute('webkit-playsinline', 'true');
     hasStoppedRef.current = false;
+
+    const attemptPlay = () => {
+      if (!el.paused) return;
+      el.play().catch(() => {});
+    };
 
     let kicked = false;
     const playFromStart = () => {
@@ -47,23 +56,24 @@ export default function Intro() {
       kicked = true;
       el.currentTime = 0;
       hasStoppedRef.current = false;
-      el.play().catch(() => {});
+      attemptPlay();
     };
 
     const onReady = () => playFromStart();
     el.addEventListener('canplay', onReady, { once: true });
     el.addEventListener('loadeddata', onReady, { once: true });
-    el.load();
-
-    const tryPlay = () => {
-      el.play().catch(() => {});
-    };
-    const retryTimer = window.setTimeout(tryPlay, 160);
+    el.addEventListener('playing', () => setVideoLoaded(true), { once: true });
+    attemptPlay();
+    const retryTimers = [160, 450, 900].map((ms) => window.setTimeout(attemptPlay, ms));
+    const retryInterval = window.setInterval(attemptPlay, 300);
+    const stopRetryTimer = window.setTimeout(() => window.clearInterval(retryInterval), 4200);
 
     return () => {
       el.removeEventListener('canplay', onReady);
       el.removeEventListener('loadeddata', onReady);
-      window.clearTimeout(retryTimer);
+      retryTimers.forEach((timer) => window.clearTimeout(timer));
+      window.clearInterval(retryInterval);
+      window.clearTimeout(stopRetryTimer);
     };
   }, []);
 
@@ -76,11 +86,20 @@ export default function Intro() {
       setVideoLoaded(false);
       el.pause();
       el.currentTime = 0;
-      el.load();
+      el.play().catch(() => {});
+    };
+    const onVisibilityChange = () => {
+      if (document.visibilityState !== 'visible') return;
+      const el = videoRef.current;
+      if (!el) return;
       el.play().catch(() => {});
     };
     window.addEventListener('pageshow', onPageShow);
-    return () => window.removeEventListener('pageshow', onPageShow);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => {
+      window.removeEventListener('pageshow', onPageShow);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    };
   }, []);
 
   return (
