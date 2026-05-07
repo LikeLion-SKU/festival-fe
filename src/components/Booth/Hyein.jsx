@@ -94,7 +94,10 @@ export default function Hyein({
   const panelBg = active ? BG_ACTIVE : BG_DEFAULT;
   const markerFill = active ? '#FF756C' : (hasBuildingSelection ?? true) ? '#FFDDDB' : '#FF958F';
   const buildingGlowStyle = active
-    ? { filter: 'drop-shadow(0 0 12px rgba(196,58,49,0.45))' }
+    ? {
+        filter:
+          'drop-shadow(0 0 12px rgba(196,58,49,0.24)) drop-shadow(0 0 28px rgba(196,58,49,0.16)) drop-shadow(0 0 44px rgba(196,58,49,0.10))',
+      }
     : undefined;
   const boxStyle =
     isFlashing && !active
