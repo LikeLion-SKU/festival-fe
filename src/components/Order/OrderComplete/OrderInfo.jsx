@@ -31,7 +31,7 @@ function OrderInfo() {
       <div className="bg-white px-5 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="px-2.5 py-1.25 bg-gray-100 rounded-[3px]">
-            <span className="text-xs font-medium text-gray-500">{orderTypeLabel}</span>
+            <div className="text-xs font-medium text-gray-500">{orderTypeLabel}</div>
           </div>
           <span className="text-base font-semibold text-order-button">{customerName}</span>
           <span className="text-xs font-medium">{customerPhoneNumber}</span>
