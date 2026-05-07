@@ -50,8 +50,12 @@ export default function BoothMapPage() {
   const [sheetExpanded, setSheetExpanded] = useState(false);
   const touchStartY = useRef(0);
   const sheetPanelRef = useRef(null);
+  const sheetScrollRef = useRef(null);
+  const touchStartedInScrollRef = useRef(false);
+  const scrollWasAtTopOnStartRef = useRef(false);
+  const collapseArmedRef = useRef(false);
 
-  /** 지도/배경 페이지가 밀리거나 움직이지 않도록 */
+  /** 지도 화면에서는 배경 스크롤 잠금, 검색 화면에서는 결과 스크롤 허용 */
   useEffect(() => {
     const html = document.documentElement;
     const body = document.body;
@@ -61,22 +65,29 @@ export default function BoothMapPage() {
       htmlOb: html.style.overscrollBehavior,
       bodyOb: body.style.overscrollBehavior,
     };
-    html.style.overflow = 'hidden';
-    body.style.overflow = 'hidden';
-    html.style.overscrollBehavior = 'none';
-    body.style.overscrollBehavior = 'none';
+    if (searchMode) {
+      html.style.overflow = '';
+      body.style.overflow = '';
+      html.style.overscrollBehavior = '';
+      body.style.overscrollBehavior = '';
+    } else {
+      html.style.overflow = 'hidden';
+      body.style.overflow = 'hidden';
+      html.style.overscrollBehavior = 'none';
+      body.style.overscrollBehavior = 'none';
+    }
     return () => {
       html.style.overflow = prev.htmlOverflow;
       body.style.overflow = prev.bodyOverflow;
       html.style.overscrollBehavior = prev.htmlOb;
       body.style.overscrollBehavior = prev.bodyOb;
     };
-  }, []);
+  }, [searchMode]);
 
   /** 시트에서 스크롤 목록이 아닌 영역의 세로 드래그가 뷰포트로 전달되지 않게 */
   useEffect(() => {
     const panel = sheetPanelRef.current;
-    if (!panel) return;
+    if (!panel || searchMode) return;
 
     const onTouchMove = (e) => {
       const scrollEl = panel.querySelector('[data-booth-sheet-scroll]');
@@ -86,7 +97,7 @@ export default function BoothMapPage() {
 
     panel.addEventListener('touchmove', onTouchMove, { passive: false });
     return () => panel.removeEventListener('touchmove', onTouchMove);
-  }, []);
+  }, [searchMode]);
 
   const orderedBuildingButtons = useMemo(() => {
     const map = new Map(BUILDINGS.map((item) => [item.id, item]));
@@ -166,7 +177,8 @@ export default function BoothMapPage() {
   return (
     <section
       className={clsx(
-        'relative min-h-dvh overflow-hidden text-white',
+        'relative min-h-dvh text-white',
+        !searchMode && 'overflow-hidden',
         !searchMode && 'overscroll-none',
         searchMode && 'flex flex-col'
       )}
@@ -219,10 +231,7 @@ export default function BoothMapPage() {
 
         {searchMode && (
           <div className="mt-5 flex min-h-0 flex-1 flex-col overflow-hidden">
-            <div
-              className="min-h-0 flex-1 overflow-y-auto [-webkit-overflow-scrolling:touch] pb-2"
-              onMouseDown={(e) => e.preventDefault()}
-            >
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain pb-2 [-webkit-overflow-scrolling:touch] [touch-action:pan-y]">
               {!search.trim() ? (
                 <div className="min-h-[min(50vh,24rem)]" aria-hidden />
               ) : isPending ? (
@@ -272,11 +281,40 @@ export default function BoothMapPage() {
           }`}
           onTouchStart={(e) => {
             touchStartY.current = e.touches[0].clientY;
+            const scrollEl = sheetScrollRef.current;
+            const startedInScrollArea = Boolean(scrollEl?.contains(e.target));
+            touchStartedInScrollRef.current = startedInScrollArea;
+            if (!startedInScrollArea || !scrollEl) {
+              scrollWasAtTopOnStartRef.current = false;
+              return;
+            }
+            scrollWasAtTopOnStartRef.current = scrollEl.scrollTop <= 0;
           }}
           onTouchEnd={(e) => {
             const deltaY = e.changedTouches[0].clientY - touchStartY.current;
             if (deltaY < -35) setSheetExpanded(true);
-            if (deltaY > 35) setSheetExpanded(false);
+            if (deltaY > 35) {
+              if (!touchStartedInScrollRef.current) {
+                setSheetExpanded(false);
+                return;
+              }
+
+              const scrollEl = sheetScrollRef.current;
+              const isAtTop = (scrollEl?.scrollTop ?? 0) <= 0;
+
+              // 리스트를 위로 다 올린 직후의 스와이프에서는 접지 않고, 한 번 더 내릴 때만 접음
+              if (isAtTop && scrollWasAtTopOnStartRef.current && collapseArmedRef.current) {
+                setSheetExpanded(false);
+                collapseArmedRef.current = false;
+                return;
+              }
+
+              if (isAtTop) {
+                collapseArmedRef.current = true;
+              } else {
+                collapseArmedRef.current = false;
+              }
+            }
           }}
         >
           <div className="mx-[27px] min-w-0 shrink-0">
@@ -306,7 +344,13 @@ export default function BoothMapPage() {
           </div>
           <div
             data-booth-sheet-scroll
+            ref={sheetScrollRef}
             className="mx-[27px] mt-5 min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain pb-2 [-webkit-overflow-scrolling:touch]"
+            onScroll={(e) => {
+              if (e.currentTarget.scrollTop > 0) {
+                collapseArmedRef.current = false;
+              }
+            }}
           >
             {isPending ? (
               <p className="py-8 text-center text-sm text-white/50 [font-family:Pretendard]">
