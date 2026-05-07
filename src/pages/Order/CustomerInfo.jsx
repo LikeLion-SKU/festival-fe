@@ -90,8 +90,14 @@ function CustomerInfo() {
               />
               <InputField
                 placeholder="테이블 번호"
-                value={tableNumber}
+                value={tableNumber ? `${tableNumber}번 테이블` : ''}
                 onChange={handleTableChange}
+                onKeyDown={(e) => {
+                  if (e.key === 'Backspace') {
+                    e.preventDefault();
+                    setTableNumber((prev) => prev.slice(0, -1));
+                  }
+                }}
                 state={tableState}
                 type="tel"
               />
