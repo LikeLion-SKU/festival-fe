@@ -27,7 +27,7 @@ function DateDot() {
 export default function Intro() {
   const videoRef = useRef(null);
   const hasStoppedRef = useRef(false);
-  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
   /** 리로드나 재라우팅 시 새 media 요소로 캐시된 재생 위치 섞임 방지 */
   const [videoMountKey] = useState(
     () => globalThis.crypto?.randomUUID?.() ?? `intro-video-${Date.now()}`
@@ -46,31 +46,17 @@ export default function Intro() {
     hasStoppedRef.current = false;
 
     const attemptPlay = () => {
+      if (hasStoppedRef.current) return;
       if (!el.paused) return;
       el.play().catch(() => {});
     };
 
-    let kicked = false;
-    const playFromStart = () => {
-      if (kicked) return;
-      kicked = true;
-      el.currentTime = 0;
-      hasStoppedRef.current = false;
-      attemptPlay();
-    };
-
-    const onReady = () => playFromStart();
-    el.addEventListener('canplay', onReady, { once: true });
-    el.addEventListener('loadeddata', onReady, { once: true });
-    el.addEventListener('playing', () => setVideoLoaded(true), { once: true });
     attemptPlay();
     const retryTimers = [160, 450, 900].map((ms) => window.setTimeout(attemptPlay, ms));
     const retryInterval = window.setInterval(attemptPlay, 300);
     const stopRetryTimer = window.setTimeout(() => window.clearInterval(retryInterval), 4200);
 
     return () => {
-      el.removeEventListener('canplay', onReady);
-      el.removeEventListener('loadeddata', onReady);
       retryTimers.forEach((timer) => window.clearTimeout(timer));
       window.clearInterval(retryInterval);
       window.clearTimeout(stopRetryTimer);
@@ -83,7 +69,7 @@ export default function Intro() {
       const el = videoRef.current;
       if (!el) return;
       hasStoppedRef.current = false;
-      setVideoLoaded(false);
+      setVideoPlaying(false);
       el.pause();
       el.currentTime = 0;
       el.play().catch(() => {});
@@ -91,7 +77,7 @@ export default function Intro() {
     const onVisibilityChange = () => {
       if (document.visibilityState !== 'visible') return;
       const el = videoRef.current;
-      if (!el) return;
+      if (!el || hasStoppedRef.current) return;
       el.play().catch(() => {});
     };
     window.addEventListener('pageshow', onPageShow);
@@ -102,14 +88,27 @@ export default function Intro() {
     };
   }, []);
 
+  const tryPlayFromUserGesture = () => {
+    if (hasStoppedRef.current) return;
+    const el = videoRef.current;
+    if (!el || videoPlaying) return;
+    el.muted = true;
+    el.defaultMuted = true;
+    el.play().catch(() => {});
+  };
+
   return (
     <section
       id="intro"
       className="relative flex min-h-[48rem] flex-col bg-[#121212] px-[1.5rem] pb-[5rem] pt-[4.5rem]"
+      onPointerDownCapture={tryPlayFromUserGesture}
     >
-      {!videoLoaded && (
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0 bg-[#121212]" />
-      )}
+      <img
+        src="/images/main-poster.png"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+      />
       <video
         key={videoMountKey}
         ref={videoRef}
@@ -122,9 +121,13 @@ export default function Intro() {
         preload="auto"
         disablePictureInPicture
         controlsList="nodownload noplaybackrate noremoteplayback"
+        onPlaying={() => setVideoPlaying(true)}
+        onError={() => setVideoPlaying(false)}
         onLoadedData={(e) => {
-          setVideoLoaded(true);
-          e.currentTarget.play().catch(() => {});
+          const v = e.currentTarget;
+          v.muted = true;
+          v.defaultMuted = true;
+          v.play().catch(() => {});
         }}
         onTimeUpdate={(e) => {
           const video = e.currentTarget;
@@ -139,17 +142,15 @@ export default function Intro() {
         }}
         aria-hidden="true"
         style={{ top: '-12px' }}
-        className={`pointer-events-none absolute inset-x-0 bottom-0 z-0 h-full w-full object-cover transition-opacity duration-150 ${
-          videoLoaded ? 'opacity-100' : 'opacity-0'
+        className={`pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-full w-full object-cover transition-opacity duration-150 ${
+          videoPlaying ? 'opacity-100' : 'opacity-0'
         }`}
       >
-        <source src="/video/main-animation.mp4" type="video/mp4" />
+        <source src="/video/main-animation-no-audio.mp4" type="video/mp4" />
       </video>
       <div
         aria-hidden="true"
-        className={`pointer-events-none absolute inset-0 z-[3] transition-opacity duration-150 ${
-          videoLoaded ? 'opacity-100' : 'opacity-0'
-        }`}
+        className="pointer-events-none absolute inset-0 z-[3]"
         style={{
           background:
             'linear-gradient(187.071deg, rgb(31, 6, 5) 1%, rgb(213, 39, 45) 24%, rgba(255, 120, 0, 0) 40%)',
@@ -157,9 +158,7 @@ export default function Intro() {
       />
       <div
         aria-hidden="true"
-        className={`pointer-events-none absolute inset-0 z-[4] transition-opacity duration-150 ${
-          videoLoaded ? 'opacity-100' : 'opacity-0'
-        }`}
+        className="pointer-events-none absolute inset-0 z-[4]"
         style={{
           background:
             'linear-gradient(180deg, rgba(18,18,18,0) 0%, rgba(18,18,18,0) 72%, rgba(151,35,42,0.72) 92%, rgba(0,0,0,0.95) 99%)',
