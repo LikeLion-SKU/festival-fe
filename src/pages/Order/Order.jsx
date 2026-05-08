@@ -15,7 +15,10 @@ function Order() {
   const [loadedKey, setLoadedKey] = useState(null);
   const [lang, setLang] = useState(sessionStorage.getItem('language') || 'KO');
   const isLoading = loadedKey !== `${boothId}-${lang}`;
-  const [foodData, setFoodData] = useState([]);
+  const [foodData, setFoodData] = useState(() => {
+    const saved = sessionStorage.getItem('orderFoodData');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [menuLoadedBoothId, setMenuLoadedBoothId] = useState(null);
   const isMenuLoading = isQR && menuLoadedBoothId !== boothId;
   const [boothNotFound, setBoothNotFound] = useState(false);
@@ -70,8 +73,21 @@ function Order() {
           }))
         );
         setFoodData(flat);
+        sessionStorage.setItem('orderFoodData', JSON.stringify(flat));
       })
-      .catch(showError)
+      .catch((error) => {
+        const status = error?.response?.status;
+        if (status === 404) {
+          setBoothNotFound(true);
+          return;
+        }
+        if (status === 400) return;
+        const message =
+          status >= 500
+            ? '서버 오류가 발생했어요. 잠시 후 다시 시도해주세요.'
+            : '메뉴를 불러오는 중 오류가 발생했어요.';
+        setErrorToast({ visible: true, message });
+      })
       .finally(() => setMenuLoadedBoothId(boothId));
   }, [boothId, isQR]);
 
@@ -79,6 +95,7 @@ function Order() {
     setQuantities({});
     sessionStorage.removeItem('orderQuantities');
     sessionStorage.removeItem('orderCart');
+    sessionStorage.removeItem('orderFoodData');
   };
 
   const handleSelect = (key) => setQuantities((prev) => ({ ...prev, [key]: 1 }));
@@ -100,6 +117,7 @@ function Order() {
 
   useEffect(() => {
     sessionStorage.setItem('orderQuantities', JSON.stringify(quantities));
+    if (!foodData.length) return;
 
     const cart = Object.entries(quantities)
       .map(([key, qty]) => {

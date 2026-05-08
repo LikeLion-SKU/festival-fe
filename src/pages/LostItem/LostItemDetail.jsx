@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 
 import { getLostItemDetail } from '@/api/lostItem';
 import backgroundImg from '@/assets/images/about-fire2.svg';
+import ArrowButton from '@/components/common/Button/ArrowButton';
 import PageHeader from '@/components/common/PageHeader';
 
 const KO_DAY_MAP = {
@@ -22,36 +23,11 @@ function formatDate(foundDate, dayOfWeek) {
   return `${month}.${day} ${dow}`;
 }
 
-function ArrowButton({ direction, onClick, disabled }) {
-  const isLeft = direction === 'left';
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      aria-label={isLeft ? '이전 이미지' : '다음 이미지'}
-      className="rounded-full flex items-center justify-center transition-all active:scale-95 disabled:opacity-30"
-      style={{
-        width: '40px',
-        height: '40px',
-        background: '#ffffff',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
-      }}
-    >
-      {/* 빨간 삼각형 */}
-      <svg width="24" height="24" viewBox="0 0 16 16" fill="none">
-        {isLeft ? (
-          <polygon points="11,2 11,14 3,8" fill="#DA3328" />
-        ) : (
-          <polygon points="5,2 5,14 13,8" fill="#DA3328" />
-        )}
-      </svg>
-    </button>
-  );
-}
-
 export default function LostItemDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const fromPage = location.state?.fromPage ?? 1;
   const [item, setItem] = useState(null);
   const [imgIndex, setImgIndex] = useState(0);
 
@@ -88,11 +64,14 @@ export default function LostItemDetail() {
         backgroundColor: '#0d0d0d',
       }}
     >
-      <PageHeader title="분실물" />
+      <PageHeader
+        title="분실물"
+        onBack={() => navigate('/lost-items', { state: { page: fromPage } })}
+      />
 
       <div className="flex-1 flex flex-col pt-[8rem] px-[1.25rem]">
         {/* 이미지 캐러셀 */}
-        <div className="relative w-full aspect-square">
+        <div className="relative w-full aspect-square shrink-0 overflow-hidden">
           <div
             className="w-full h-full overflow-hidden bg-white/10"
             onTouchStart={handleTouchStart}

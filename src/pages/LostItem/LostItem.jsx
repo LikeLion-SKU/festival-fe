@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 
-import { login, logout } from '@/api/auth';
+import { login, logout, verifySession } from '@/api/auth';
 import { deleteLostItem, getLostItems, updateLostItemStatus } from '@/api/lostItem';
 import LockIcon from '@/assets/icons/lock.svg';
 import backgroundImg from '@/assets/images/about-fire2.svg';
@@ -25,12 +25,12 @@ const CARD_MIN_HEIGHT = 110;
 
 export default function LostItem() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [query, setQuery] = useState('');
   const [selectedDate, setSelectedDate] = useState('all');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [items, setItems] = useState([]);
+  const [currentPage, setCurrentPage] = useState(location.state?.page ?? 1);
+  const [allItems, setAllItems] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(4);
   const [itemsKey, setItemsKey] = useState(0);
   const [managingItem, setManagingItem] = useState(null);
@@ -43,7 +43,21 @@ export default function LostItem() {
   const [loginPassword, setLoginPassword] = useState('');
   const [loginFail, setLoginFail] = useState(false);
 
-  const isLoggedIn = !!localStorage.getItem('accessToken');
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('accessToken'));
+
+  useEffect(() => {
+    verifySession()
+      .then(() => {
+        localStorage.setItem('accessToken', 'admin');
+        setIsLoggedIn(true);
+      })
+      .catch((err) => {
+        if (err?.response?.status === 401) {
+          localStorage.removeItem('accessToken');
+          setIsLoggedIn(false);
+        }
+      });
+  }, []);
 
   const handleTitleClick = () => {
     const next = titleClickCount + 1;
@@ -63,6 +77,7 @@ export default function LostItem() {
     try {
       await login({ departmentName: 'STUDENT_COUNCIL', password: loginPassword });
       localStorage.setItem('accessToken', 'admin');
+      setIsLoggedIn(true);
       setShowLoginModal(false);
       setLoginPassword('');
       setLoginFail(false);
@@ -86,8 +101,8 @@ export default function LostItem() {
 
   useEffect(() => {
     const params = {
-      page: currentPage - 1,
-      size: pageSize,
+      page: 0,
+      size: 500,
       ...(query && { name: query }),
       ...(selectedDate !== 'all' && { foundDate: selectedDate }),
     };
@@ -95,15 +110,17 @@ export default function LostItem() {
     getLostItems(params)
       .then((res) => {
         const content = res.data.content ?? [];
-        setItems([...content].sort((a, b) => (a.returned ? 1 : 0) - (b.returned ? 1 : 0)));
-        setTotalPages(res.data.totalPages ?? 1);
+        const sorted = [...content].sort((a, b) => (a.returned ? 1 : 0) - (b.returned ? 1 : 0));
+        setAllItems(sorted);
         setItemsKey((k) => k + 1);
       })
       .catch(() => {
-        setItems([]);
-        setTotalPages(1);
+        setAllItems([]);
       });
-  }, [selectedDate, currentPage, pageSize, query, refreshKey]);
+  }, [selectedDate, query, refreshKey]);
+
+  const totalPages = Math.max(1, Math.ceil(allItems.length / pageSize));
+  const items = allItems.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const handleDateChange = (value) => {
     setSelectedDate(value);
@@ -182,7 +199,7 @@ export default function LostItem() {
           {Array.from({ length: pageSize }, (_, i) =>
             items[i] ? (
               <div
-                key={`${itemsKey}-${i}`}
+                key={`${itemsKey}-${currentPage}-${i}`}
                 className="flex-1 min-h-0 overflow-hidden"
                 style={{
                   opacity: 0,
@@ -193,7 +210,9 @@ export default function LostItem() {
                 <LostItemCard
                   item={items[i]}
                   className="w-full h-full"
-                  onClick={(item) => navigate(`/lost-items/${item.id}`)}
+                  onClick={(item) =>
+                    navigate(`/lost-items/${item.id}`, { state: { fromPage: currentPage } })
+                  }
                   isAdmin={isLoggedIn}
                   onManage={(item) => {
                     setManagingItem(item);
@@ -224,7 +243,7 @@ export default function LostItem() {
 
       {/* 로그아웃 모달 */}
       {showLogoutModal && (
-        <div className="absolute inset-0 z-[70] flex items-center justify-center bg-black/50 px-[1.5rem]">
+        <div className="absolute inset-0 z-[70] flex items-center justify-center bg-black/50 px-[1.75rem]">
           <div
             className="flex flex-col items-center gap-[1.5rem] overflow-hidden"
             style={{
@@ -278,6 +297,7 @@ export default function LostItem() {
                     /* 실패해도 로컬 토큰 제거 */
                   }
                   localStorage.removeItem('accessToken');
+                  setIsLoggedIn(false);
                   setShowLogoutModal(false);
                 }}
                 className="flex-1 bg-[#7D2A25] text-[#FFFFFF] text-[0.875rem] font-semibold [font-family:Pretendard]"
@@ -301,7 +321,7 @@ export default function LostItem() {
 
       {/* 로그인 모달 */}
       {showLoginModal && (
-        <div className="absolute inset-0 z-[70] flex items-center justify-center bg-black/50 px-[1.5rem]">
+        <div className="absolute inset-0 z-[70] flex items-center justify-center bg-black/50 px-[1.75rem]">
           <div className="w-full bg-[#2e2e2e] px-[2rem] py-[2.5rem] flex flex-col items-center gap-[1.5rem]">
             <div className="flex flex-col items-center gap-[0.375rem]">
               <p
@@ -407,7 +427,7 @@ export default function LostItem() {
 
       {/* 삭제 확인 모달 */}
       {showDeleteConfirm && (
-        <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/50 px-[1.25rem]">
+        <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/50 px-[1.75rem]">
           <div
             className="w-full flex flex-col items-center gap-[1.25rem]"
             style={{
@@ -488,7 +508,7 @@ export default function LostItem() {
       {/* 관리 모달 */}
       {managingItem && !showDeleteConfirm && (
         <div
-          className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 px-[1.25rem]"
+          className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 px-[1.75rem]"
           onClick={() => setManagingItem(null)}
         >
           <div
@@ -540,6 +560,7 @@ export default function LostItem() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  marginBottom: '4px',
                 }}
               >
                 삭제
@@ -556,7 +577,7 @@ export default function LostItem() {
             <div className="flex flex-col" style={{ gap: '12px' }}>
               <div
                 className="flex overflow-hidden"
-                style={{ boxShadow: 'inset 0 0 0 1px #A0A0A0' }}
+                style={{ boxShadow: 'inset 0 0 0 1px #A0A0A0', marginBottom: '4px' }}
               >
                 <button
                   type="button"
@@ -590,13 +611,16 @@ export default function LostItem() {
                 onClick={async () => {
                   try {
                     await updateLostItemStatus(managingItem.id, claimStatus === 'claimed');
-                    setItems((prev) =>
-                      prev.map((it) =>
+                    setAllItems((prev) => {
+                      const updated = prev.map((it) =>
                         it.id === managingItem.id
                           ? { ...it, returned: claimStatus === 'claimed' }
                           : it
-                      )
-                    );
+                      );
+                      return [...updated].sort(
+                        (a, b) => (a.returned ? 1 : 0) - (b.returned ? 1 : 0)
+                      );
+                    });
                     setToast({ visible: true, message: '저장되었습니다', duration: 1500 });
                   } catch {
                     setToast({

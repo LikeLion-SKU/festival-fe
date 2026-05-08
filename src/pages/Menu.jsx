@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 
+import HorseRedIcon from '@/assets/icons/horse-red.svg';
 import HorseIcon from '@/assets/icons/horse.svg';
 import InstagramIcon from '@/assets/icons/instagram.svg?react';
 import LinkIcon from '@/assets/icons/link.svg';
@@ -9,10 +10,6 @@ import BgMadeByTop1 from '@/assets/images/bg-madeby-top-1.png';
 import BgMadeByTop2 from '@/assets/images/bg-madeby-top-2.png';
 import TitleLogo from '@/assets/images/title-logo.svg';
 import MenuButton from '@/components/common/Button/MenuButton';
-
-/** 말발굽 아이콘 main-red500 컬러로 변경 */
-const RED_ICON_FILTER =
-  'brightness(0) saturate(100%) invert(37%) sepia(43%) saturate(4458%) hue-rotate(336deg) brightness(92%) contrast(89%)';
 
 /** 멋사 홈페이지 및 인스타그램 주소 */
 const LIKELION_HOME_URL = 'https://skulikelion.com/';
@@ -39,16 +36,15 @@ const MENU_ROW_LABEL_PRESSED =
 function MenuHorseIcon({ variant }) {
   return (
     <img
-      src={HorseIcon}
+      src={variant === 'outline' ? HorseRedIcon : HorseIcon}
       alt=""
       aria-hidden="true"
       className="h-5 w-[1.1875rem] shrink-0 object-contain"
-      style={variant === 'outline' ? { filter: RED_ICON_FILTER } : undefined}
     />
   );
 }
 
-/** 기본은 빨간 실루엣, 누르면 원본 아이콘으로 변함 */
+/** 기본은 C43A31 실루엣, 누르면 흰색 아이콘으로 변함 */
 function MenuRowHorseIcons() {
   return (
     <span
@@ -56,10 +52,9 @@ function MenuRowHorseIcons() {
       aria-hidden
     >
       <img
-        src={HorseIcon}
+        src={HorseRedIcon}
         alt=""
         className="absolute max-h-full max-w-full object-contain opacity-100 transition-opacity duration-150 ease-out group-[&:active]:opacity-0"
-        style={{ filter: RED_ICON_FILTER }}
       />
       <img
         src={HorseIcon}
@@ -70,8 +65,13 @@ function MenuRowHorseIcons() {
   );
 }
 
+const MENU_ROW_BTN_CURRENT =
+  'relative flex w-full overflow-hidden border border-solid border-[#c43a31] bg-[#c43a31] px-4 py-3 shadow-[inset_0_-2px_3.5px_rgba(0,0,0,0.25),inset_0_2px_2px_rgba(255,255,255,0.25)] cursor-default pointer-events-none md:py-[0.875rem]';
+
 export default function Menu() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const fromPath = location.state?.from ?? null;
   const [madeByNavigating, setMadeByNavigating] = useState(false);
 
   useEffect(() => {
@@ -155,12 +155,21 @@ export default function Menu() {
 
           <div className="flex w-full shrink-0 flex-col gap-5 md:gap-7">
             <div className="flex flex-col gap-1.5">
-              <Link to="/" className={`${MENU_ROW_BTN} ${MENU_ROW_BTN_ACTIVE}`}>
-                <span className="flex flex-1 items-center justify-center gap-[0.625rem]">
-                  <MenuRowHorseIcons />
-                  <span className={MENU_ROW_LABEL}>메인 화면</span>
-                </span>
-              </Link>
+              {fromPath === '/' ? (
+                <div className={MENU_ROW_BTN_CURRENT} aria-current="page">
+                  <span className="flex flex-1 items-center justify-center gap-[0.625rem]">
+                    <MenuHorseIcon variant="filled" />
+                    <span className={MENU_ROW_LABEL_PRESSED}>메인 화면</span>
+                  </span>
+                </div>
+              ) : (
+                <Link to="/" className={`${MENU_ROW_BTN} ${MENU_ROW_BTN_ACTIVE}`}>
+                  <span className="flex flex-1 items-center justify-center gap-[0.625rem]">
+                    <MenuRowHorseIcons />
+                    <span className={MENU_ROW_LABEL}>메인 화면</span>
+                  </span>
+                </Link>
+              )}
 
               <Link to="/booth-map" className={`${MENU_ROW_BTN} ${MENU_ROW_BTN_ACTIVE}`}>
                 <span className="flex flex-1 items-center justify-center gap-[0.625rem]">
@@ -178,27 +187,36 @@ export default function Menu() {
             </div>
 
             <div className="flex flex-col gap-[max(2rem,calc(1rem+2.5dvh))] md:gap-[max(3.5rem,calc(1.75rem+3.5dvh))]">
-              <button
-                type="button"
-                aria-busy={madeByNavigating}
-                disabled={madeByNavigating}
-                onClick={() => {
-                  if (madeByNavigating) return;
-                  setMadeByNavigating(true);
-                  window.setTimeout(() => navigate('/made-by'), MADE_BY_NAV_DELAY_MS);
-                }}
-                className={[
-                  MENU_ROW_BTN,
-                  madeByNavigating ? `${MENU_ROW_BTN_PRESSED} cursor-wait` : MENU_ROW_BTN_ACTIVE,
-                ].join(' ')}
-              >
-                <span className="flex flex-1 items-center justify-center gap-[0.625rem]">
-                  {madeByNavigating ? <MenuHorseIcon variant="filled" /> : <MenuRowHorseIcons />}
-                  <span className={madeByNavigating ? MENU_ROW_LABEL_PRESSED : MENU_ROW_LABEL}>
-                    제작자 보러가기
+              {fromPath === '/made-by' ? (
+                <div className={MENU_ROW_BTN_CURRENT} aria-current="page">
+                  <span className="flex flex-1 items-center justify-center gap-[0.625rem]">
+                    <MenuHorseIcon variant="filled" />
+                    <span className={MENU_ROW_LABEL_PRESSED}>제작자 보러가기</span>
                   </span>
-                </span>
-              </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  aria-busy={madeByNavigating}
+                  disabled={madeByNavigating}
+                  onClick={() => {
+                    if (madeByNavigating) return;
+                    setMadeByNavigating(true);
+                    window.setTimeout(() => navigate('/made-by'), MADE_BY_NAV_DELAY_MS);
+                  }}
+                  className={[
+                    MENU_ROW_BTN,
+                    madeByNavigating ? `${MENU_ROW_BTN_PRESSED} cursor-wait` : MENU_ROW_BTN_ACTIVE,
+                  ].join(' ')}
+                >
+                  <span className="flex flex-1 items-center justify-center gap-[0.625rem]">
+                    {madeByNavigating ? <MenuHorseIcon variant="filled" /> : <MenuRowHorseIcons />}
+                    <span className={madeByNavigating ? MENU_ROW_LABEL_PRESSED : MENU_ROW_LABEL}>
+                      제작자 보러가기
+                    </span>
+                  </span>
+                </button>
+              )}
 
               <div className="flex flex-nowrap -translate-x-1 -translate-y-3 items-center justify-center gap-x-[max(1.25rem,calc(0.75rem+2dvh))] px-0.5 md:-translate-x-1.5 md:-translate-y-0.5 md:gap-x-[max(1rem,calc(0.625rem+2.5dvh))]">
                 <a

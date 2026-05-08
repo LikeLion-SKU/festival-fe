@@ -197,14 +197,41 @@ function PersonGrid({ members }) {
 
 export default function MadeBy() {
   const navigate = useNavigate();
+  const [hasScrolled, setHasScrolled] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => setHasScrolled(true), 4200);
+    const onScroll = () => {
+      if (window.scrollY >= document.documentElement.scrollHeight * 0.05) {
+        setHasScrolled(true);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, []);
+
   return (
     <div className="min-h-dvh bg-[#161616]">
-      <style>{ANIMATION_STYLE}</style>
+      <style>
+        {ANIMATION_STYLE}
+        {`
+        @keyframes hint-float-down {
+          0%   { opacity: 0;   transform: translateY(-4px); }
+          40%  { opacity: 0.9; transform: translateY(0px); }
+          70%  { opacity: 0.9; transform: translateY(0px); }
+          100% { opacity: 0;   transform: translateY(4px); }
+        }
+        .hint-down-1 { animation: hint-float-down 1.5s ease-in-out infinite; }
+        .hint-down-2 { animation: hint-float-down 1.5s ease-in-out infinite 0.22s; }
+      `}
+      </style>
       <div className="relative mx-auto w-full max-w-[450px] min-h-dvh">
         <PageHeader to="/" className="z-20" />
 
@@ -288,7 +315,7 @@ export default function MadeBy() {
         </div>
 
         {/* PROJECT LEADER */}
-        <section className="px-[2rem] pt-[7.5rem] pb-[2rem]">
+        <section className="px-[3rem] pt-[7.5rem] pb-[2rem]">
           <ScrollFade>
             <SectionHeader title="PROJECT LEADER" />
             <PersonGrid members={PROJECT_LEADER} />
@@ -296,7 +323,7 @@ export default function MadeBy() {
         </section>
 
         {/* PRODUCT OWNER */}
-        <section className="relative px-[2rem] pt-[6.25rem] pb-[2rem]">
+        <section className="relative px-[3rem] pt-[6.25rem] pb-[2rem]">
           <img
             src={BgMadeByMid1}
             alt=""
@@ -324,7 +351,7 @@ export default function MadeBy() {
         </section>
 
         {/* FRONTEND DEV */}
-        <section className="relative px-[2rem] pt-[6.25rem] pb-[2rem]">
+        <section className="relative px-[3rem] pt-[6.25rem] pb-[2rem]">
           <img
             src={BgMadeByMiddle1}
             alt=""
@@ -352,7 +379,7 @@ export default function MadeBy() {
         </section>
 
         {/* BACKEND DEV */}
-        <section className="relative px-[2rem] pt-[6.25rem] pb-[2rem]">
+        <section className="relative px-[3rem] pt-[6.25rem] pb-[2rem]">
           <img
             src={BgMadeByBottom}
             alt=""
@@ -402,7 +429,13 @@ export default function MadeBy() {
         <section className="px-[2rem] pt-[7.5rem] pb-[6.75rem]">
           <ScrollFade>
             <SectionHeader
-              title="For Students, By Students Student Affairs Office"
+              title={
+                <>
+                  For Students, By Students
+                  <br />
+                  Student Affairs Office
+                </>
+              }
               subtitle="학생을 위해, 학생처가 함께 만들었습니다"
             />
             <div className="mt-[3rem] grid grid-cols-2 gap-x-[0.5rem] gap-y-[1.5rem]">
@@ -422,8 +455,46 @@ export default function MadeBy() {
 
         <Footer />
       </div>
-      <div className="fixed z-50 left-1/2 -translate-x-1/2" style={{ bottom: '2.75rem' }}>
-        <MenuButton onClick={() => navigate('/menu')} />
+      <div
+        className="fixed z-[100] left-1/2 flex flex-col items-center gap-1 pointer-events-none"
+        style={{
+          bottom: '3.5rem',
+          transform: 'translateX(-50%)',
+          opacity: hasScrolled ? 0 : 1,
+          transition: 'opacity 0.4s ease',
+        }}
+        aria-hidden
+      >
+        <svg className="hint-down-1" width="20" height="12" viewBox="0 0 20 12" fill="none">
+          <polyline
+            points="2,2 10,10 18,2"
+            stroke="white"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        <svg className="hint-down-2" width="20" height="12" viewBox="0 0 20 12" fill="none">
+          <polyline
+            points="2,2 10,10 18,2"
+            stroke="white"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+      <div
+        className="fixed z-[100] left-1/2"
+        style={{
+          bottom: '2.75rem',
+          transform: `translateX(-50%) translateY(${hasScrolled ? '0px' : '10px'})`,
+          opacity: hasScrolled ? 1 : 0,
+          pointerEvents: hasScrolled ? 'auto' : 'none',
+          transition: 'opacity 0.5s ease, transform 0.5s ease',
+        }}
+      >
+        <MenuButton onClick={() => navigate('/menu', { state: { from: '/made-by' } })} />
       </div>
     </div>
   );

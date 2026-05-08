@@ -11,6 +11,7 @@ import {
   MAIN_SECTION_ICON_SCROLL_FADE,
   useScrollDrivenOpacity,
 } from '@/components/animation/useScrollDrivenOpacity';
+import ArrowButton from '@/components/common/Button/ArrowButton';
 import { BOOTH_CARDS, BUILDINGS } from '@/constants/mainDummyData';
 
 const MAIN_BOOTH_CARDS_PER_BUILDING = 4;
@@ -120,6 +121,7 @@ function BoothCard({ image, subtitle, title }) {
 export default function Booth() {
   const navigate = useNavigate();
   const [activeBuildingId, setActiveBuildingId] = useState(BUILDINGS[0].id);
+  const activeBuildingIndex = BUILDINGS.findIndex((b) => b.id === activeBuildingId);
   const iconBlockRef = useRef(null);
   const cardsGridRef = useRef(null);
   const hasCardsGridEnteredRef = useRef(false);
@@ -137,6 +139,24 @@ export default function Booth() {
       settleTimerRef.current = null;
     }, 300);
   }, []);
+
+  const goToPrevBuilding = useCallback(() => {
+    setActiveBuildingId((prev) => {
+      const idx = BUILDINGS.findIndex((b) => b.id === prev);
+      if (idx <= 0) return prev;
+      if (hasCardsGridEnteredRef.current) runCardsEntrance();
+      return BUILDINGS[idx - 1].id;
+    });
+  }, [runCardsEntrance]);
+
+  const goToNextBuilding = useCallback(() => {
+    setActiveBuildingId((prev) => {
+      const idx = BUILDINGS.findIndex((b) => b.id === prev);
+      if (idx >= BUILDINGS.length - 1) return prev;
+      if (hasCardsGridEnteredRef.current) runCardsEntrance();
+      return BUILDINGS[idx + 1].id;
+    });
+  }, [runCardsEntrance]);
 
   const visibleCards = useMemo(
     () =>
@@ -206,8 +226,8 @@ export default function Booth() {
         <img src={DesertBg} alt="" aria-hidden="true" className="-mt-[20rem] w-full object-cover" />
       </div>
 
-      <div className="relative z-10 mx-auto flex w-full flex-col items-center gap-4">
-        <div className="flex flex-col items-center gap-6">
+      <div className="relative z-10 mx-auto flex w-full max-w-[450px] flex-col items-center gap-4">
+        <div className="flex w-full flex-col items-center gap-6">
           <div
             ref={iconBlockRef}
             style={{ opacity: iconOpacity, willChange: 'opacity' }}
@@ -237,7 +257,7 @@ export default function Booth() {
                     if (hasCardsGridEnteredRef.current) runCardsEntrance();
                   }}
                   className={clsx(
-                    'h-9 w-[clamp(2.2rem,14.5vw,3.5rem)] min-w-0 border border-solid border-white px-1 text-center text-[clamp(0.62rem,2.65vw,0.75rem)] tracking-[-0.01875rem] whitespace-nowrap transition-colors sm:px-3',
+                    'h-9 w-[clamp(2.2rem,14.5vw,3.5rem)] min-w-0 border border-solid border-white px-1 text-center text-[clamp(0.62rem,2.65vw,0.75rem)] tracking-[-0.01875rem] whitespace-nowrap transition-colors',
                     active
                       ? 'bg-white font-bold text-[#141414]'
                       : 'bg-transparent font-medium text-white'
@@ -250,39 +270,55 @@ export default function Booth() {
           </div>
         </div>
 
-        <div
-          className="transform-gpu will-change-[opacity]"
-          style={{
-            opacity: isCardsSettled ? undefined : BOOTH_STACKED_GROUP_OPACITY,
-            animation: isCardsSettled
-              ? `booth-card-spread-opacity ${BOOTH_SPREAD_MS}ms ${BOOTH_SPREAD_EASE} 0ms both`
-              : 'none',
-          }}
-        >
-          <div ref={cardsGridRef} className="grid w-full grid-cols-2 gap-x-4 gap-y-4">
-            {visibleCards.map((card, index) => (
-              <div key={card.id} className="transform-gpu">
-                <div
-                  style={{
-                    '--booth-from-transform': getBoothCardCenterTransform(index),
-                    willChange: 'transform',
-                    transform: isCardsSettled ? undefined : getBoothCardCenterTransform(index),
-                    animation: isCardsSettled
-                      ? `booth-card-spread-transform ${BOOTH_SPREAD_MS}ms ${BOOTH_SPREAD_EASE} ${getBoothCardScatterDelayMs(index)}ms both`
-                      : 'none',
-                  }}
-                >
-                  <BoothCard image={card.image} subtitle={card.subtitle} title={card.title} />
+        <div className="relative w-full">
+          <div
+            className="transform-gpu will-change-[opacity]"
+            style={{
+              opacity: isCardsSettled ? undefined : BOOTH_STACKED_GROUP_OPACITY,
+              animation: isCardsSettled
+                ? `booth-card-spread-opacity ${BOOTH_SPREAD_MS}ms ${BOOTH_SPREAD_EASE} 0ms both`
+                : 'none',
+            }}
+          >
+            <div ref={cardsGridRef} className="grid w-full grid-cols-2 gap-x-4 gap-y-4">
+              {visibleCards.map((card, index) => (
+                <div key={card.id} className="transform-gpu">
+                  <div
+                    style={{
+                      '--booth-from-transform': getBoothCardCenterTransform(index),
+                      willChange: 'transform',
+                      transform: isCardsSettled ? undefined : getBoothCardCenterTransform(index),
+                      animation: isCardsSettled
+                        ? `booth-card-spread-transform ${BOOTH_SPREAD_MS}ms ${BOOTH_SPREAD_EASE} ${getBoothCardScatterDelayMs(index)}ms both`
+                        : 'none',
+                    }}
+                  >
+                    <BoothCard image={card.image} subtitle={card.subtitle} title={card.title} />
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          <div className="absolute inset-0 flex items-center justify-between pointer-events-none">
+            <div className="pointer-events-auto -ml-4 w-[40px] h-[40px] flex items-center justify-center">
+              {activeBuildingIndex > 0 && (
+                <ArrowButton direction="left" onClick={goToPrevBuilding} ariaLabel="이전 건물" />
+              )}
+            </div>
+            <div className="pointer-events-auto -mr-4 w-[40px] h-[40px] flex items-center justify-center">
+              {activeBuildingIndex < BUILDINGS.length - 1 && (
+                <ArrowButton direction="right" onClick={goToNextBuilding} ariaLabel="다음 건물" />
+              )}
+            </div>
           </div>
         </div>
-
+      </div>
+      <div className="relative z-10 mx-[1.15625rem] mt-4">
         <button
           type="button"
           onClick={() => navigate('/booth-map')}
-          className="mt-4 flex h-[3.25rem] w-full shrink-0 items-center justify-center border border-solid border-white bg-[rgba(255,255,255,0.12)] px-4 py-[0.875rem] text-base font-semibold leading-6 tracking-[-0.025rem] text-white shadow-[1px_1px_0px_rgba(0,0,0,0.12)] backdrop-blur-[5px] backdrop-saturate-85"
+          className="flex h-[3.25rem] w-full shrink-0 items-center justify-center border border-solid border-white bg-[rgba(255,255,255,0.12)] px-4 py-[0.875rem] text-base font-semibold leading-6 tracking-[-0.025rem] text-white shadow-[1px_1px_0px_rgba(0,0,0,0.12)] backdrop-blur-[5px] backdrop-saturate-85"
         >
           한눈에 보기
         </button>

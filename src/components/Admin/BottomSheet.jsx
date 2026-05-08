@@ -33,7 +33,6 @@ export default function BottomSheet({
                 color={buttonColor}
                 buttonName={buttonName}
                 onClick={onButtonClick}
-                textSize="16px"
               />
             )}
           </div>

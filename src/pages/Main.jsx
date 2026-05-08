@@ -18,7 +18,16 @@ export default function Main() {
 
   useEffect(() => {
     const timer = setTimeout(() => setHasScrolled(true), 4200);
-    return () => clearTimeout(timer);
+    const onScroll = () => {
+      if (window.scrollY >= document.documentElement.scrollHeight * 0.05) {
+        setHasScrolled(true);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', onScroll);
+    };
   }, []);
 
   return (
@@ -90,7 +99,7 @@ export default function Main() {
           transition: 'opacity 0.5s ease, transform 0.5s ease',
         }}
       >
-        <MenuButton onClick={() => navigate('/menu')} />
+        <MenuButton onClick={() => navigate('/menu', { state: { from: '/' } })} />
       </div>
     </div>
   );
