@@ -32,7 +32,6 @@ const LINEUP_IGNORE_DRAG_AFTER_NAV_MS = 480;
 
 /**
  * id 순서 기준으로 카드 배치
- * 왼쪽/오른쪽 버튼 클릭 시 방향 전환
  */
 function slotsFromIdRing(navIds, centerCursor, itemById, swapSideNeighbors = false) {
   const n = navIds.length;
@@ -71,8 +70,11 @@ function sortSlotsStable(slots) {
 }
 
 function LineupCardFace({ item }) {
-  const starWrapperClass = 'right-[12rem] top-[2.35rem] h-[8.9rem] w-[8.9rem]';
+  const starWrapperClass = 'right-[13rem] top-[2.35rem] h-[8.9rem] w-[8.9rem]';
   const starTextTiltClass = '-rotate-[7deg]';
+  const imageOffsetX = item.imageOffsetX ?? '0.4rem';
+  const imageOffsetY = item.imageOffsetY ?? '4.0rem';
+  const imageScale = item.imageScale ?? 2.79;
 
   return (
     <div className="relative h-[19.5rem] w-[19.5rem]">
@@ -88,7 +90,14 @@ function LineupCardFace({ item }) {
           src={item.image}
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 h-full w-full scale-[2.79] translate-y-[4.0rem] translate-x-[0.4rem] object-contain object-bottom"
+          loading="eager"
+          decoding="sync"
+          className="absolute inset-0 h-full w-full scale-[var(--lineup-image-scale)] translate-y-[var(--lineup-image-offset-y)] translate-x-[var(--lineup-image-offset-x)] object-contain object-bottom"
+          style={{
+            '--lineup-image-offset-x': imageOffsetX,
+            '--lineup-image-offset-y': imageOffsetY,
+            '--lineup-image-scale': imageScale,
+          }}
         />
       </div>
 
@@ -153,6 +162,20 @@ export default function Lineup() {
     return m;
   }, []);
 
+  useEffect(() => {
+    // 화살표 전환 시 깜빡임을 줄이기 위해 라인업 이미지를 선로딩한다.
+    const allImages = LINEUP_DAY_GROUPS.flatMap((group) =>
+      group.items.map((item) => item.image).filter(Boolean)
+    );
+    const uniqueImages = [...new Set(allImages)];
+
+    uniqueImages.forEach((src) => {
+      const img = new Image();
+      img.decoding = 'sync';
+      img.src = src;
+    });
+  }, []);
+
   const [pressedLeft, setPressedLeft] = useState(false);
   const [pressedRight, setPressedRight] = useState(false);
   const pressLeftTimerRef = useRef(null);
@@ -168,7 +191,7 @@ export default function Lineup() {
     cursorRight: 0,
   }));
 
-  /** 버튼 혹은 스와이프 전에는 DAY 2 안에서만 자동 순환 — 버튼 없이 DAY 3으로 넘어가지 않음 */
+  /** 버튼 혹은 스와이프 전에는 DAY 2 가 디폴트임 */
   const navIds = laneNav.arrowOrSwipeUsed
     ? laneNav.activeLane === 'left'
       ? leftNavIds
@@ -181,10 +204,8 @@ export default function Lineup() {
     : laneNav.fullAutoCursor;
   const total = navIds.length;
 
-  const centerId = navIds[((centerCursor % total) + total) % total];
-  const swapSideNeighbors = laneNav.arrowOrSwipeUsed
-    ? laneNav.activeLane === 'right'
-    : rightNavIds.includes(centerId);
+  /** DAY 2는 슬롯 미러링 → 커서 +1 이어도 다음 카드가 왼쪽에서 들어와 반시계 느낌. DAY 3은 미러링 끔 → +1 이 시계 방향. id 순서는 항상 배열 순서(1→2→3, 4→5→6). */
+  const swapSideNeighbors = laneNav.arrowOrSwipeUsed ? laneNav.activeLane === 'left' : true;
   const stageRef = useRef(null);
   const cardMeasureRef = useRef(null);
   const [layoutMetrics, setLayoutMetrics] = useState(() => ({
@@ -253,7 +274,7 @@ export default function Lineup() {
   const actualCenterLeft = layoutMetrics.stage / 2 - layoutMetrics.card / 2;
   const stageShiftX = actualCenterLeft - designCenterLeft;
 
-  /** 왼쪽 UI: 같은 레인일 때만 1→2→3. 오른쪽에서 넘어오면 항상 id 1부터 */
+  /** 왼쪽 UI(DAY 2): 같은 레인일 때 커서 +1 → 중앙 id 1→2→3, 회전은 반시계 느낌(swap). 오른쪽에서 넘어오면 id 1부터 */
   const handleLeftLaneNav = () => {
     setLaneNav((s) => {
       if (!s.arrowOrSwipeUsed) {
@@ -279,7 +300,7 @@ export default function Lineup() {
     });
   };
 
-  /** 오른쪽 UI: 같은 레인일 때만 4→5→6. 왼쪽에서 넘어오면 항상 id 4부터 */
+  /** 오른쪽 UI(DAY 3): 같은 레인일 때 커서 +1 → 중앙 id 4→5→6, 회전은 시계 방향(swap 끔). 왼쪽에서 넘어오면 id 4부터 */
   const handleRightLaneNav = () => {
     setLaneNav((s) => {
       if (!s.arrowOrSwipeUsed) {
