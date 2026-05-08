@@ -22,7 +22,7 @@ const EVACUATION_ROWS = [
   '혜인관, 은주관 사이 대일외고 방향',
 ];
 
-const AMBULANCE_ROWS = ['북악관 앞', '목요일 19:00~23:00', '금요일 20:00~24:00'];
+const AMBULANCE_ROWS = ['대일관 계단 앞 안전본부', '목요일 19:00~23:00', '금요일 20:00~24:00'];
 
 export default function Safety() {
   const iconBlockRef = useRef(null);
@@ -121,7 +121,7 @@ export default function Safety() {
         <div className="pt-[1.61rem] pb-[1.15rem]">
           <div className="grid grid-cols-[6.1rem_1fr] items-start gap-x-[0.8rem]">
             <p className="whitespace-nowrap pt-[0.4rem] pl-[1rem] text-left text-[0.875rem] font-extrabold leading-[1.35] tracking-[-0.01rem] text-white [font-family:Pretendard]">
-              응급차 대기 안내
+              응급진료소 안내
             </p>
             <div className="pl-[1.3rem] mt-[0.4rem] text-left text-[0.75rem] font-semibold leading-[1.7] tracking-[-0.01rem] text-white [font-family:Pretendard]">
               {AMBULANCE_ROWS.map((line) => (

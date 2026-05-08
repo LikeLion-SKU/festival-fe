@@ -49,7 +49,7 @@ const BACKEND_DEV = [
 ];
 
 const COUNCIL_MEMBERS = [
-  { name: '한영균', role: '학생과 처장' },
+  { name: '한영균', role: '학생처 처장' },
   { name: '방효영', role: '학생과 과장' },
   { name: '김영규', role: '학생과 직원' },
   { name: '김훈이', role: '학생과 직원' },
