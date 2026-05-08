@@ -64,6 +64,12 @@ export default function AdminMain() {
   const selected = NAV_ITEMS.find((item) => location.pathname.startsWith(item.goto))?.key ?? 'wait';
 
   const [counts, setCounts] = useState(INITIAL_COUNTS);
+  const pendingIdsRef = useRef({
+    wait: new Set(),
+    cook: new Set(),
+    complete: new Set(),
+    cancel: new Set(),
+  });
   const selectedRef = useRef(selected);
   const outerScrollRef = useRef(null);
   const [pageScrollEl, setPageScrollEl] = useState(null);
@@ -83,23 +89,43 @@ export default function AdminMain() {
     });
   }, [setHeaderConfig]);
 
-  // 자식 페이지에서 SSE orderNotification 수신 시 호출
-  const notifyOrderStatus = useCallback((orderStatus) => {
+  // SSE orderIncrementNotification 수신 시 호출 — 카운트 +1, 미확인 id Set에 추가
+  const addPendingOrder = useCallback((orderStatus, orderId) => {
     const key = STATUS_TO_KEY[orderStatus];
     if (!key) return;
     if (key === selectedRef.current) return;
-    setCounts((prev) => ({ ...prev, [key]: prev[key] + 1 }));
+    const set = pendingIdsRef.current[key];
+    if (set.has(orderId)) return;
+    set.add(orderId);
+    setCounts((prev) => ({ ...prev, [key]: (prev[key] ?? 0) + 1 }));
   }, []);
 
-  // 자식 페이지가 mount될 때 호출하여 본인 탭 카운트를 0으로 비움
+  // SSE orderDecrementNotification 수신 시 호출 — 미확인 id Set에 있을 때만 카운트 -1, id 제거
+  const removePendingOrder = useCallback((orderStatus, orderId) => {
+    const key = STATUS_TO_KEY[orderStatus];
+    if (!key) return;
+    const set = pendingIdsRef.current[key];
+    if (!set?.has(orderId)) return;
+    set.delete(orderId);
+    setCounts((prev) => ({ ...prev, [key]: Math.max(0, (prev[key] ?? 0) - 1) }));
+  }, []);
+
+  // 자식 페이지가 mount될 때 호출하여 본인 탭 카운트와 미확인 id Set을 비움
   const clearCount = useCallback((key) => {
     if (!key) return;
+    pendingIdsRef.current[key]?.clear();
     setCounts((prev) => (prev[key] ? { ...prev, [key]: 0 } : prev));
   }, []);
 
   const childContext = useMemo(
-    () => ({ ...context, notifyOrderStatus, clearCount, setScrollContainer: setPageScrollEl }),
-    [context, notifyOrderStatus, clearCount]
+    () => ({
+      ...context,
+      addPendingOrder,
+      removePendingOrder,
+      clearCount,
+      setScrollContainer: setPageScrollEl,
+    }),
+    [context, addPendingOrder, removePendingOrder, clearCount]
   );
 
   const moveToMenu = (item) => {

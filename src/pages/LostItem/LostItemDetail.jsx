@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 
 import { getLostItemDetail } from '@/api/lostItem';
 import backgroundImg from '@/assets/images/about-fire2.svg';
@@ -25,6 +25,9 @@ function formatDate(foundDate, dayOfWeek) {
 
 export default function LostItemDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const fromPage = location.state?.fromPage ?? 1;
   const [item, setItem] = useState(null);
   const [imgIndex, setImgIndex] = useState(0);
 
@@ -61,11 +64,14 @@ export default function LostItemDetail() {
         backgroundColor: '#0d0d0d',
       }}
     >
-      <PageHeader title="분실물" />
+      <PageHeader
+        title="분실물"
+        onBack={() => navigate('/lost-items', { state: { page: fromPage } })}
+      />
 
       <div className="flex-1 flex flex-col pt-[8rem] px-[1.25rem]">
         {/* 이미지 캐러셀 */}
-        <div className="relative w-full aspect-square">
+        <div className="relative w-full aspect-square shrink-0 overflow-hidden">
           <div
             className="w-full h-full overflow-hidden bg-white/10"
             onTouchStart={handleTouchStart}

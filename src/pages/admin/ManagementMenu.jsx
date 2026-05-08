@@ -398,14 +398,14 @@ export default function MenuManagement() {
           <WarningIcon style={{ width: '36px', height: '36px' }} />
           <div className="flex flex-col items-center gap-1.5">
             <p
-              className="font-medium text-[#1A1A1A]"
-              style={{ fontSize: '20px', lineHeight: '28px', letterSpacing: '-1%' }}
+              className="font-semibold text-[#1A1A1A] [font-family:Pretendard]"
+              style={{ fontSize: '20px', lineHeight: '28px', letterSpacing: '-0.01em' }}
             >
               이 메뉴를 품절 처리할까요?
             </p>
             <p
-              className="font-semibold text-[#FE5F54]"
-              style={{ fontSize: '20px', lineHeight: '28px', letterSpacing: '-1%' }}
+              className="font-semibold text-[#FE5F54] [font-family:Pretendard]"
+              style={{ fontSize: '20px', lineHeight: '28px', letterSpacing: '-0.01em' }}
             >
               손님에게 품절로 표시돼요
             </p>

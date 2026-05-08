@@ -34,7 +34,7 @@ export default function LostItemCard({ item, onClick, onManage, isAdmin, classNa
       }}
     >
       {/* 썸네일 */}
-      <div className="relative shrink-0 w-[9.375rem] h-full overflow-hidden bg-white/10">
+      <div className="relative shrink-0 w-[calc(100%-12.5rem)] h-full overflow-hidden bg-white/10">
         {item.imageUrl ? (
           <img
             src={item.imageUrl}
@@ -49,10 +49,10 @@ export default function LostItemCard({ item, onClick, onManage, isAdmin, classNa
         )}
         {item.returned && (
           <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-[0.5rem]">
-            <img src={horseImg} alt="수령 완료" className="w-[3rem] h-[3rem]" />
+            <img src={horseImg} alt="수령 완료" className="w-[1.75rem] h-[1.75rem]" />
             <p
-              className="text-white text-[0.75rem] font-bold"
-              style={{ letterSpacing: '-0.025em' }}
+              className="text-[#FFFFFF] text-[0.8125rem] font-semibold [font-family:Pretendard]"
+              style={{ lineHeight: '20px', letterSpacing: '0' }}
             >
               주인이 찾아갔어요!
             </p>
@@ -62,7 +62,7 @@ export default function LostItemCard({ item, onClick, onManage, isAdmin, classNa
 
       {/* 정보 */}
       <div
-        className={`flex-1 min-w-0 bg-black/20 pl-[1rem] flex flex-col justify-center gap-[0.375rem] ${isAdmin ? 'pr-[4rem]' : 'pr-[1rem]'}`}
+        className={`w-[12.5rem] shrink-0 bg-black/20 pl-[1rem] flex flex-col justify-center gap-[0.375rem] ${isAdmin ? 'pr-[4rem]' : 'pr-[1rem]'}`}
       >
         <p
           className="text-[#A0A0A0] text-[0.875rem] font-bold"
