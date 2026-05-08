@@ -171,8 +171,10 @@ function CustomerInfo() {
           }
         }}
       >
-        <p className="font-medium">주문을 요청할까요?</p>
-        <p className="font-medium">주문 요청 후에는 취소가 불가능해요.</p>
+        <div className="flex flex-col gap-px">
+          <div className="font-medium">주문을 요청할까요?</div>
+          <div className="font-medium">주문 요청 후에는 취소가 불가능해요.</div>
+        </div>
       </Modal>
       <Toast
         visible={errorToast.visible}
