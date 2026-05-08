@@ -145,10 +145,13 @@ function CustomerInfo() {
               })),
             });
             sessionStorage.removeItem('orderCustomerInfo');
-            sessionStorage.removeItem('orderResponse');
             sessionStorage.removeItem('orderQuantities');
             sessionStorage.removeItem('orderCart');
             sessionStorage.setItem('orderToastPending', 'true');
+            sessionStorage.setItem(
+              'orderResponse',
+              JSON.stringify({ orderResponse: res.data, orderType, boothId })
+            );
             navigate(`/order/${boothId}/pay`, {
               state: { orderResponse: res.data, orderType },
               replace: true,

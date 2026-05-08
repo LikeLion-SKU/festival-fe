@@ -132,6 +132,10 @@ function Order() {
     });
 
   useEffect(() => {
+    const prevBoothId = sessionStorage.getItem('orderBoothId');
+    if (prevBoothId && prevBoothId !== boothId) {
+      sessionStorage.removeItem('orderResponse');
+    }
     sessionStorage.setItem('orderBoothId', boothId);
     sessionStorage.setItem('orderQuantities', JSON.stringify(quantities));
     if (!foodData.length) return;
@@ -158,7 +162,6 @@ function Order() {
       sessionStorage.removeItem('orderQuantities');
       sessionStorage.removeItem('orderCart');
       sessionStorage.removeItem('orderCustomerInfo');
-      sessionStorage.removeItem('orderResponse');
       sessionStorage.removeItem('orderBoothId');
     };
   }, []);
