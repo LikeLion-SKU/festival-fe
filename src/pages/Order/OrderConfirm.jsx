@@ -44,7 +44,9 @@ function OrderConfirm() {
       <OrderButtonBox
         buttonName="결제하기"
         isActive={orderType !== null}
-        onClick={() => navigate(`/order/${boothId}/customer-info`, { state: { orderType } })}
+        onClick={() =>
+          orderType && navigate(`/order/${boothId}/customer-info`, { state: { orderType } })
+        }
       />
       <div className="h-22" />
     </div>
