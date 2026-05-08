@@ -31,10 +31,10 @@ export default function NotFound() {
             ...죄송합니다. 페이지를 찾을 수 없습니다.
           </p>
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate(-1)}
             className="text-[14px] font-medium leading-[1] tracking-[0%] text-white underline underline-offset-2 [font-family:Pretendard]"
           >
-            메인 페이지로 이동하기
+            이전 페이지로 이동하기
           </button>
         </div>
       </div>

@@ -28,6 +28,7 @@ const privateApi = createApiInstance(PRIVATE_API_BASE_URL, { withCredentials: tr
 
 // ─── 강제 로그아웃 처리 ────────────────────────────
 const forceLogout = () => {
+  localStorage.removeItem('accessToken');
   window.location.href = LOGIN_PATH;
 };
 
