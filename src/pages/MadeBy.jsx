@@ -205,7 +205,16 @@ export default function MadeBy() {
 
   useEffect(() => {
     const timer = setTimeout(() => setHasScrolled(true), 4200);
-    return () => clearTimeout(timer);
+    const onScroll = () => {
+      if (window.scrollY >= document.documentElement.scrollHeight * 0.05) {
+        setHasScrolled(true);
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', onScroll);
+    };
   }, []);
 
   return (
@@ -306,7 +315,7 @@ export default function MadeBy() {
         </div>
 
         {/* PROJECT LEADER */}
-        <section className="px-[2rem] pt-[7.5rem] pb-[2rem]">
+        <section className="px-[3rem] pt-[7.5rem] pb-[2rem]">
           <ScrollFade>
             <SectionHeader title="PROJECT LEADER" />
             <PersonGrid members={PROJECT_LEADER} />
@@ -314,7 +323,7 @@ export default function MadeBy() {
         </section>
 
         {/* PRODUCT OWNER */}
-        <section className="relative px-[2rem] pt-[6.25rem] pb-[2rem]">
+        <section className="relative px-[3rem] pt-[6.25rem] pb-[2rem]">
           <img
             src={BgMadeByMid1}
             alt=""
@@ -342,7 +351,7 @@ export default function MadeBy() {
         </section>
 
         {/* FRONTEND DEV */}
-        <section className="relative px-[2rem] pt-[6.25rem] pb-[2rem]">
+        <section className="relative px-[3rem] pt-[6.25rem] pb-[2rem]">
           <img
             src={BgMadeByMiddle1}
             alt=""
@@ -370,7 +379,7 @@ export default function MadeBy() {
         </section>
 
         {/* BACKEND DEV */}
-        <section className="relative px-[2rem] pt-[6.25rem] pb-[2rem]">
+        <section className="relative px-[3rem] pt-[6.25rem] pb-[2rem]">
           <img
             src={BgMadeByBottom}
             alt=""
@@ -420,7 +429,13 @@ export default function MadeBy() {
         <section className="px-[2rem] pt-[7.5rem] pb-[6.75rem]">
           <ScrollFade>
             <SectionHeader
-              title="For Students, By Students Student Affairs Office"
+              title={
+                <>
+                  For Students, By Students
+                  <br />
+                  Student Affairs Office
+                </>
+              }
               subtitle="학생을 위해, 학생처가 함께 만들었습니다"
             />
             <div className="mt-[3rem] grid grid-cols-2 gap-x-[0.5rem] gap-y-[1.5rem]">
