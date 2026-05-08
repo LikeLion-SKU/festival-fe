@@ -1,7 +1,8 @@
 import Singer2 from '@/assets/images/singer2.png';
 
 /**
- * 라인업 카드 더미 - 왼쪽 버튼 클릭시(id 1→2→3), [1]: 오른쪽 버튼 클릭시 (id 4→5→6, 반시계 느낌).
+ * 라인업 카드 -DAY 2: id 1→2→3, DAY 3: id 4→5→6 (커서 +1)
+ * 화면 회전 느낌은 Lineup.jsx swapSideNeighbors로 DAY 2=반시계, DAY 3=시계로 바꿈
  */
 export const LINEUP_DAY_GROUPS = [
   {
