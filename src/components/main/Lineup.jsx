@@ -153,27 +153,14 @@ export default function Lineup() {
   const lineupAutoRotatePauseAfterManualMs = lineupAutoRotateIntervalMs;
 
   const leftNavIds = useMemo(() => LINEUP_DAY_GROUPS[0].items.map((it) => it.id), []);
-  const rightNavIds = useMemo(() => LINEUP_DAY_GROUPS[1].items.map((it) => it.id), []);
+  // 우측 화살표 모션도 3카드 회전
+  const rightNavIds = useMemo(() => LINEUP_DAY_GROUPS[1].items.map((it) => it.id).slice(0, 3), []);
   const itemById = useMemo(() => {
     const m = new Map();
     for (const g of LINEUP_DAY_GROUPS) {
       for (const it of g.items) m.set(it.id, it);
     }
     return m;
-  }, []);
-
-  useEffect(() => {
-    // 화살표 전환 시 깜빡임을 줄이기 위해 라인업 이미지를 선로딩한다.
-    const allImages = LINEUP_DAY_GROUPS.flatMap((group) =>
-      group.items.map((item) => item.image).filter(Boolean)
-    );
-    const uniqueImages = [...new Set(allImages)];
-
-    uniqueImages.forEach((src) => {
-      const img = new Image();
-      img.decoding = 'sync';
-      img.src = src;
-    });
   }, []);
 
   const [pressedLeft, setPressedLeft] = useState(false);
@@ -204,8 +191,8 @@ export default function Lineup() {
     : laneNav.fullAutoCursor;
   const total = navIds.length;
 
-  /** DAY 2는 슬롯 미러링 → 커서 +1 이어도 다음 카드가 왼쪽에서 들어와 반시계 느낌. DAY 3은 미러링 끔 → +1 이 시계 방향. id 순서는 항상 배열 순서(1→2→3, 4→5→6). */
-  const swapSideNeighbors = laneNav.arrowOrSwipeUsed ? laneNav.activeLane === 'left' : true;
+  /** 슬롯 미러링을 항상 유지해 세 카드가 원형 회전하듯 교차 이동하도록 한다. 방향은 각 레인의 커서 증감으로만 제어한다. */
+  const swapSideNeighbors = true;
   const stageRef = useRef(null);
   const cardMeasureRef = useRef(null);
   const [layoutMetrics, setLayoutMetrics] = useState(() => ({
@@ -300,7 +287,7 @@ export default function Lineup() {
     });
   };
 
-  /** 오른쪽 UI(DAY 3): 같은 레인일 때 커서 +1 → 중앙 id 4→5→6, 회전은 시계 방향(swap 끔). 왼쪽에서 넘어오면 id 4부터 */
+  /** 오른쪽 UI(DAY 3): 같은 레인일 때 커서를 반대로 이동시켜 좌측 버튼 모션의 역방향 회전을 만든다. 왼쪽에서 넘어오면 id 4부터 */
   const handleRightLaneNav = () => {
     setLaneNav((s) => {
       if (!s.arrowOrSwipeUsed) {
@@ -321,7 +308,7 @@ export default function Lineup() {
       }
       return {
         ...s,
-        cursorRight: (s.cursorRight + 1) % rightNavIds.length,
+        cursorRight: (s.cursorRight - 1 + rightNavIds.length) % rightNavIds.length,
       };
     });
   };
