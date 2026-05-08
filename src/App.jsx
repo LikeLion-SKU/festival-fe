@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import AdminLayout from '@/layouts/AdminLayout';
 import MobileLayout from '@/layouts/MobileLayout';
+import NotFound from '@/pages/NotFound';
 import Order from '@/pages/Order/Order';
 import AdminMain from '@/pages/admin/AdminMain';
 
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
   {
     //모바일 레이아웃 - 사용자 페이지
     Component: MobileLayout,
+    errorElement: <NotFound />,
     children: [
       { path: '/', lazy: page(() => import('@/pages/Main')) },
       { path: '/menu', lazy: page(() => import('@/pages/Menu')) },
@@ -53,6 +55,7 @@ const router = createBrowserRouter([
   {
     //관리자 레이아웃 (헤더 + 컨테이너 통합)
     Component: AdminLayout,
+    errorElement: <NotFound />,
     children: [
       {
         path: '/admin',

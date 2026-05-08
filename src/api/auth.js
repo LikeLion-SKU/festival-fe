@@ -4,3 +4,5 @@ export const login = ({ departmentName, password }) =>
   APIService.public.post('/auth/login', { departmentName, password });
 
 export const logout = () => APIService.private.post('/auth/logout');
+
+export const verifySession = () => APIService.public.post('/auth/refresh');
