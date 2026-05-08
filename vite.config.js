@@ -28,6 +28,14 @@ export default defineConfig(({ mode }) => {
           background_color: '#ffffff',
           display: 'standalone',
           start_url: '/',
+          shortcuts: [
+            {
+              name: '관리자 로그인',
+              short_name: '관리자',
+              url: '/login',
+              icons: [{ src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],
+            },
+          ],
           icons: [
             {
               src: '/icons/icon-192.png',

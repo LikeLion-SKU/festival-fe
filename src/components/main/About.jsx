@@ -29,7 +29,11 @@ export default function About() {
     setLionPhase('in');
     lionTimerRef.current = setTimeout(() => {
       setLionPhase('out');
-      window.open('https://skulikelion.com/', '_blank', 'noopener,noreferrer');
+      Object.assign(document.createElement('a'), {
+        href: 'https://skulikelion.com/',
+        target: '_blank',
+        rel: 'noopener noreferrer',
+      }).click();
       setTimeout(() => setLionPhase(null), 500);
     }, 2000);
   };
