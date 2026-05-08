@@ -13,7 +13,13 @@ function OrderPay() {
   const { thumbnailUrl, boothId } = useOutletContext();
   const { state } = useLocation();
 
-  const { orderResponse, orderType } = state || {};
+  const savedPayData = (() => {
+    const saved = sessionStorage.getItem('orderResponse');
+    if (!saved) return null;
+    const parsed = JSON.parse(saved);
+    return parsed.boothId === boothId ? parsed : null;
+  })();
+  const { orderResponse, orderType } = state?.orderResponse ? state : (savedPayData ?? {});
   const {
     customerName,
     customerPhoneNumber,
@@ -132,9 +138,10 @@ function OrderPay() {
         buttonName="직원 확인 완료"
         isActive={true}
         note="입금자명은 주문자명과 같아야 해요"
-        onClick={() =>
-          navigate(`/order/${boothId}/complete`, { state: { orderResponse, orderType } })
-        }
+        onClick={() => {
+          sessionStorage.removeItem('orderResponse');
+          navigate(`/order/${boothId}/complete`, { state: { orderResponse, orderType } });
+        }}
       />
     </div>
   );

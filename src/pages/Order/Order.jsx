@@ -16,6 +16,8 @@ function Order() {
   const [lang, setLang] = useState(sessionStorage.getItem('language') || 'KO');
   const isLoading = loadedKey !== `${boothId}-${lang}`;
   const [foodData, setFoodData] = useState(() => {
+    const savedBoothId = sessionStorage.getItem('orderBoothId');
+    if (savedBoothId !== boothId) return [];
     const saved = sessionStorage.getItem('orderFoodData');
     return saved ? JSON.parse(saved) : [];
   });
@@ -23,10 +25,24 @@ function Order() {
   const isMenuLoading = isQR && menuLoadedBoothId !== boothId;
   const [boothNotFound, setBoothNotFound] = useState(false);
   const [errorToast, setErrorToast] = useState({ visible: false, message: '' });
-  const [quantities, setQuantities] = useState(() => {
-    const saved = sessionStorage.getItem('orderQuantities');
-    return saved ? JSON.parse(saved) : {};
+  const [cartState, setCartState] = useState(() => {
+    const savedBoothId = sessionStorage.getItem('orderBoothId');
+    const savedQuantities = sessionStorage.getItem('orderQuantities');
+    return {
+      boothId,
+      quantities: savedBoothId === boothId && savedQuantities ? JSON.parse(savedQuantities) : {},
+    };
   });
+
+  const quantities = cartState.boothId === boothId ? cartState.quantities : {};
+
+  const setQuantities = (updater) => {
+    setCartState((prev) => {
+      const current = prev.boothId === boothId ? prev.quantities : {};
+      const next = typeof updater === 'function' ? updater(current) : updater;
+      return { boothId, quantities: next };
+    });
+  };
 
   const handleLangChange = (code) => {
     sessionStorage.setItem('language', code);
@@ -89,7 +105,7 @@ function Order() {
         setErrorToast({ visible: true, message });
       })
       .finally(() => setMenuLoadedBoothId(boothId));
-  }, [boothId, isQR]);
+  }, [boothId, isQR, lang]);
 
   const handleReset = () => {
     setQuantities({});
@@ -116,6 +132,11 @@ function Order() {
     });
 
   useEffect(() => {
+    const prevBoothId = sessionStorage.getItem('orderBoothId');
+    if (prevBoothId && prevBoothId !== boothId) {
+      sessionStorage.removeItem('orderResponse');
+    }
+    sessionStorage.setItem('orderBoothId', boothId);
     sessionStorage.setItem('orderQuantities', JSON.stringify(quantities));
     if (!foodData.length) return;
 
@@ -134,14 +155,14 @@ function Order() {
       })
       .filter(Boolean);
     sessionStorage.setItem('orderCart', JSON.stringify(cart));
-  }, [quantities, foodData]);
+  }, [quantities, foodData, boothId]);
 
   useEffect(() => {
     return () => {
       sessionStorage.removeItem('orderQuantities');
       sessionStorage.removeItem('orderCart');
       sessionStorage.removeItem('orderCustomerInfo');
-      sessionStorage.removeItem('orderResponse');
+      sessionStorage.removeItem('orderBoothId');
     };
   }, []);
 
