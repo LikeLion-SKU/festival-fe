@@ -16,7 +16,7 @@ export const getWaitingMenu = async () => {
 // axios 인터셉터를 타지 않으므로, 인증 실패(예: 401)로 연결이 닫히면
 // 직접 리프레시를 시도하고, 실패 시 로그인 페이지로 보냄.
 export const subscribeOrder = (sseSubscribeType) => {
-  const url = `/api/orders/subscribe?sseSubscribeType=${encodeURIComponent(sseSubscribeType)}`;
+  const url = `https://api.skufestival.site/api/orders/subscribe?sseSubscribeType=${encodeURIComponent(sseSubscribeType)}`;
 
   return new EventSource(url, { withCredentials: true });
 };
