@@ -10,6 +10,7 @@ import Introduce from '@/components/main/Introduce.jsx';
 import Lineup from '@/components/main/Lineup.jsx';
 import Safety from '@/components/main/Safety.jsx';
 import Timetable from '@/components/main/Timetable.jsx';
+import { LINEUP_DAY_GROUPS } from '@/constants/lineupDummyData';
 import Footer from '@/layouts/Footer.jsx';
 
 export default function Main() {
@@ -28,6 +29,27 @@ export default function Main() {
       clearTimeout(timer);
       window.removeEventListener('scroll', onScroll);
     };
+  }, []);
+
+  useEffect(() => {
+    // 메인 진입 직후 라인업 이미지 미리 로드
+    const lineupSixImages = LINEUP_DAY_GROUPS.flatMap((group) =>
+      group.items
+        .slice(0, 3)
+        .map((item) => item.image)
+        .filter(Boolean)
+    );
+    const uniqueImages = [...new Set(lineupSixImages)];
+
+    uniqueImages.forEach((src) => {
+      const img = new Image();
+      img.loading = 'eager';
+      img.decoding = 'async';
+      img.src = src;
+      if (typeof img.decode === 'function') {
+        img.decode().catch(() => {});
+      }
+    });
   }, []);
 
   return (
