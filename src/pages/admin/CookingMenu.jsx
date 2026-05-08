@@ -36,7 +36,7 @@ export default function CookingMenu() {
   const [newOrderIds, setNewOrderIds] = useState(() => new Set());
   const [hasNewCooking, setHasNewCooking] = useState(false);
   const queryClient = useQueryClient();
-  const { notifyOrderStatus, clearCount, setIsLoading, setScrollContainer } =
+  const { addPendingOrder, removePendingOrder, clearCount, setIsLoading, setScrollContainer } =
     useOutletContext() ?? {};
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [toast, setToast] = useState({ visible: false, message: '' });
@@ -92,10 +92,25 @@ export default function CookingMenu() {
       setHasNewCooking(true);
     };
 
-    const handleNotification = (event) => {
-      //다른 페이지 새로운 데이터 추가시 표시
-      const { orderStatus } = JSON.parse(event.data);
-      notifyOrderStatus?.(orderStatus);
+    const handleIncrement = (event) => {
+      //다른 페이지 새로운 데이터 추가시 카운트 +1, 미확인 id 추가
+      const { orderStatus, orderId } = JSON.parse(event.data);
+      addPendingOrder?.(orderStatus, orderId);
+    };
+
+    const handleDecrement = (event) => {
+      //다른 페이지 데이터 빠지면 미확인 id에 있을 때만 카운트 -1, id 제거
+      const { orderStatus, orderId } = JSON.parse(event.data);
+      removePendingOrder?.(orderStatus, orderId);
+    };
+
+    const handleDismiss = (event) => {
+      //특정 주문을 현재 페이지 데이터에서 제거
+      const { orderId } = JSON.parse(event.data);
+      queryClient.setQueryData(queryKey, (prev) => {
+        if (!prev?.data) return prev;
+        return { ...prev, data: prev.data.filter((o) => o.orderId !== orderId) };
+      });
     };
 
     const handleUnitStatus = (event) => {
@@ -120,7 +135,9 @@ export default function CookingMenu() {
     };
 
     eventSource.addEventListener('cookingOrderEvent', handleCookingOrder);
-    eventSource.addEventListener('orderNotification', handleNotification);
+    eventSource.addEventListener('orderIncrementNotification', handleIncrement);
+    eventSource.addEventListener('orderDecrementNotification', handleDecrement);
+    eventSource.addEventListener('dismissNotification', handleDismiss);
     eventSource.addEventListener('orderItemUnitStatusEvent', handleUnitStatus);
 
     eventSource.onerror = () => {
@@ -131,11 +148,13 @@ export default function CookingMenu() {
 
     return () => {
       eventSource.removeEventListener('cookingOrderEvent', handleCookingOrder);
-      eventSource.removeEventListener('orderNotification', handleNotification);
+      eventSource.removeEventListener('orderIncrementNotification', handleIncrement);
+      eventSource.removeEventListener('orderDecrementNotification', handleDecrement);
+      eventSource.removeEventListener('dismissNotification', handleDismiss);
       eventSource.removeEventListener('orderItemUnitStatusEvent', handleUnitStatus);
       eventSource.close();
     };
-  }, [queryClient, notifyOrderStatus]);
+  }, [queryClient, addPendingOrder, removePendingOrder]);
 
   const allExpanded = orderData.length > 0 && expandedIds.size === orderData.length;
 

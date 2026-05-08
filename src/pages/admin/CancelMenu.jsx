@@ -24,7 +24,7 @@ export default function CancelMenu() {
   const [toast, setToast] = useState({ visible: false, message: '' });
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { notifyOrderStatus, clearCount, setIsLoading, setScrollContainer } =
+  const { addPendingOrder, removePendingOrder, clearCount, setIsLoading, setScrollContainer } =
     useOutletContext() ?? {};
 
   useEffect(() => {
@@ -52,14 +52,31 @@ export default function CancelMenu() {
       }));
     };
 
-    const handleNotification = (event) => {
-      //다른 페이지 데이터 추가시 표시
-      const { orderStatus } = JSON.parse(event.data);
-      notifyOrderStatus?.(orderStatus);
+    const handleIncrement = (event) => {
+      //다른 페이지 데이터 추가시 카운트 +1, 미확인 id 추가
+      const { orderStatus, orderId } = JSON.parse(event.data);
+      addPendingOrder?.(orderStatus, orderId);
+    };
+
+    const handleDecrement = (event) => {
+      //다른 페이지 데이터 빠지면 미확인 id에 있을 때만 카운트 -1, id 제거
+      const { orderStatus, orderId } = JSON.parse(event.data);
+      removePendingOrder?.(orderStatus, orderId);
+    };
+
+    const handleDismiss = (event) => {
+      //특정 주문을 현재 페이지 데이터에서 제거
+      const { orderId } = JSON.parse(event.data);
+      queryClient.setQueryData(queryKey, (prev) => {
+        if (!prev?.data) return prev;
+        return { ...prev, data: prev.data.filter((o) => o.orderId !== orderId) };
+      });
     };
 
     eventSource.addEventListener('canceledOrderEvent', handleCanceledOrder);
-    eventSource.addEventListener('orderNotification', handleNotification);
+    eventSource.addEventListener('orderIncrementNotification', handleIncrement);
+    eventSource.addEventListener('orderDecrementNotification', handleDecrement);
+    eventSource.addEventListener('dismissNotification', handleDismiss);
 
     eventSource.onerror = () => {
       if (eventSource.readyState === EventSource.CLOSED) {
@@ -69,10 +86,12 @@ export default function CancelMenu() {
 
     return () => {
       eventSource.removeEventListener('canceledOrderEvent', handleCanceledOrder);
-      eventSource.removeEventListener('orderNotification', handleNotification);
+      eventSource.removeEventListener('orderIncrementNotification', handleIncrement);
+      eventSource.removeEventListener('orderDecrementNotification', handleDecrement);
+      eventSource.removeEventListener('dismissNotification', handleDismiss);
       eventSource.close();
     };
-  }, [queryClient, notifyOrderStatus]);
+  }, [queryClient, addPendingOrder, removePendingOrder]);
 
   const filtered = filterOrders(orderData, dateFilter, searchQuery); //필터링된 데이터
 
