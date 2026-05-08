@@ -70,8 +70,11 @@ function sortSlotsStable(slots) {
 }
 
 function LineupCardFace({ item }) {
-  const starWrapperClass = 'right-[12rem] top-[2.35rem] h-[8.9rem] w-[8.9rem]';
+  const starWrapperClass = 'right-[13rem] top-[2.35rem] h-[8.9rem] w-[8.9rem]';
   const starTextTiltClass = '-rotate-[7deg]';
+  const imageOffsetX = item.imageOffsetX ?? '0.4rem';
+  const imageOffsetY = item.imageOffsetY ?? '4.0rem';
+  const imageScale = item.imageScale ?? 2.79;
 
   return (
     <div className="relative h-[19.5rem] w-[19.5rem]">
@@ -87,7 +90,14 @@ function LineupCardFace({ item }) {
           src={item.image}
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 h-full w-full scale-[2.79] translate-y-[4.0rem] translate-x-[0.4rem] object-contain object-bottom"
+          loading="eager"
+          decoding="sync"
+          className="absolute inset-0 h-full w-full scale-[var(--lineup-image-scale)] translate-y-[var(--lineup-image-offset-y)] translate-x-[var(--lineup-image-offset-x)] object-contain object-bottom"
+          style={{
+            '--lineup-image-offset-x': imageOffsetX,
+            '--lineup-image-offset-y': imageOffsetY,
+            '--lineup-image-scale': imageScale,
+          }}
         />
       </div>
 
@@ -150,6 +160,20 @@ export default function Lineup() {
       for (const it of g.items) m.set(it.id, it);
     }
     return m;
+  }, []);
+
+  useEffect(() => {
+    // 화살표 전환 시 깜빡임을 줄이기 위해 라인업 이미지를 선로딩한다.
+    const allImages = LINEUP_DAY_GROUPS.flatMap((group) =>
+      group.items.map((item) => item.image).filter(Boolean)
+    );
+    const uniqueImages = [...new Set(allImages)];
+
+    uniqueImages.forEach((src) => {
+      const img = new Image();
+      img.decoding = 'sync';
+      img.src = src;
+    });
   }, []);
 
   const [pressedLeft, setPressedLeft] = useState(false);

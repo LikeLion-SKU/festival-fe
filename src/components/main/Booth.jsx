@@ -12,7 +12,8 @@ import {
   useScrollDrivenOpacity,
 } from '@/components/animation/useScrollDrivenOpacity';
 import ArrowButton from '@/components/common/Button/ArrowButton';
-import { BOOTH_CARDS, BUILDINGS } from '@/constants/mainDummyData';
+import { getMainBoothCardsByBuilding } from '@/constants/boothBuildingData';
+import { BUILDINGS } from '@/constants/mainDummyData';
 
 const MAIN_BOOTH_CARDS_PER_BUILDING = 4;
 
@@ -73,10 +74,12 @@ function BoothCardTitle({ title }) {
 /** @param {{ image: string; subtitle: string; title: string | string[] }} props */
 function BoothCard({ image, subtitle, title }) {
   const titleLabel = Array.isArray(title) ? title.join(' ') : title;
+  const normalizedTitleLabel = titleLabel.replace(/\s+/g, '');
   const imageAlt = `${titleLabel} 부스`;
   const titleLines = getTitleLines(title);
   const isSingleLineTitle = titleLines.length === 1;
-  const hasWrappedTitle = titleLines.length > 1;
+  const isNanoCard = normalizedTitleLabel.includes('나노화학');
+  const isSportsCard = normalizedTitleLabel.includes('스포츠앤테크놀리지');
 
   return (
     <article className="relative h-[13.25rem] w-full overflow-hidden shadow-[1px_1px_0px_rgba(0,0,0,0.12)]">
@@ -95,9 +98,14 @@ function BoothCard({ image, subtitle, title }) {
         >
           <img src={image} alt={imageAlt} className="size-full object-cover" />
         </div>
-        <div className="flex flex-col items-center text-[#141414]">
+        <div className="relative flex min-h-0 flex-1 flex-col items-center pb-[0.2rem] text-[#141414]">
           <div className="h-px w-full shrink-0 bg-[#141414]" aria-hidden />
-          <div className="flex min-h-[4rem] w-full flex-col items-center pt-[0.7rem]">
+          <div
+            className={clsx(
+              'flex min-h-[4rem] w-full flex-col items-center pt-[0.5rem]',
+              isNanoCard && '-translate-y-[0.5rem]'
+            )}
+          >
             <p className="w-full max-w-[11rem] text-center text-xs font-regular tracking-[-.01875rem]">
               {subtitle}
             </p>
@@ -106,10 +114,8 @@ function BoothCard({ image, subtitle, title }) {
             </div>
           </div>
           <div
-            className={clsx(
-              'h-px w-full shrink-0 bg-[#141414]',
-              hasWrappedTitle ? 'mt-[0.85rem]' : 'mt-[0.2rem]'
-            )}
+            className="absolute left-0 right-0 h-px bg-[#141414]"
+            style={{ bottom: isSportsCard ? '-1rem' : isNanoCard ? '0.35rem' : '0' }}
             aria-hidden
           />
         </div>
@@ -159,11 +165,7 @@ export default function Booth() {
   }, [runCardsEntrance]);
 
   const visibleCards = useMemo(
-    () =>
-      BOOTH_CARDS.filter((card) => card.buildingId === activeBuildingId).slice(
-        0,
-        MAIN_BOOTH_CARDS_PER_BUILDING
-      ),
+    () => getMainBoothCardsByBuilding(activeBuildingId).slice(0, MAIN_BOOTH_CARDS_PER_BUILDING),
     [activeBuildingId]
   );
 

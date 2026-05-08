@@ -114,6 +114,7 @@ export default function Timetable() {
         className="mx-auto mt-[1.5rem] flex w-full max-w-[24rem] flex-col gap-[0.05rem]"
       >
         {(TIMETABLE_DAY_BANNERS[selectedDay] ?? []).map((banner, index) => {
+          const slotImageSrc = banner.imageSlotSrc ?? Singer1;
           const isVariant2 = banner.variant === 2;
           const isVariant1 = banner.variant === 1;
           const isRightAligned = index % 2 === 1;
@@ -175,10 +176,10 @@ export default function Timetable() {
                   artistSizeClass={artistSizeClass}
                   teamOffsetClass={teamOffsetClass}
                   showRightImageSlot={isVariant1}
-                  rightImageSlotSrc={isVariant1 ? Singer1 : ''}
+                  rightImageSlotSrc={isVariant1 ? slotImageSrc : ''}
                   rightImageSlotOffsetClass={rightImageSlotOffsetClass}
                   showLeftImageSlot={isVariant2}
-                  leftImageSlotSrc={isVariant2 ? Singer1 : ''}
+                  leftImageSlotSrc={isVariant2 ? slotImageSrc : ''}
                   leftImageSlotMirror={isVariant2}
                   leftImageSlotOffsetClass={leftImageSlotOffsetClass}
                   leftImageSlotRotateDeg={-10}
