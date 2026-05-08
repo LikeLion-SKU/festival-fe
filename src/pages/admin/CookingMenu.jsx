@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Lottie from 'lottie-react/build/index.es.js';
@@ -16,7 +16,7 @@ import NothingIcon from '@/assets/icons/admin/nothing_icon.svg?react';
 import WarningIcon from '@/assets/icons/admin/warning_icon.svg?react';
 import LoadingAnimation from '@/assets/lottie/loading_animations.json';
 import NewOrderSignal from '@/components/Admin/AdminCooking/NewOrderSignal';
-import TableOrderCard from '@/components/Admin/AdminCooking/TableOrderCard';
+import OrderSummaryBox from '@/components/Admin/AdminCooking/OrderSummaryBox';
 import BottomSheet from '@/components/Admin/BottomSheet';
 import CancelGuideModal from '@/components/Admin/CancelGuideModal';
 import CancelReasonModal from '@/components/Admin/CancelReasonModal';
@@ -32,20 +32,24 @@ const unitsToOrderItems = (
 export default function CookingMenu() {
   const [modal, setModal] = useState(null);
   const [reason, setReason] = useState(null);
-  const [summaryOpen, setSummaryOpen] = useState(false);
   const [expandedIds, setExpandedIds] = useState(() => new Set());
   const [newOrderIds, setNewOrderIds] = useState(() => new Set());
-  const [hasNewWaiting, setHasNewWaiting] = useState(false);
+  const [hasNewCooking, setHasNewCooking] = useState(false);
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const { notifyOrderStatus, clearCount, setIsLoading, setScrollContainer } =
+  const { addPendingOrder, removePendingOrder, clearCount, setIsLoading, setScrollContainer } =
     useOutletContext() ?? {};
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [toast, setToast] = useState({ visible: false, message: '' });
+  const cardRefs = useRef(new Map());
 
-  const handleGotoWaiting = () => {
-    setHasNewWaiting(false);
-    navigate('/admin/waiting');
+  const handleScrollToNew = () => {
+    setHasNewCooking(false);
+    const firstNewOrder = orderData.find((d) => newOrderIds.has(d.orderId));
+    if (!firstNewOrder) return;
+    cardRefs.current.get(firstNewOrder.orderId)?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
   };
 
   const markSeen = (orderId) => {
@@ -85,13 +89,28 @@ export default function CookingMenu() {
         next.add(newOrder.orderId);
         return next;
       });
+      setHasNewCooking(true);
     };
 
-    const handleNotification = (event) => {
-      //다른 페이지 새로운 데이터 추가시 표시
-      const { orderStatus } = JSON.parse(event.data);
-      notifyOrderStatus?.(orderStatus);
-      if (orderStatus === 'WAITING') setHasNewWaiting(true);
+    const handleIncrement = (event) => {
+      //다른 페이지 새로운 데이터 추가시 카운트 +1, 미확인 id 추가
+      const { orderStatus, orderId } = JSON.parse(event.data);
+      addPendingOrder?.(orderStatus, orderId);
+    };
+
+    const handleDecrement = (event) => {
+      //다른 페이지 데이터 빠지면 미확인 id에 있을 때만 카운트 -1, id 제거
+      const { orderStatus, orderId } = JSON.parse(event.data);
+      removePendingOrder?.(orderStatus, orderId);
+    };
+
+    const handleDismiss = (event) => {
+      //특정 주문을 현재 페이지 데이터에서 제거
+      const { orderId } = JSON.parse(event.data);
+      queryClient.setQueryData(queryKey, (prev) => {
+        if (!prev?.data) return prev;
+        return { ...prev, data: prev.data.filter((o) => o.orderId !== orderId) };
+      });
     };
 
     const handleUnitStatus = (event) => {
@@ -116,7 +135,9 @@ export default function CookingMenu() {
     };
 
     eventSource.addEventListener('cookingOrderEvent', handleCookingOrder);
-    eventSource.addEventListener('orderNotification', handleNotification);
+    eventSource.addEventListener('orderIncrementNotification', handleIncrement);
+    eventSource.addEventListener('orderDecrementNotification', handleDecrement);
+    eventSource.addEventListener('dismissNotification', handleDismiss);
     eventSource.addEventListener('orderItemUnitStatusEvent', handleUnitStatus);
 
     eventSource.onerror = () => {
@@ -127,11 +148,13 @@ export default function CookingMenu() {
 
     return () => {
       eventSource.removeEventListener('cookingOrderEvent', handleCookingOrder);
-      eventSource.removeEventListener('orderNotification', handleNotification);
+      eventSource.removeEventListener('orderIncrementNotification', handleIncrement);
+      eventSource.removeEventListener('orderDecrementNotification', handleDecrement);
+      eventSource.removeEventListener('dismissNotification', handleDismiss);
       eventSource.removeEventListener('orderItemUnitStatusEvent', handleUnitStatus);
       eventSource.close();
     };
-  }, [queryClient, notifyOrderStatus]);
+  }, [queryClient, addPendingOrder, removePendingOrder]);
 
   const allExpanded = orderData.length > 0 && expandedIds.size === orderData.length;
 
@@ -256,49 +279,7 @@ export default function CookingMenu() {
 
   return (
     <div className="relative flex flex-col w-full h-full bg-[#f8f8f8] items-center">
-      <div /* 주문 요약 박스*/
-        className="sticky flex w-full min-h-13 shrink-0 max-h-50 overflow-auto flex-col bg-white px-5 py-2 shadow-[0_1px_2px_0_rgba(0,0,0,0.1)]"
-      >
-        <button
-          type="button"
-          onClick={() => setSummaryOpen((v) => !v)}
-          aria-expanded={summaryOpen}
-          className="flex h-10 w-full items-center justify-between px-2 py-1.5"
-        >
-          <div className="flex items-center gap-1">
-            <span className="text-[16px] font-semibold leading-[1.6] text-[#222]">주문 요약</span>
-            <span className="font-medium text-[14px] text-[#A0A0A0]">
-              (총 {orderData.length}건)
-            </span>
-          </div>
-          <OpenButton open={summaryOpen} />
-        </button>
-
-        <div /* 주문 요약 오픈시 박스 */
-          className={`grid transition-[grid-template-rows] duration-300 ease-out ${
-            summaryOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
-          }`}
-        >
-          <div className="overflow-hidden">
-            <div className="flex flex-wrap gap-2 pb-2.5 pt-1">
-              {orderData.length > 0 ? (
-                orderData.map((data) => (
-                  <TableOrderCard
-                    key={data.orderId}
-                    tableNumber={data.tableNumber}
-                    checkedCount={data.orderItemUnits?.filter((u) => u.isServed).length ?? 0}
-                    totalCount={data.orderItemUnits?.length ?? 0}
-                  />
-                ))
-              ) : (
-                <p className="font-semibold mx-auto my-5 text-deep-gray">
-                  현재 요약된 주문이 없습니다!
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+      <OrderSummaryBox orderData={orderData} />
 
       {orderData.length > 0 /* 조리 중인 주문들 리스트 */ ? (
         <div ref={setScrollContainer} className="overflow-auto w-full no-scrollbar pb-7 px-5">
@@ -315,7 +296,15 @@ export default function CookingMenu() {
 
           <div className="flex flex-col gap-2 overflow-auto no-scrollbar pb-7">
             {orderData.map((data) => (
-              <div key={data.orderId} className="w-full" onClick={() => markSeen(data.orderId)}>
+              <div
+                key={data.orderId}
+                ref={(el) => {
+                  if (el) cardRefs.current.set(data.orderId, el);
+                  else cardRefs.current.delete(data.orderId);
+                }}
+                className="w-full"
+                onClick={() => markSeen(data.orderId)}
+              >
                 <OrderCard
                   variant="cooking"
                   tableNumber={data.tableNumber}
@@ -348,8 +337,8 @@ export default function CookingMenu() {
         </div>
       )}
 
-      {hasNewWaiting /* 새로운 대기 주문 알림 배너 */ && (
-        <NewOrderSignal onClick={handleGotoWaiting} />
+      {hasNewCooking /* 새로운 조리 주문 알림 배너 */ && (
+        <NewOrderSignal onClick={handleScrollToNew} />
       )}
 
       <BottomSheet /* 미완성 주문 완료 모달 */

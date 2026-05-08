@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 
 import { login } from '@/api/auth';
@@ -11,6 +11,15 @@ import OrderButton from '@/components/common/OrderButton';
 import LoginSplash from './LoginSplash';
 
 export default function AdminLogin() {
+  useEffect(() => {
+    const existing = document.querySelector('link[rel="manifest"]');
+    const prev = existing?.href ?? null;
+    if (existing) existing.href = '/login-manifest.json';
+    return () => {
+      if (existing && prev) existing.href = prev;
+    };
+  }, []);
+
   const [department, setDepartment] = useState('');
   const [password, setPassword] = useState('');
   const [isFail, setIsFail] = useState(false);
@@ -51,7 +60,7 @@ export default function AdminLogin() {
       <div className="mt-12.75 flex w-full flex-col gap-6.25 px-5 items-center">
         <div className="flex w-full flex-col gap-2.5">
           <div
-            className={`flex items-center gap-1 w-full text-[18px] font-semibold leading-[1.6]  ${department ? 'text-[#FE5F54]' : 'text-deep-gray'}`}
+            className={`flex items-center gap-1 w-full text-[16px] font-semibold leading-[1.6]  ${department ? 'text-[#FE5F54]' : 'text-deep-gray'}`}
           >
             학과 선택
             {department ? <CheckIcon /> : ''}
@@ -61,7 +70,7 @@ export default function AdminLogin() {
 
         <div className="flex w-full flex-col gap-3.75">
           <p
-            className={`flex items-center gap-1 w-full text-[18px] font-semibold leading-[1.6] ${isFail ? 'text-[#FF9500]' : 'text-deep-gray'}`}
+            className={`flex items-center gap-1 w-full text-[16px] font-semibold leading-[1.6] ${isFail ? 'text-[#FF9500]' : 'text-deep-gray'}`}
           >
             비밀번호
             {isFail && <WrningIcon />}
