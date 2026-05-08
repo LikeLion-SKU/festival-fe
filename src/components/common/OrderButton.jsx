@@ -7,13 +7,14 @@ export default function OrderButton({
   buttonName,
   onClick,
   showCheckIcon = false,
+  textSize = '14px',
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      style={{ width, height, backgroundColor: color }}
-      className="flex items-center justify-center gap-1 rounded-lg text-[14px] font-medium leading-normal text-white"
+      style={{ width, height, backgroundColor: color, fontSize: textSize }}
+      className="flex items-center justify-center gap-1 rounded-lg font-medium leading-normal text-white"
     >
       {showCheckIcon && <CheckIcon />}
       <span>{buttonName}</span>
