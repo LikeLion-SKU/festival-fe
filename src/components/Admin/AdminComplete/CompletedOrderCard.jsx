@@ -67,7 +67,9 @@ export default function CompletedOrderCard({
         </div>
         <div className="flex flex-col items-end whitespace-nowrap text-[12px] font-medium leading-[1.6]">
           <span className="text-[#7F7F7F]">{orderTime} 주문</span>
-          <span className="text-[#FF756C]">{completeTime} 완료</span>
+          <span className="text-[#FF756C]">
+            {completeTime} {cancelReason ? '취소' : '완료'}
+          </span>
         </div>
       </div>
 

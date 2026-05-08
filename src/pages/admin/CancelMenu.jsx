@@ -150,7 +150,7 @@ export default function CancelMenu() {
         <div className="flex flex-col items-center mt-50">
           <NothingIcon />
           {!searchQuery ? (
-            <p className="font-semibold text-[20px] text-[#A0A0A0]">완료된 주문이 없어요!</p>
+            <p className="font-semibold text-[20px] text-[#A0A0A0]">취소된 주문이 없어요!</p>
           ) : (
             <p className="text-[20px] font-semibold text-[#A0A0A0]">일치하는 결과가 없어요!</p>
           )}
