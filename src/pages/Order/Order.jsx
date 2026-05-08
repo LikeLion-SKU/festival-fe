@@ -89,7 +89,7 @@ function Order() {
         setErrorToast({ visible: true, message });
       })
       .finally(() => setMenuLoadedBoothId(boothId));
-  }, [boothId, isQR]);
+  }, [boothId, isQR, lang]);
 
   const handleReset = () => {
     setQuantities({});
