@@ -32,7 +32,6 @@ export default function Main() {
   }, []);
 
   useEffect(() => {
-    // 메인 진입 직후 라인업 이미지 미리 로드
     const lineupSixImages = LINEUP_DAY_GROUPS.flatMap((group) =>
       group.items
         .slice(0, 3)
