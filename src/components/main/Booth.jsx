@@ -12,7 +12,8 @@ import {
   useScrollDrivenOpacity,
 } from '@/components/animation/useScrollDrivenOpacity';
 import ArrowButton from '@/components/common/Button/ArrowButton';
-import { BOOTH_CARDS, BUILDINGS } from '@/constants/mainDummyData';
+import { getMainBoothCardsByBuilding } from '@/constants/boothBuildingData';
+import { BUILDINGS } from '@/constants/mainDummyData';
 
 const MAIN_BOOTH_CARDS_PER_BUILDING = 4;
 
@@ -43,26 +44,16 @@ function getBoothCardScatterDelayMs(index) {
 }
 
 function getTitleLines(title) {
-  if (!Array.isArray(title)) {
-    return [String(title).slice(0, 10)];
-  }
-
-  const mergedTitle = title.join(' ');
-  const mergedLength = mergedTitle.replace(/\s+/g, '').length;
-  if (mergedLength <= 9) {
-    return [mergedTitle.slice(0, 10)];
-  }
-
-  return title.map((line) => String(line).slice(0, 10));
+  if (!Array.isArray(title)) return [String(title)];
+  return title.map((line) => String(line).trim()).filter(Boolean);
 }
 
 function BoothCardTitle({ title }) {
   const lines = getTitleLines(title);
-  const isSingleLine = lines.length === 1;
   return (
-    <div className="flex w-full flex-col gap-0 px-1 text-center text-[clamp(1rem,4.3vw,1.25rem)] font-extrabold leading-[1.08] tracking-[-0.03125rem] text-[#141414]">
+    <div className="flex w-full flex-col items-center gap-0 px-1 text-center text-[clamp(1.1rem,4.5vw,1.375rem)] font-extrabold leading-[1.08] tracking-[-0.03125rem] text-[#141414]">
       {lines.map((line, i) => (
-        <p key={`${line}-${i}`} className={clsx(isSingleLine && 'whitespace-nowrap')}>
+        <p key={`${line}-${i}`} className="max-w-[11rem] break-keep">
           {line}
         </p>
       ))}
@@ -74,9 +65,9 @@ function BoothCardTitle({ title }) {
 function BoothCard({ image, subtitle, title }) {
   const titleLabel = Array.isArray(title) ? title.join(' ') : title;
   const imageAlt = `${titleLabel} 부스`;
-  const titleLines = getTitleLines(title);
-  const isSingleLineTitle = titleLines.length === 1;
-  const hasWrappedTitle = titleLines.length > 1;
+  const isMultiLineTitle = getTitleLines(title).length > 1;
+  const normalizedTitleLabel = titleLabel.replace(/\s+/g, '');
+  const isNanoCard = normalizedTitleLabel.includes('나노화학');
 
   return (
     <article className="relative h-[13.25rem] w-full overflow-hidden shadow-[1px_1px_0px_rgba(0,0,0,0.12)]">
@@ -86,32 +77,35 @@ function BoothCard({ image, subtitle, title }) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 size-full object-cover"
       />
-      <div className="relative flex flex-col gap-2 px-[1.125rem] pb-[0.875rem] pt-4">
+      <div className="relative flex flex-col gap-0 px-[1.125rem] pb-0 pt-4">
         <div
           className={clsx(
             'relative w-full shrink-0 overflow-hidden bg-white',
-            isSingleLineTitle ? 'h-[6.625rem]' : 'h-[5.375rem]'
+            isNanoCard ? 'h-[4.5rem]' : isMultiLineTitle ? 'h-[5.75rem]' : 'h-[6.625rem]'
           )}
         >
-          <img src={image} alt={imageAlt} className="size-full object-cover" />
+          <img
+            src={image}
+            alt={imageAlt}
+            className={clsx('size-full object-cover', isMultiLineTitle && '-translate-y-[0.55rem]')}
+          />
         </div>
-        <div className="flex flex-col items-center text-[#141414]">
-          <div className="h-px w-full shrink-0 bg-[#141414]" aria-hidden />
-          <div className="flex min-h-[4rem] w-full flex-col items-center pt-[0.7rem]">
+        <div className="relative flex min-h-0 flex-1 translate-y-[0.5rem] flex-col items-center pb-0 text-[#141414]">
+          <div className="h-px w-full shrink-0 translate-y-[0.22rem] bg-[#141414]" aria-hidden />
+          <div
+            className={clsx(
+              'flex min-h-[4rem] w-full flex-col items-center pb-2 pt-[0.5rem]',
+              isMultiLineTitle && '-translate-y-[0.32rem]'
+            )}
+          >
             <p className="w-full max-w-[11rem] text-center text-xs font-regular tracking-[-.01875rem]">
               {subtitle}
             </p>
-            <div className="mt-[0.45rem]">
+            <div className={clsx('mt-[0.45rem]', isNanoCard && '-translate-y-[0.22rem]')}>
               <BoothCardTitle title={title} />
             </div>
           </div>
-          <div
-            className={clsx(
-              'h-px w-full shrink-0 bg-[#141414]',
-              hasWrappedTitle ? 'mt-[0.85rem]' : 'mt-[0.2rem]'
-            )}
-            aria-hidden
-          />
+          <div className="absolute left-0 right-0 bottom-0 h-px bg-[#141414]" aria-hidden />
         </div>
       </div>
     </article>
@@ -121,6 +115,7 @@ function BoothCard({ image, subtitle, title }) {
 export default function Booth() {
   const navigate = useNavigate();
   const [activeBuildingId, setActiveBuildingId] = useState(BUILDINGS[0].id);
+  const [activePageByBuilding, setActivePageByBuilding] = useState({});
   const activeBuildingIndex = BUILDINGS.findIndex((b) => b.id === activeBuildingId);
   const iconBlockRef = useRef(null);
   const cardsGridRef = useRef(null);
@@ -140,32 +135,77 @@ export default function Booth() {
     }, 300);
   }, []);
 
-  const goToPrevBuilding = useCallback(() => {
-    setActiveBuildingId((prev) => {
-      const idx = BUILDINGS.findIndex((b) => b.id === prev);
-      if (idx <= 0) return prev;
-      if (hasCardsGridEnteredRef.current) runCardsEntrance();
-      return BUILDINGS[idx - 1].id;
-    });
-  }, [runCardsEntrance]);
-
-  const goToNextBuilding = useCallback(() => {
-    setActiveBuildingId((prev) => {
-      const idx = BUILDINGS.findIndex((b) => b.id === prev);
-      if (idx >= BUILDINGS.length - 1) return prev;
-      if (hasCardsGridEnteredRef.current) runCardsEntrance();
-      return BUILDINGS[idx + 1].id;
-    });
-  }, [runCardsEntrance]);
-
-  const visibleCards = useMemo(
-    () =>
-      BOOTH_CARDS.filter((card) => card.buildingId === activeBuildingId).slice(
-        0,
-        MAIN_BOOTH_CARDS_PER_BUILDING
-      ),
+  const activeBuildingCards = useMemo(
+    () => getMainBoothCardsByBuilding(activeBuildingId),
     [activeBuildingId]
   );
+  const activeBuildingTotalPages = Math.max(
+    1,
+    Math.ceil(activeBuildingCards.length / MAIN_BOOTH_CARDS_PER_BUILDING)
+  );
+  const activePage = Math.min(
+    activePageByBuilding[activeBuildingId] ?? 0,
+    activeBuildingTotalPages - 1
+  );
+  const hasPrevPage = activePage > 0;
+  const hasNextPage = activePage < activeBuildingTotalPages - 1;
+  const visibleCards = useMemo(() => {
+    const start = activePage * MAIN_BOOTH_CARDS_PER_BUILDING;
+    return activeBuildingCards.slice(start, start + MAIN_BOOTH_CARDS_PER_BUILDING);
+  }, [activeBuildingCards, activePage]);
+
+  const goToPrevBuilding = useCallback(() => {
+    setActiveBuildingId((prevBuildingId) => {
+      const idx = BUILDINGS.findIndex((b) => b.id === prevBuildingId);
+      if (idx < 0) return prevBuildingId;
+
+      const cards = getMainBoothCardsByBuilding(prevBuildingId);
+      const totalPages = Math.max(1, Math.ceil(cards.length / MAIN_BOOTH_CARDS_PER_BUILDING));
+      const page = Math.min(activePageByBuilding[prevBuildingId] ?? 0, totalPages - 1);
+
+      if (page > 0) {
+        setActivePageByBuilding((prevPages) => ({ ...prevPages, [prevBuildingId]: page - 1 }));
+        if (hasCardsGridEnteredRef.current) runCardsEntrance();
+        return prevBuildingId;
+      }
+
+      if (idx <= 0) return prevBuildingId;
+
+      const prevBuildingIdTarget = BUILDINGS[idx - 1].id;
+      const prevBuildingCards = getMainBoothCardsByBuilding(prevBuildingIdTarget);
+      const prevBuildingLastPage =
+        Math.max(1, Math.ceil(prevBuildingCards.length / MAIN_BOOTH_CARDS_PER_BUILDING)) - 1;
+      setActivePageByBuilding((prevPages) => ({
+        ...prevPages,
+        [prevBuildingIdTarget]: prevBuildingLastPage,
+      }));
+      if (hasCardsGridEnteredRef.current) runCardsEntrance();
+      return prevBuildingIdTarget;
+    });
+  }, [activePageByBuilding, runCardsEntrance]);
+
+  const goToNextBuilding = useCallback(() => {
+    setActiveBuildingId((prevBuildingId) => {
+      const idx = BUILDINGS.findIndex((b) => b.id === prevBuildingId);
+      if (idx < 0) return prevBuildingId;
+
+      const cards = getMainBoothCardsByBuilding(prevBuildingId);
+      const totalPages = Math.max(1, Math.ceil(cards.length / MAIN_BOOTH_CARDS_PER_BUILDING));
+      const page = Math.min(activePageByBuilding[prevBuildingId] ?? 0, totalPages - 1);
+
+      if (page < totalPages - 1) {
+        setActivePageByBuilding((prevPages) => ({ ...prevPages, [prevBuildingId]: page + 1 }));
+        if (hasCardsGridEnteredRef.current) runCardsEntrance();
+        return prevBuildingId;
+      }
+
+      if (idx >= BUILDINGS.length - 1) return prevBuildingId;
+      const nextBuildingId = BUILDINGS[idx + 1].id;
+      setActivePageByBuilding((prevPages) => ({ ...prevPages, [nextBuildingId]: 0 }));
+      if (hasCardsGridEnteredRef.current) runCardsEntrance();
+      return nextBuildingId;
+    });
+  }, [activePageByBuilding, runCardsEntrance]);
 
   useEffect(() => {
     const grid = cardsGridRef.current;
@@ -254,6 +294,7 @@ export default function Booth() {
                   aria-selected={active}
                   onClick={() => {
                     setActiveBuildingId(b.id);
+                    setActivePageByBuilding((prevPages) => ({ ...prevPages, [b.id]: 0 }));
                     if (hasCardsGridEnteredRef.current) runCardsEntrance();
                   }}
                   className={clsx(
@@ -280,7 +321,10 @@ export default function Booth() {
                 : 'none',
             }}
           >
-            <div ref={cardsGridRef} className="grid w-full grid-cols-2 gap-x-4 gap-y-4">
+            <div
+              ref={cardsGridRef}
+              className="grid min-h-[27.5rem] w-full grid-cols-2 content-start gap-x-4 gap-y-4"
+            >
               {visibleCards.map((card, index) => (
                 <div key={card.id} className="transform-gpu">
                   <div
@@ -302,12 +346,12 @@ export default function Booth() {
 
           <div className="absolute inset-0 flex items-center justify-between pointer-events-none">
             <div className="pointer-events-auto -ml-4 w-[40px] h-[40px] flex items-center justify-center">
-              {activeBuildingIndex > 0 && (
+              {(activeBuildingIndex > 0 || hasPrevPage) && (
                 <ArrowButton direction="left" onClick={goToPrevBuilding} ariaLabel="이전 건물" />
               )}
             </div>
             <div className="pointer-events-auto -mr-4 w-[40px] h-[40px] flex items-center justify-center">
-              {activeBuildingIndex < BUILDINGS.length - 1 && (
+              {(activeBuildingIndex < BUILDINGS.length - 1 || hasNextPage) && (
                 <ArrowButton direction="right" onClick={goToNextBuilding} ariaLabel="다음 건물" />
               )}
             </div>
