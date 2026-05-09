@@ -1,6 +1,6 @@
 function TitleSection() {
   return (
-    <div className="flex flex-col items-center justify-center gap-2 py-16 bg-gray-bg pb-5">
+    <div className="flex flex-col items-center justify-center gap-2 py-15 bg-gray-bg pb-5">
       <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
         <style>{`
           @keyframes draw-circle-orange {
