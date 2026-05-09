@@ -40,7 +40,11 @@ function CustomerInfo() {
 
   const handlePhoneChange = (e) => {
     const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
-    setPhoneDigits(digits);
+    if (phoneDigits === '' && digits.length > 0) {
+      setPhoneDigits(('010' + digits).slice(0, 11));
+    } else {
+      setPhoneDigits(digits);
+    }
   };
 
   const handleTableChange = (e) => {
@@ -194,7 +198,7 @@ function CustomerInfo() {
           setSoldOutToast(false);
           sessionStorage.removeItem('orderQuantities');
           sessionStorage.removeItem('orderCart');
-          navigate(`/order/${boothId}`, { replace: true });
+          navigate(`/order/${boothId}?entry=qr`, { replace: true });
         }}
       />
     </div>

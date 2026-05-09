@@ -226,7 +226,7 @@ export default function CompleteMenu() {
       >
         <div className="flex flex-col items-center pt-11.5">
           <WarningIcon />
-          <p className="font-semibold text-[1.25rem] mt-7 leading-7">
+          <p className="font-semibold text-[1.25rem] mt-7 leading-6">
             이미 <span className="text-[#FE5F54]">완료된</span> 주문이에요.
           </p>
           <p className="font-semibold text-[1.25rem] leading-7">조리 중으로 되돌릴까요?</p>

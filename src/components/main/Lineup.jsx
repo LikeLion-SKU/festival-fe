@@ -4,8 +4,9 @@ import HorseIcon from '@/assets/icons/horse.svg';
 import FenceBg from '@/assets/images/fence.svg';
 import HorseCard from '@/assets/images/horse-card.png';
 import HorseRed from '@/assets/images/horse-red.svg';
+import LineupCardDay2Bg from '@/assets/images/lineup-card-day2.svg';
 import LineupCardBg from '@/assets/images/lineup-card.svg';
-import LineupStarBg from '@/assets/images/lineup-star.svg';
+import LineupStarBg from '@/assets/images/lineup-star.png';
 import LineupCarouselDragSurface from '@/components/animation/LineupCarouselDragSurface';
 import LineupSlotCard from '@/components/animation/LineupSlotCard';
 import {
@@ -70,16 +71,19 @@ function sortSlotsStable(slots) {
 }
 
 function LineupCardFace({ item }) {
-  const starWrapperClass = 'right-[13rem] top-[2.35rem] h-[8.9rem] w-[8.9rem]';
+  const starWrapperClass = 'right-[13rem] top-[2.35rem] h-[7.2rem] w-[8rem]';
   const starTextTiltClass = '-rotate-[7deg]';
   const imageOffsetX = item.imageOffsetX ?? '0.4rem';
   const imageOffsetY = item.imageOffsetY ?? '4.0rem';
   const imageScale = item.imageScale ?? 2.79;
+  const normalizedDay = item.day?.replace(/\s/g, '').toUpperCase();
+  const cardBackgroundImage = normalizedDay === 'DAY2' ? LineupCardDay2Bg : LineupCardBg;
+  const artistTextColor = normalizedDay === 'DAY2' ? '#FFE5AD' : '#F1CCB2';
 
   return (
     <div className="relative h-[19.5rem] w-[19.5rem]">
       <img
-        src={LineupCardBg}
+        src={cardBackgroundImage}
         alt=""
         aria-hidden="true"
         className="absolute inset-0 h-full w-full object-contain"
@@ -114,7 +118,10 @@ function LineupCardFace({ item }) {
           <p className="pb-[0.18rem] text-[0.72rem] font-medium leading-[1.2] whitespace-normal break-keep">
             {item.group}
           </p>
-          <p className="text-[1.45rem] font-extrabold leading-[1.1] whitespace-nowrap">
+          <p
+            className="text-[1.45rem] font-extrabold leading-[1.1] whitespace-nowrap"
+            style={{ color: artistTextColor }}
+          >
             {item.artist}
           </p>
         </div>
@@ -420,7 +427,7 @@ export default function Lineup() {
   return (
     <section
       id="lineup"
-      className="relative min-h-[34.1rem] overflow-hidden bg-[#141414] px-[3.65625rem] pt-[0rem]"
+      className="relative min-h-[34.1rem] overflow-hidden bg-black px-[3.65625rem] pt-[0rem]"
     >
       <div
         aria-hidden="true"

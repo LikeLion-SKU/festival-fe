@@ -5,7 +5,6 @@ import KiofBg from '@/assets/images/kiof.jpg';
 import LgnBg from '@/assets/images/lgnshot.jpg';
 import LimeBg from '@/assets/images/lime.jpg';
 import ParkBg from '@/assets/images/park.jpg';
-import Singer2 from '@/assets/images/singer2.png';
 
 /**
  * 라인업 카드 -DAY 2: id 1→2→3, DAY 3: id 4→5→6 (커서 +1)

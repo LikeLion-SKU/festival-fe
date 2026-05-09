@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 
 import Back from '@/assets/icons/back.svg?react';
 import HomeShadow from '@/assets/icons/home_shadow.svg?react';
+import Background from '@/assets/images/background.svg';
 import EnFlag from '@/assets/images/en.svg';
 import KoFlag from '@/assets/images/ko.svg';
 import ZhFlag from '@/assets/images/zh.svg';
@@ -21,6 +22,7 @@ function BoothImageSection({ thumbnailUrl, onLangChange, isLoading, isQR }) {
   const pillRef = useRef(null);
 
   const currentLang = LANGUAGES.find((l) => l.code === selectedLang);
+  const otherLangs = LANGUAGES.filter((l) => l.code !== selectedLang);
 
   const handleLangSelect = (code) => {
     setSelectedLang(code);
@@ -45,7 +47,9 @@ function BoothImageSection({ thumbnailUrl, onLangChange, isLoading, isQR }) {
         {isLoading ? (
           <Skeleton className="w-full h-full rounded-none" />
         ) : (
-          <img src={thumbnailUrl} className="w-full h-full object-cover blur" />
+          <>
+            <img src={Background} className="w-full h-full object-cover" />
+          </>
         )}
       </div>
       {isLoading ? (
@@ -60,42 +64,44 @@ function BoothImageSection({ thumbnailUrl, onLangChange, isLoading, isQR }) {
       {!isQR && (
         <button
           onClick={() => navigate(-1)}
-          className="absolute top-12 left-5 z-20 w-12 h-12 bg-white rounded-[35px] shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] overflow-hidden flex items-center justify-center"
+          className="absolute top-11 left-5 z-20 w-12 h-12 bg-white rounded-[35px] shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] overflow-hidden flex items-center justify-center"
         >
           <Back />
         </button>
       )}
 
-      <div className="absolute top-12 right-5 z-20 flex items-center gap-2.5">
+      <div className="absolute top-11 right-5 z-20 flex items-center gap-2.5">
         {/* 언어 선택 pill */}
         <div
           ref={pillRef}
-          className="px-1.25 py-1.25 bg-white rounded-[35px] shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] inline-flex items-center gap-2"
+          className="px-1.25 py-1.25 bg-white rounded-[35px] shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] inline-flex flex-row-reverse items-center gap-2 overflow-hidden"
+          style={{
+            width: isExpanded ? '146px' : '50px',
+            transition: 'width 320ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+          }}
         >
-          {isExpanded ? (
-            LANGUAGES.map((lang) => (
-              <button
-                key={lang.code}
-                onClick={() => handleLangSelect(lang.code)}
-                className="relative w-10 h-10 rounded-full overflow-hidden outline-1 -outline-offset-1"
-                style={{ outlineColor: lang.code === selectedLang ? '#737373' : '#E5E5E5' }}
-              >
-                <img src={lang.flag} alt={lang.code} className="w-full h-full object-cover" />
-                {lang.code === selectedLang && <div className="absolute inset-0 bg-black/50" />}
-              </button>
-            ))
-          ) : (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="relative w-10 h-10 rounded-full overflow-hidden outline-1 -outline-offset-1 shrink-0"
+            style={{ outlineColor: isExpanded ? '#737373' : '#E5E5E5' }}
+          >
+            <img src={currentLang.flag} alt={selectedLang} className="w-full h-full object-cover" />
+            {isExpanded && <div className="absolute inset-0 bg-black/50" />}
+          </button>
+          {otherLangs.map((lang, i) => (
             <button
-              onClick={() => setIsExpanded(true)}
-              className="w-10 h-10 rounded-full overflow-hidden outline-1 -outline-offset-1 outline-gray-200"
+              key={lang.code}
+              onClick={() => handleLangSelect(lang.code)}
+              className="relative w-10 h-10 rounded-full overflow-hidden outline-1 -outline-offset-1 outline-gray-200 shrink-0"
+              style={{
+                opacity: isExpanded ? 1 : 0,
+                transform: isExpanded ? 'scale(1)' : 'scale(0.85)',
+                transition: `opacity 200ms ease ${i * 60}ms, transform 200ms ease ${i * 60}ms`,
+              }}
             >
-              <img
-                src={currentLang.flag}
-                alt={selectedLang}
-                className="w-full h-full object-cover"
-              />
+              <img src={lang.flag} alt={lang.code} className="w-full h-full object-cover" />
             </button>
-          )}
+          ))}
         </div>
 
         {/* 홈 버튼 */}

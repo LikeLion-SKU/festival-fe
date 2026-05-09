@@ -166,7 +166,7 @@ export default function CancelMenu() {
       ) : isPending ? (
         <Lottie animationData={LoadingAnimation} loop className="w-40 h-40 m-auto" />
       ) : (
-        <div className="flex flex-col items-center mt-50">
+        <div className="flex flex-col items-center mt-50 gap-3">
           <NothingIcon />
           {!searchQuery ? (
             <p className="font-semibold text-[20px] text-[#A0A0A0]">취소된 주문이 없어요!</p>

@@ -5,7 +5,7 @@ export default function OrderHeader({
   onBack,
 }) {
   return (
-    <div className="relative flex h-14 w-full items-center justify-center px-5 mt-10">
+    <div className="relative flex h-14 w-full items-center justify-center px-5 mt-9">
       {showBackButton && (
         <button
           type="button"
