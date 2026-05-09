@@ -260,12 +260,19 @@ export default function BoothMapPage() {
                         setActiveBuildingId((prev) => (prev === item.id ? null : item.id));
                         triggerCardsAnimation();
                       }}
+                      onMouseUp={(e) => e.currentTarget.blur()}
+                      onTouchEnd={(e) => e.currentTarget.blur()}
                       className={clsx(
-                        'relative overflow-hidden flex h-8 min-h-8 min-w-0 flex-[1_1_60px] items-center justify-center border border-solid px-1 text-[clamp(12px,3vw,14px)] font-medium leading-none tracking-[-0.02em] [font-family:Pretendard]',
+                        'relative overflow-hidden flex h-8 min-h-8 min-w-0 flex-[1_1_60px] items-center justify-center px-1 text-[clamp(12px,3vw,14px)] font-medium leading-none tracking-[-0.02em] [font-family:Pretendard] outline-none focus:outline-none focus-visible:outline-none',
                         active
-                          ? 'border-[#C43A31] bg-[rgba(196,58,49,0.6)] text-[#FFDDDB]'
-                          : 'border-[#595959] bg-[#353535] text-[#a0a0a0]'
+                          ? 'bg-[rgba(196,58,49,0.6)] text-[#FFDDDB]'
+                          : 'bg-[#353535] text-[#a0a0a0]'
                       )}
+                      style={{
+                        WebkitTapHighlightColor: 'transparent',
+                        appearance: 'none',
+                        boxShadow: active ? 'inset 0 0 0 1px #C43A31' : 'inset 0 0 0 1px #595959',
+                      }}
                     >
                       {flashing && (
                         <span
