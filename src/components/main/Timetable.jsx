@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 import HorseIcon from '@/assets/icons/horse.svg';
 import FireBg from '@/assets/images/fire1.svg';
 import FireBg2 from '@/assets/images/fire2.svg';
-import Singer1 from '@/assets/images/singer1.png';
 import {
   MAIN_SECTION_ICON_SCROLL_FADE,
   useScrollDrivenOpacity,
@@ -47,13 +46,13 @@ export default function Timetable() {
   return (
     <section
       id="timetable"
-      className="min-h-[70rem] overflow-x-hidden bg-[#141414] px-[1.5rem] pt-[7.5rem]"
+      className="min-h-[70rem] overflow-x-hidden bg-black px-[1.5rem] pt-[7.5rem]"
       style={{
-        backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 32%), linear-gradient(0deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0) 35%), url(${FireBg}), url(${FireBg2}), linear-gradient(180deg, rgba(20,20,20,0.6) 0%, rgba(20,20,20,1) 100%)`,
+        backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.58) 22%, rgba(8,8,8,0.28) 40%, rgba(0,0,0,0) 54%), linear-gradient(0deg, rgba(0,0,0,0.52) 0%, rgba(0,0,0,0) 35%), url(${FireBg}), url(${FireBg2}), linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,1) 100%)`,
         backgroundRepeat: 'no-repeat, no-repeat, no-repeat, no-repeat, no-repeat',
-        backgroundPosition: 'center top, center bottom, center -7rem, center -15rem, center',
+        backgroundPosition: 'center top, center bottom, center -5rem, center -5rem, center',
         backgroundSize: 'cover, cover, cover, cover, cover',
-        backgroundBlendMode: 'normal, normal, hard-light, normal, normal',
+        backgroundBlendMode: 'normal, normal, hard-light, hard-light, normal',
       }}
     >
       <style>{`
@@ -65,6 +64,14 @@ export default function Timetable() {
           to {
             opacity: 1;
             transform: translateY(0);
+          }
+        }
+        /* iOS Safari: 인접 섹션 경계 서브픽셀 합성으로 생기는 1px 헤어라인 완화 */
+        @supports (-webkit-touch-callout: none) {
+          #timetable {
+            margin-top: -1px;
+            position: relative;
+            z-index: 1;
           }
         }
       `}</style>
@@ -114,39 +121,28 @@ export default function Timetable() {
         className="mx-auto mt-[1.5rem] flex w-full max-w-[24rem] flex-col gap-[0.05rem]"
       >
         {(TIMETABLE_DAY_BANNERS[selectedDay] ?? []).map((banner, index) => {
-          const slotImageSrc = banner.imageSlotSrc ?? Singer1;
           const isVariant2 = banner.variant === 2;
           const isVariant1 = banner.variant === 1;
           const isRightAligned = index % 2 === 1;
-          const timeBadgeOffsetClass = isVariant1 ? '!translate-x-[0.45rem]' : '';
-          const rightImageSlotOffsetClass = isVariant1 ? '!top-[45%] !translate-x-[0.55rem]' : '';
-          const leftImageSlotOffsetClass = isVariant2 ? '!top-[42%] !translate-x-[-15.85rem]' : '';
           const variant1ShiftClass = isVariant1 ? 'translate-x-[0.95rem]' : '';
           const variant2ShiftClass = isVariant2 ? '-translate-x-[0.95rem]' : '';
-          const artistOffsetClass = [
-            isVariant1 ? (banner.bannerVariant === 3 ? '!-ml-[2rem]' : '!ml-[2.5rem]') : '',
-            selectedDay === 'day2' && banner.id === 1 ? '!translate-x-[0.25rem]' : '',
-            selectedDay === 'day2' && banner.id === 6
-              ? '!-translate-x-[0.2rem]'
-              : selectedDay === 'day3' && banner.id === 6
-                ? '!translate-x-[1.2rem]'
-                : '',
-          ].join(' ');
-          const isSmallArtistText = selectedDay === 'day3' && banner.id === 4;
-          const artistSizeClass = isSmallArtistText
-            ? '!text-[1.15rem]'
-            : selectedDay === 'day3' && banner.id === 7
-              ? '!text-[1rem]'
-              : '';
-          const teamOffsetClass =
-            selectedDay === 'day2' && banner.id === 5 ? '!-translate-y-[0.25rem]' : '';
+          const stackSpacingClass =
+            (selectedDay === 'day2' && banner.id >= 6) || (selectedDay === 'day3' && banner.id >= 5)
+              ? '-mt-[1.9rem]'
+              : banner.id >= 2
+                ? '-mt-[1.6rem]'
+                : '';
+          const banner37OffsetClass =
+            selectedDay === 'day3' && banner.id === 7 ? '-mt-[0.95rem]' : '';
+          const banner28OffsetClass =
+            selectedDay === 'day2' && banner.id === 8 ? 'mt-[0.01rem]' : '';
 
           return (
             <div
               key={`${selectedDay}-${banner.id}`}
               className={`${isRightAligned ? 'self-end' : 'self-start'} ${variant1ShiftClass} ${variant2ShiftClass} ${
-                banner.id >= 2 ? '-mt-[1.5rem]' : ''
-              } ${banner.variant === 2 ? 'z-0' : 'z-10'}`}
+                stackSpacingClass
+              } ${banner37OffsetClass} ${banner28OffsetClass} ${banner.variant === 2 ? 'z-0' : 'z-9'}`}
             >
               <div
                 style={{
@@ -160,29 +156,8 @@ export default function Timetable() {
                 className="transform-gpu"
               >
                 <Banner
-                  artist={banner.artist}
-                  team={banner.team ?? ''}
-                  time={banner.time}
-                  variant={banner.variant}
-                  imageVariant={banner.bannerVariant}
-                  reverse={isRightAligned}
-                  mirrorImage={false}
-                  tiltTimeBadgeLeft={false}
-                  timeBadgeOffsetClass={timeBadgeOffsetClass}
-                  enableVariant2BaseShift
-                  adjustDay2Variant2Text={isVariant2}
-                  useVariant1TextLayoutForVariant2={false}
-                  artistOffsetClass={artistOffsetClass}
-                  artistSizeClass={artistSizeClass}
-                  teamOffsetClass={teamOffsetClass}
-                  showRightImageSlot={isVariant1}
-                  rightImageSlotSrc={isVariant1 ? slotImageSrc : ''}
-                  rightImageSlotOffsetClass={rightImageSlotOffsetClass}
-                  showLeftImageSlot={isVariant2}
-                  leftImageSlotSrc={isVariant2 ? slotImageSrc : ''}
-                  leftImageSlotMirror={isVariant2}
-                  leftImageSlotOffsetClass={leftImageSlotOffsetClass}
-                  leftImageSlotRotateDeg={-10}
+                  bannerImageSrc={banner.bannerImageSrc}
+                  bannerScale={banner.bannerScale ?? 1}
                 />
               </div>
             </div>

@@ -37,14 +37,7 @@ export default function Introduce() {
   const bodyOpacity = useScrollDrivenOpacity(bodyBlockRef, MAIN_SECTION_BODY_SCROLL_FADE);
 
   return (
-    <section
-      id="introduce"
-      className="min-h-[21rem] bg-[#141414] px-[3.65625rem] pt-[6rem]"
-      style={{
-        backgroundImage:
-          'linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 31%, rgba(0,0,0,1) 90%, rgba(0,0,0,0) 125%)',
-      }}
-    >
+    <section id="introduce" className="min-h-[21rem] bg-black px-[3.65625rem] pt-[6rem]">
       <div className="flex flex-col items-center gap-[0.75rem]">
         <div
           ref={iconBlockRef}
