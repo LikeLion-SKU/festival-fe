@@ -1,4 +1,3 @@
-import BoothDefaultImage from '@/assets/images/booth-default.png';
 import BoothImagePlaceholder from '@/assets/images/booth_image.svg';
 import CheongunChineseImage from '@/assets/images/cheongun-chinese.png';
 import CheongunDoshiImage from '@/assets/images/cheongun-doshi.png';
@@ -6,6 +5,7 @@ import CheongunJapanImage from '@/assets/images/cheongun-japan.png';
 import CheongunSportImage from '@/assets/images/cheongun-sport.png';
 import CheongunYoongImage from '@/assets/images/cheongun-yoong.png';
 import DaeilElectricImage from '@/assets/images/daeil-electric.png';
+import DaeilHakImage from '@/assets/images/daeil-hak.png';
 import DaeilIgongImage from '@/assets/images/daeil-igong.png';
 import DaeilMoneyImage from '@/assets/images/daeil-money.png';
 import DaeilMullImage from '@/assets/images/daeil-mull.png';
@@ -24,6 +24,7 @@ import Eunju2GunsaImage from '@/assets/images/eunju2-gunsa.png';
 import Eunju2GwangImage from '@/assets/images/eunju2-gwang.png';
 import Eunju2IeumImage from '@/assets/images/eunju2-ieum.png';
 import Eunju2MovieImage from '@/assets/images/eunju2-movie.png';
+import Eunju2MusicImage from '@/assets/images/eunju2-music.png';
 import Eunju2SocialImage from '@/assets/images/eunju2-social.png';
 import HyeinChongdongImage from '@/assets/images/hyein-chongdong.png';
 import HyeinCoreImage from '@/assets/images/hyein-core.png';
@@ -206,7 +207,7 @@ const BOOTH_CARD_CONTENT_BY_BUILDING = {
       title: '토목건축공학과',
     },
     학생처: {
-      image: BoothDefaultImage,
+      image: DaeilHakImage,
       subtitle: '대일관 앞',
       title: '학생처 학생과',
     },
@@ -248,7 +249,7 @@ const BOOTH_CARD_CONTENT_BY_BUILDING = {
       title: ['디자인학부', '(VOID(보이드)/sesi)'],
     },
     실용음악학부: {
-      image: BoothDefaultImage,
+      image: Eunju2MusicImage,
       subtitle: '은주2관 앞',
       title: '실용음악학부',
     },
@@ -328,6 +329,7 @@ export const BOOTH_CARDS_BY_BUILDING = Object.fromEntries(
         ...(contentByBuilding[departmentKey] ?? {}),
         id: `${row.id}${idSuffix}`,
         buildingId,
+        departmentKey,
         image: contentByBuilding[departmentKey]?.image ?? BoothImagePlaceholder,
         subtitle:
           contentByBuilding[departmentKey]?.subtitle ??
@@ -354,16 +356,48 @@ export const BOOTH_CARDS_BY_BUILDING = Object.fromEntries(
  * 배열 순서가 화면 노출 순서가 된다.
  */
 export const MAIN_BOOTH_CARD_DEPARTMENTS_BY_BUILDING = {
-  hyein: ['총동아리연합회', '신문사', '총학생회', '축제기획단'],
-  eunju1: ['경영학부', '공공인재학부', '미래융합대학1', '소프트웨어학과'],
-  eunju2: ['영화영상학과', '사회과학대', '광고홍보영상학과', '군사학과'],
-  cheongun: ['도시공학과', '일어전공', '스포츠앤테크놀리지학과', '융합대'],
-  daeil: ['물류시스템공학과', '금융정보공학과', '이공대', '나노화학생명공학과'],
+  hyein: ['총학생회', '신문사', '총동아리연합회'],
+  eunju1: [
+    '미래융합대학2',
+    '소프트웨어학과',
+    '아동청소년학과',
+    '미래융합대학1',
+    '경영학부',
+    '공공인재학부',
+  ],
+  eunju2: [
+    '사회과학대',
+    '미용예술학부',
+    '예술대',
+    '광고홍보영상학과',
+    '디자인학부1',
+    '디자인학부2',
+    '군사학과',
+    '영화영상학과',
+    '실용음악학부',
+  ],
+  cheongun: ['융합대', '스포츠앤테크놀리지학과', '도시공학과', '중어전공', '일어전공'],
+  daeil: [
+    '나노화학생명공학과',
+    '전자컴퓨터공학과',
+    '토목건축공학과',
+    '이공대',
+    '물류시스템공학과',
+    '학생처',
+    '금융정보공학과',
+  ],
 };
 
 export function getMainBoothCardsByBuilding(buildingId) {
   const cards = BOOTH_CARDS_BY_BUILDING[buildingId] ?? [];
-  return cards;
+  const preferredOrder = MAIN_BOOTH_CARD_DEPARTMENTS_BY_BUILDING[buildingId];
+  if (!preferredOrder?.length) return cards;
+
+  const ordered = preferredOrder
+    .map((departmentKey) => cards.find((card) => card.departmentKey === departmentKey))
+    .filter(Boolean);
+
+  return ordered.length ? ordered : cards;
 }
 
 export const BOOTH_CARDS_FROM_BUILDINGS = Object.values(BOOTH_CARDS_BY_BUILDING).flat();

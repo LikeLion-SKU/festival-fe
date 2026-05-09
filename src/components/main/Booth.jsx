@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 
 import HorseIcon from '@/assets/icons/horse.svg';
-import BoothPaper from '@/assets/images/booth-paper.svg';
 import DesertBg from '@/assets/images/desert.svg';
 import FenceBg from '@/assets/images/fence.svg';
 import {
@@ -15,11 +14,10 @@ import ArrowButton from '@/components/common/Button/ArrowButton';
 import { getMainBoothCardsByBuilding } from '@/constants/boothBuildingData';
 import { BUILDINGS } from '@/constants/mainDummyData';
 
-const MAIN_BOOTH_CARDS_PER_BUILDING = 4;
-
+const MAIN_BOOTH_CARDS_PER_PAGE = 4;
 const BOOTH_SPREAD_MS = 1580;
 const BOOTH_SPREAD_EASE = 'cubic-bezier(0.22,1,0.36,1)';
-/** opacity는 카드별로 지정해지면 진해지니까 그룹 자체로 적용시킴*/
+/** opacity는 카드별로 지정해지면 진해지니까 그룹 자체로 적용시킴 */
 const BOOTH_STACKED_GROUP_OPACITY = 0.9;
 
 /** 스프레드 시작: 중앙에서 카드들이 모인 상태*/
@@ -43,71 +41,13 @@ function getBoothCardScatterDelayMs(index) {
   return Math.round(index * 38);
 }
 
-function getTitleLines(title) {
-  if (!Array.isArray(title)) return [String(title)];
-  return title.map((line) => String(line).trim()).filter(Boolean);
-}
-
-function BoothCardTitle({ title }) {
-  const lines = getTitleLines(title);
-  return (
-    <div className="flex w-full flex-col items-center gap-0 px-1 text-center text-[clamp(1.1rem,4.5vw,1.375rem)] font-extrabold leading-[1.08] tracking-[-0.03125rem] text-[#141414]">
-      {lines.map((line, i) => (
-        <p key={`${line}-${i}`} className="max-w-[11rem] break-keep">
-          {line}
-        </p>
-      ))}
-    </div>
-  );
-}
-
-/** @param {{ image: string; subtitle: string; title: string | string[] }} props */
-function BoothCard({ image, subtitle, title }) {
-  const titleLabel = Array.isArray(title) ? title.join(' ') : title;
-  const imageAlt = `${titleLabel} 부스`;
-  const isMultiLineTitle = getTitleLines(title).length > 1;
-  const normalizedTitleLabel = titleLabel.replace(/\s+/g, '');
-  const isNanoCard = normalizedTitleLabel.includes('나노화학');
-
+/** @param {{ image: string; title: string | string[] }} props */
+function BoothImageCard({ image, title }) {
+  const titleLabel = Array.isArray(title) ? title.join(' ') : String(title ?? '');
+  const imageAlt = titleLabel ? `${titleLabel} 부스 카드` : '부스 카드';
   return (
     <article className="relative h-[13.25rem] w-full overflow-hidden shadow-[1px_1px_0px_rgba(0,0,0,0.12)]">
-      <img
-        src={BoothPaper}
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 size-full object-cover"
-      />
-      <div className="relative flex flex-col gap-0 px-[1.125rem] pb-0 pt-4">
-        <div
-          className={clsx(
-            'relative w-full shrink-0 overflow-hidden bg-white',
-            isNanoCard ? 'h-[4.5rem]' : isMultiLineTitle ? 'h-[5.75rem]' : 'h-[6.625rem]'
-          )}
-        >
-          <img
-            src={image}
-            alt={imageAlt}
-            className={clsx('size-full object-cover', isMultiLineTitle && '-translate-y-[0.55rem]')}
-          />
-        </div>
-        <div className="relative flex min-h-0 flex-1 translate-y-[0.5rem] flex-col items-center pb-0 text-[#141414]">
-          <div className="h-px w-full shrink-0 translate-y-[0.22rem] bg-[#141414]" aria-hidden />
-          <div
-            className={clsx(
-              'flex min-h-[4rem] w-full flex-col items-center pb-2 pt-[0.5rem]',
-              isMultiLineTitle && '-translate-y-[0.32rem]'
-            )}
-          >
-            <p className="w-full max-w-[11rem] text-center text-xs font-regular tracking-[-.01875rem]">
-              {subtitle}
-            </p>
-            <div className={clsx('mt-[0.45rem]', isNanoCard && '-translate-y-[0.22rem]')}>
-              <BoothCardTitle title={title} />
-            </div>
-          </div>
-          <div className="absolute left-0 right-0 bottom-0 h-px bg-[#141414]" aria-hidden />
-        </div>
-      </div>
+      <img src={image} alt={imageAlt} className="size-full object-cover" />
     </article>
   );
 }
@@ -141,7 +81,7 @@ export default function Booth() {
   );
   const activeBuildingTotalPages = Math.max(
     1,
-    Math.ceil(activeBuildingCards.length / MAIN_BOOTH_CARDS_PER_BUILDING)
+    Math.ceil(activeBuildingCards.length / MAIN_BOOTH_CARDS_PER_PAGE)
   );
   const activePage = Math.min(
     activePageByBuilding[activeBuildingId] ?? 0,
@@ -150,8 +90,8 @@ export default function Booth() {
   const hasPrevPage = activePage > 0;
   const hasNextPage = activePage < activeBuildingTotalPages - 1;
   const visibleCards = useMemo(() => {
-    const start = activePage * MAIN_BOOTH_CARDS_PER_BUILDING;
-    return activeBuildingCards.slice(start, start + MAIN_BOOTH_CARDS_PER_BUILDING);
+    const start = activePage * MAIN_BOOTH_CARDS_PER_PAGE;
+    return activeBuildingCards.slice(start, start + MAIN_BOOTH_CARDS_PER_PAGE);
   }, [activeBuildingCards, activePage]);
 
   const goToPrevBuilding = useCallback(() => {
@@ -160,7 +100,7 @@ export default function Booth() {
       if (idx < 0) return prevBuildingId;
 
       const cards = getMainBoothCardsByBuilding(prevBuildingId);
-      const totalPages = Math.max(1, Math.ceil(cards.length / MAIN_BOOTH_CARDS_PER_BUILDING));
+      const totalPages = Math.max(1, Math.ceil(cards.length / MAIN_BOOTH_CARDS_PER_PAGE));
       const page = Math.min(activePageByBuilding[prevBuildingId] ?? 0, totalPages - 1);
 
       if (page > 0) {
@@ -174,7 +114,7 @@ export default function Booth() {
       const prevBuildingIdTarget = BUILDINGS[idx - 1].id;
       const prevBuildingCards = getMainBoothCardsByBuilding(prevBuildingIdTarget);
       const prevBuildingLastPage =
-        Math.max(1, Math.ceil(prevBuildingCards.length / MAIN_BOOTH_CARDS_PER_BUILDING)) - 1;
+        Math.max(1, Math.ceil(prevBuildingCards.length / MAIN_BOOTH_CARDS_PER_PAGE)) - 1;
       setActivePageByBuilding((prevPages) => ({
         ...prevPages,
         [prevBuildingIdTarget]: prevBuildingLastPage,
@@ -190,7 +130,7 @@ export default function Booth() {
       if (idx < 0) return prevBuildingId;
 
       const cards = getMainBoothCardsByBuilding(prevBuildingId);
-      const totalPages = Math.max(1, Math.ceil(cards.length / MAIN_BOOTH_CARDS_PER_BUILDING));
+      const totalPages = Math.max(1, Math.ceil(cards.length / MAIN_BOOTH_CARDS_PER_PAGE));
       const page = Math.min(activePageByBuilding[prevBuildingId] ?? 0, totalPages - 1);
 
       if (page < totalPages - 1) {
@@ -337,7 +277,7 @@ export default function Booth() {
                         : 'none',
                     }}
                   >
-                    <BoothCard image={card.image} subtitle={card.subtitle} title={card.title} />
+                    <BoothImageCard image={card.image} title={card.title} />
                   </div>
                 </div>
               ))}
