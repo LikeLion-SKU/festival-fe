@@ -47,7 +47,7 @@ export default function BoothMap({
   return (
     <div
       ref={containerRef}
-      className="relative aspect-[335/360] w-full touch-manipulation overscroll-contain bg-transparent"
+      className="relative aspect-[335/360] w-full overscroll-contain bg-transparent [touch-action:pan-y]"
     >
       <div
         className="pointer-events-none absolute inset-0 z-0 bg-contain bg-no-repeat"
