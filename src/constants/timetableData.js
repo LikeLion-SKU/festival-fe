@@ -27,7 +27,7 @@ export const TIMETABLE_DAY_BANNERS = {
     { id: 4, artist: 'MSGA', team: '실용음악학부', time: '17:55 ★ ~ 18:15', variant: 2 },
     {
       id: 5,
-      artist: '예술교육원 실용무용',
+      artist: '예술교육 실용무용',
       team: '실용무용전공',
       time: '18:15 ★ ~ 18:40',
       variant: 1,
@@ -74,7 +74,7 @@ export const TIMETABLE_DAY_BANNERS = {
     { id: 6, artist: 'Time Sale', team: '실음 x 실무 연합', time: '18:45 ★ ~ 19:15', variant: 2 },
     {
       id: 7,
-      artist: 'Imagine The Impossible',
+      artist: ['Imagine', 'The Impossible'],
       team: '실용음악학부',
       time: '19:15 ★ ~ 19:45',
       variant: 1,

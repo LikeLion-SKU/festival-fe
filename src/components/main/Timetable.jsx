@@ -4,6 +4,7 @@ import HorseIcon from '@/assets/icons/horse.svg';
 import FireBg from '@/assets/images/fire1.svg';
 import FireBg2 from '@/assets/images/fire2.svg';
 import Singer1 from '@/assets/images/singer1.png';
+import UdreamBg from '@/assets/images/udream.jpg';
 import {
   MAIN_SECTION_ICON_SCROLL_FADE,
   useScrollDrivenOpacity,
@@ -133,21 +134,85 @@ export default function Timetable() {
           const variant2ShiftClass = isVariant2 ? '-translate-x-[0.95rem]' : '';
           const artistOffsetClass = [
             isVariant1 ? (banner.bannerVariant === 3 ? '!-ml-[2rem]' : '!ml-[2.5rem]') : '',
-            selectedDay === 'day2' && banner.id === 1 ? '!translate-x-[0.25rem]' : '',
+            selectedDay === 'day2' && banner.id === 1
+              ? '!translate-x-[0.25rem] !translate-y-[0.45rem]'
+              : '',
+            selectedDay === 'day2' && banner.id === 5
+              ? '!-translate-x-[0.25rem] !translate-y-[0.5rem]'
+              : '',
             selectedDay === 'day2' && banner.id === 6
-              ? '!-translate-x-[0.2rem]'
-              : selectedDay === 'day3' && banner.id === 6
-                ? '!translate-x-[1.2rem]'
-                : '',
+              ? '!-translate-x-[2.1rem] !-translate-y-[0.15rem]'
+              : '',
+            selectedDay === 'day2' && banner.id === 7
+              ? '!translate-x-[0.05rem] !-translate-y-[0.05rem]'
+              : '',
+            selectedDay === 'day2' && banner.id === 8
+              ? '!-translate-x-[1.1rem] !-translate-y-[0.1rem]'
+              : '',
+            selectedDay === 'day3' && banner.id === 1
+              ? '!translate-x-[0.5rem] !-translate-y-[0.15rem]'
+              : '',
+            selectedDay === 'day3' && banner.id === 2
+              ? '!-translate-x-[1rem] !translate-y-[0.05rem]'
+              : '',
+            selectedDay === 'day3' && banner.id === 4
+              ? '!translate-x-[1.25rem] !translate-y-[0.2rem]'
+              : '',
+            selectedDay === 'day3' && banner.id === 5
+              ? '!translate-x-[1.35rem] !translate-y-[0.05rem]'
+              : '',
+            selectedDay === 'day3' && banner.id === 6
+              ? '!translate-x-[1.2rem] !translate-y-[0.1rem]'
+              : '',
+            selectedDay === 'day3' && banner.id === 7
+              ? '!translate-x-[0.5rem] !-translate-y-[0.05rem]'
+              : '',
           ].join(' ');
           const isSmallArtistText = selectedDay === 'day3' && banner.id === 4;
           const artistSizeClass = isSmallArtistText
-            ? '!text-[1.15rem]'
+            ? '!text-[1.6rem]'
             : selectedDay === 'day3' && banner.id === 7
-              ? '!text-[1rem]'
-              : '';
+              ? '!text-[1.4rem]'
+              : selectedDay === 'day2' && banner.id === 1
+                ? '!text-[1.6rem]'
+                : '';
           const teamOffsetClass =
-            selectedDay === 'day2' && banner.id === 5 ? '!-translate-y-[0.25rem]' : '';
+            selectedDay === 'day2' && banner.id === 1
+              ? '!translate-x-[0.55rem] !translate-y-[0.25rem]'
+              : selectedDay === 'day2' && banner.id === 2
+                ? '!-translate-x-[0.3rem] !translate-y-[0.25rem]'
+                : selectedDay === 'day2' && banner.id === 3
+                  ? '!-translate-x-[0.3rem] !translate-y-[0.25rem]'
+                  : selectedDay === 'day2' && banner.id === 4
+                    ? '!-translate-x-[0.3rem] !translate-y-[0.25rem]'
+                    : selectedDay === 'day2' && banner.id === 5
+                      ? '!translate-y-[0.05rem]'
+                      : selectedDay === 'day2' && banner.id === 6
+                        ? '!-translate-x-[0.3rem] !translate-y-[0.25rem]'
+                        : selectedDay === 'day2' && banner.id === 7
+                          ? '!translate-x-[0.1rem] !translate-y-[0.15rem]'
+                          : selectedDay === 'day2' && banner.id === 8
+                            ? '!-translate-x-[1rem] !translate-y-[0.15rem]'
+                            : selectedDay === 'day3' && banner.id === 1
+                              ? '!translate-x-[0.5rem] !translate-y-[0.25rem]'
+                              : selectedDay === 'day3' && banner.id === 2
+                                ? '!-translate-x-[1rem] !translate-y-[0.2rem]'
+                                : selectedDay === 'day3' && banner.id === 3
+                                  ? '!translate-x-[0.1rem] !translate-y-[0.3rem]'
+                                  : selectedDay === 'day3' && banner.id === 4
+                                    ? '!-translate-x-[0.55rem] !translate-y-[0.2rem]'
+                                    : selectedDay === 'day3' && banner.id === 5
+                                      ? '!translate-x-[0.55rem] !translate-y-[0.25rem]'
+                                      : selectedDay === 'day3' && banner.id === 6
+                                        ? '!-translate-x-[0.55rem] !translate-y-[0.25rem]'
+                                        : selectedDay === 'day3' && banner.id === 7
+                                          ? '!-translate-x-[0.55rem] !translate-y-[0.45rem]'
+                                          : '';
+
+          const artistFirstLineOffsetClass =
+            selectedDay === 'day3' && banner.id === 7
+              ? '!translate-x-[3.8rem] !translate-y-[0.4rem]'
+              : '';
 
           return (
             <div
@@ -181,6 +246,7 @@ export default function Timetable() {
                   adjustDay2Variant2Text={isVariant2}
                   useVariant1TextLayoutForVariant2={false}
                   artistOffsetClass={artistOffsetClass}
+                  artistFirstLineOffsetClass={artistFirstLineOffsetClass}
                   artistSizeClass={artistSizeClass}
                   teamOffsetClass={teamOffsetClass}
                   showRightImageSlot={isVariant1}

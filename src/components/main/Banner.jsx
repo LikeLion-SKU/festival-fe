@@ -22,6 +22,7 @@ export default function Banner({
   adjustDay2Variant2Text = false,
   useVariant1TextLayoutForVariant2 = false,
   artistOffsetClass = '',
+  artistFirstLineOffsetClass = '',
   artistSizeClass = '',
   teamOffsetClass = '',
   showRightImageSlot = false,
@@ -37,6 +38,7 @@ export default function Banner({
   const bannerImage = BANNER_BACKGROUNDS[imageVariant ?? variant] ?? WhiteBanner1;
   const timeSegments = time.split('★');
   const showTeam = Boolean(team?.trim());
+  const artistLines = Array.isArray(artist) ? artist : [artist];
 
   return (
     <div className="relative w-full max-w-[22rem]">
@@ -71,7 +73,7 @@ export default function Banner({
             </p>
           ) : null}
           <p
-            className={`${showTeam ? 'mt-[0.3rem]' : ''} whitespace-nowrap ${imageVariant === 3 ? 'text-[1.5rem]' : 'text-[1.862rem]'} font-extrabold leading-[1.4] tracking-[0] text-[#D53E27] [font-family:Pretendard] ${
+            className={`${showTeam ? 'mt-[0.3rem]' : ''} ${artistLines.length > 1 ? 'whitespace-normal' : 'whitespace-nowrap'} ${imageVariant === 3 ? 'text-[1.5rem]' : 'text-[1.862rem]'} font-extrabold leading-[1.25] tracking-[0] text-[#D53E27] [font-family:Pretendard] ${
               variant === 1 || (variant === 2 && useVariant1TextLayoutForVariant2)
                 ? reverse
                   ? 'mr-[3rem] origin-right rotate-[4.3deg]'
@@ -83,7 +85,19 @@ export default function Banner({
                   : ''
             } ${artistOffsetClass} ${artistSizeClass}`}
           >
-            {artist}
+            {artistLines.map((line, i) => (
+              <span
+                key={`artist-line-${i}`}
+                className={
+                  i === 0 && artistFirstLineOffsetClass
+                    ? `inline-block ${artistFirstLineOffsetClass}`
+                    : undefined
+                }
+              >
+                {i > 0 ? <br /> : null}
+                {line}
+              </span>
+            ))}
           </p>
         </div>
       </div>
