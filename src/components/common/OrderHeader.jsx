@@ -3,6 +3,7 @@ export default function OrderHeader({
   titleClassName = '',
   showBackButton = false,
   onBack,
+  rightButton,
 }) {
   return (
     <div className="relative flex h-14 w-full items-center justify-center px-5 mt-9">
@@ -36,6 +37,16 @@ export default function OrderHeader({
       >
         {title}
       </h1>
+      {rightButton && (
+        <button
+          type="button"
+          onClick={rightButton.onClick}
+          className="absolute right-5 flex flex-col items-center gap-1"
+        >
+          <img src={rightButton.icon} alt={rightButton.label} className="w-6 h-6" />
+          <span className="text-[11px] font-medium text-[#FE5F54]">{rightButton.label}</span>
+        </button>
+      )}
     </div>
   );
 }
