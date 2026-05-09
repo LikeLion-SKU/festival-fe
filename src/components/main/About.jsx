@@ -43,7 +43,11 @@ export default function About() {
   return (
     <section
       id="about"
-      className="relative overflow-hidden bg-[#141414] px-[3.65625rem] pb-[4.5rem] pt-[3.75rem]"
+      className="relative overflow-hidden px-[3.65625rem] pb-[4.5rem] pt-[3.75rem]"
+      style={{
+        background:
+          'linear-gradient(180deg, #000000 0%, #020202 22%, #0b0b0b 42%, #151313 74%, #141414 100%)',
+      }}
     >
       <style>{`
         @keyframes lion-pop-in {
@@ -90,7 +94,7 @@ export default function About() {
         className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[16rem]"
         style={{
           background:
-            'linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.7) 45%, rgba(0,0,0,0.35) 70%, rgba(0,0,0,0.15) 90%,rgba(0,0,0,0) 100%)',
+            'linear-gradient(180deg, rgba(0,0,0,0.96) 0%, rgba(0,0,0,0.84) 36%, rgba(8,8,8,0.5) 68%, rgba(20,17,17,0.2) 88%, rgba(20,17,17,0) 100%)',
         }}
       />
       <div
@@ -133,7 +137,7 @@ export default function About() {
           <p className="text-center text-[1.125rem] leading-[1.2] [font-family:Sekuya]">CAST</p>
           <CastCreditsAnimation rows={CAST_ROWS} />
         </div>
-        <div className="mt-[2.45rem] -mx-[1rem] flex w-[calc(100%+2rem)] flex-col gap-[0.55rem]">
+        <div className="mt-[2.45rem] -mx-[1rem] flex w-[calc(100%+4rem)] flex-col gap-[0.55rem]">
           <button
             type="button"
             onClick={() => navigate('/made-by')}

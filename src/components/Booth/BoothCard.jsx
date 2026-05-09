@@ -12,6 +12,7 @@ export default function BoothCard({
   className,
   variant = 'sheet',
   to,
+  onClick,
 }) {
   const heightClass = variant === 'search' ? 'h-[168px]' : 'h-[119px]';
   const subtitleSize = variant === 'search' ? 'text-[14px]' : 'text-[12px]';
@@ -110,6 +111,7 @@ export default function BoothCard({
     return (
       <Link
         to={to}
+        onClick={onClick}
         className={clsx(
           'block min-w-0 max-w-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/40',
           className
