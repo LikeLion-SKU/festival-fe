@@ -141,6 +141,10 @@ export default function BoothMapPage() {
     });
   }, [boothRows, searchQ]);
 
+  const cardsAnimKey = `${searchMode ? 'search' : 'map'}-${searchQ}-${activeBuildingId ?? 'all'}-${
+    boothRows.length
+  }`;
+
   const sectionBgStyle = searchMode
     ? { backgroundColor: '#121212' }
     : {
@@ -163,6 +167,10 @@ export default function BoothMapPage() {
           0%   { opacity: 0; }
           50%  { opacity: 1; }
           100% { opacity: 0; }
+        }
+        @keyframes booth-card-in {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
       <PageHeader
@@ -257,8 +265,16 @@ export default function BoothMapPage() {
             </p>
           ) : searchMode ? (
             <ul className="flex flex-col gap-3 px-1 pb-4">
-              {searchOverlayRows.map((row) => (
-                <li key={row.id} className="min-w-0">
+              {searchOverlayRows.map((row, i) => (
+                <li
+                  key={`${cardsAnimKey}-${row.id}`}
+                  className="min-w-0"
+                  style={{
+                    opacity: 0,
+                    animation: 'booth-card-in 0.7s ease forwards',
+                    animationDelay: `${i * 70}ms`,
+                  }}
+                >
                   <BoothCard
                     variant="search"
                     to={row.boothId != null ? `/order/${row.boothId}` : undefined}
@@ -272,16 +288,24 @@ export default function BoothMapPage() {
             </ul>
           ) : (
             <div className="grid min-w-0 grid-cols-2 gap-x-3 gap-y-4">
-              {sheetBoothRows.map((row) => (
-                <BoothCard
-                  key={row.id}
-                  variant="sheet"
-                  to={row.boothId != null ? `/order/${row.boothId}` : undefined}
-                  imageSrc={row.thumbnailUrl || BoothPlaceholderImg}
-                  location={row.location}
-                  departmentName={row.departmentName}
-                  boothNumbers={row.boothNumbers}
-                />
+              {sheetBoothRows.map((row, i) => (
+                <div
+                  key={`${cardsAnimKey}-${row.id}`}
+                  style={{
+                    opacity: 0,
+                    animation: 'booth-card-in 0.7s ease forwards',
+                    animationDelay: `${i * 70}ms`,
+                  }}
+                >
+                  <BoothCard
+                    variant="sheet"
+                    to={row.boothId != null ? `/order/${row.boothId}` : undefined}
+                    imageSrc={row.thumbnailUrl || BoothPlaceholderImg}
+                    location={row.location}
+                    departmentName={row.departmentName}
+                    boothNumbers={row.boothNumbers}
+                  />
+                </div>
               ))}
             </div>
           )}
