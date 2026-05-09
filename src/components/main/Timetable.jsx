@@ -51,7 +51,7 @@ export default function Timetable() {
       style={{
         backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 32%), linear-gradient(0deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0) 35%), url(${FireBg}), url(${FireBg2}), linear-gradient(180deg, rgba(20,20,20,0.6) 0%, rgba(20,20,20,1) 100%)`,
         backgroundRepeat: 'no-repeat, no-repeat, no-repeat, no-repeat, no-repeat',
-        backgroundPosition: 'center top, center bottom, center -7rem, center -15rem, center',
+        backgroundPosition: 'center top, center bottom, center 6rem, center 6rem, center',
         backgroundSize: 'cover, cover, cover, cover, cover',
         backgroundBlendMode: 'normal, normal, hard-light, normal, normal',
       }}
@@ -65,6 +65,14 @@ export default function Timetable() {
           to {
             opacity: 1;
             transform: translateY(0);
+          }
+        }
+        /* iOS Safari: 인접 섹션 경계 서브픽셀 합성으로 생기는 1px 헤어라인 완화 */
+        @supports (-webkit-touch-callout: none) {
+          #timetable {
+            margin-top: -1px;
+            position: relative;
+            z-index: 1;
           }
         }
       `}</style>
