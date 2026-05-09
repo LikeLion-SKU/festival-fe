@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 
 import Back from '@/assets/icons/back.svg?react';
 import HomeShadow from '@/assets/icons/home_shadow.svg?react';
+import Background from '@/assets/images/background.svg';
 import EnFlag from '@/assets/images/en.svg';
 import KoFlag from '@/assets/images/ko.svg';
 import ZhFlag from '@/assets/images/zh.svg';
@@ -47,8 +48,7 @@ function BoothImageSection({ thumbnailUrl, onLangChange, isLoading, isQR }) {
           <Skeleton className="w-full h-full rounded-none" />
         ) : (
           <>
-            <img src={thumbnailUrl} className="w-full h-full object-cover blur" />
-            <div className="absolute inset-0 bg-[#391412]/50" />
+            <img src={Background} className="w-full h-full object-cover" />
           </>
         )}
       </div>
