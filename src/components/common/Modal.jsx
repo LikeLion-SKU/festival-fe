@@ -13,20 +13,20 @@ function Modal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white rounded-2xl mx-8 px-8 py-10 flex flex-col items-center gap-5 w-full max-w-sm">
+      <div className="bg-white rounded-2xl mx-8 px-8 pt-9 pb-5 flex flex-col items-center w-full max-w-sm">
         <WarningIcon />
-        <div className="text-center flex flex-col gap-1">{children}</div>
-        <div className="flex gap-3 w-full mt-1">
+        <div className="text-center flex flex-col mt-3 gap-1">{children}</div>
+        <div className="flex gap-3 w-full mt-6">
           <button
             onClick={onCancel}
-            className="flex-1 py-3 rounded-xl bg-gray-100 text-gray-500 font-medium text-sm"
+            className="flex-1 py-3 rounded-lg bg-gray-100 text-gray-500 font-medium text-sm"
           >
             {cancelText}
           </button>
           <button
             onClick={onConfirm}
             disabled={isConfirmDisabled}
-            className="flex-1 py-3 rounded-xl bg-order-button text-white font-medium text-sm disabled:opacity-50"
+            className="flex-1 py-3 rounded-lg bg-order-button text-white font-medium text-sm disabled:opacity-50"
           >
             {confirmText}
           </button>
