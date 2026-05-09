@@ -11,6 +11,8 @@ import ProductIcon from '@/assets/icons/admin/product_gray_icon.svg';
 import ProductActiveIcon from '@/assets/icons/admin/product_red_icon.svg';
 import WaitIcon from '@/assets/icons/admin/wait_gray_icon.svg';
 import WaitActiveIcon from '@/assets/icons/admin/wait_red_icon.svg';
+import ManageIcon from '@/assets/icons/manage.svg';
+import BusinessManagementSheet from '@/components/Admin/BusinessManagementSheet';
 import NavButton from '@/components/Admin/NavButton';
 
 const NAV_ITEMS = [
@@ -63,6 +65,7 @@ export default function AdminMain() {
 
   const selected = NAV_ITEMS.find((item) => location.pathname.startsWith(item.goto))?.key ?? 'wait';
 
+  const [showBusinessSheet, setShowBusinessSheet] = useState(false);
   const [counts, setCounts] = useState(INITIAL_COUNTS);
   const pendingIdsRef = useRef({
     wait: new Set(),
@@ -86,8 +89,13 @@ export default function AdminMain() {
   useEffect(() => {
     setHeaderConfig({
       title: '주문 관리',
+      rightButton: {
+        icon: ManageIcon,
+        label: '영업 관리',
+        onClick: () => setShowBusinessSheet(true),
+      },
     });
-  }, [setHeaderConfig]);
+  }, [setHeaderConfig, setShowBusinessSheet]);
 
   // SSE orderIncrementNotification 수신 시 호출 — 카운트 +1, 미확인 id Set에 추가
   const addPendingOrder = useCallback((orderStatus, orderId) => {
@@ -134,6 +142,7 @@ export default function AdminMain() {
 
   return (
     <div className="relative flex flex-col h-full">
+      <BusinessManagementSheet open={showBusinessSheet} onOpenChange={setShowBusinessSheet} />
       <nav className="flex w-full items-start border-b border-[#E5E5E5] bg-white mt-4">
         {NAV_ITEMS.map((item) => (
           <NavButton

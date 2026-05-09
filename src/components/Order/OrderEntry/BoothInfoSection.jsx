@@ -6,11 +6,23 @@ import { getLangFontClass } from '@/utils/langFont';
 
 const CONTENT_LIMIT = 150;
 
+const BOOTH_STATUS_LABEL = {
+  SOLD_OUT: '재료 소진',
+  BREAK_TIME: '브레이크타임',
+  LAST_ORDER_CLOSED: '라스트오더 마감',
+  BOOTH_REASON_CLOSED: '부스 사정',
+  CLOSED: '영업종료',
+};
+
 function BoothInfoSection({
   boothName,
   departmentName,
   location,
   isOpen,
+  boothStatus,
+  dayOpenTime,
+  nightOpenTime,
+  closeTime,
   content,
   images,
   isLoading,
@@ -83,6 +95,41 @@ function BoothInfoSection({
           <div className={`h-5 text-sm font-medium ${textSecondary}`}>{location}</div>
         )}
       </div>
+      <div className="relative flex mt-1 gap-3 items-center">
+        <div className={`shrink-0 text-sm font-medium ${textLabel}`}>운영 시간</div>
+        {isLoading ? (
+          <Skeleton className="w-16 h-5" />
+        ) : (
+          <span className="text-sm font-medium" style={{ color: '#FF756C' }}>
+            {isOpen
+              ? '영업 중'
+              : BOOTH_STATUS_LABEL[boothStatus]
+                ? `${BOOTH_STATUS_LABEL[boothStatus]}으로 인한 영업 중단`
+                : '영업 중단'}
+          </span>
+        )}
+      </div>
+      {!isLoading && (dayOpenTime || nightOpenTime || closeTime) && (
+        <div className="relative mt-0.5">
+          <span
+            className="font-semibold [font-family:Pretendard]"
+            style={{
+              fontSize: '15px',
+              lineHeight: '24px',
+              letterSpacing: '-0.025em',
+              color: '#595959',
+            }}
+          >
+            {[
+              dayOpenTime && `낮 오픈 ${dayOpenTime}`,
+              nightOpenTime && `밤 오픈 ${nightOpenTime}`,
+              closeTime && `마감 ${closeTime}`,
+            ]
+              .filter(Boolean)
+              .join(' / ')}
+          </span>
+        </div>
+      )}
       <div className={`relative mt-7 text-sm font-normal leading-6 ${textSecondary} ${fontClass}`}>
         {isLoading ? (
           <div className="flex flex-col gap-2">
