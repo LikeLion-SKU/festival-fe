@@ -17,6 +17,10 @@ function OrderEntry() {
     departmentName,
     location,
     isOpen,
+    boothStatus,
+    dayOpenTime,
+    nightOpenTime,
+    closeTime,
     content,
     thumbnailUrl,
     images,
@@ -64,6 +68,10 @@ function OrderEntry() {
         departmentName={departmentName}
         location={location}
         isOpen={isOpen}
+        boothStatus={boothStatus}
+        dayOpenTime={dayOpenTime}
+        nightOpenTime={nightOpenTime}
+        closeTime={closeTime}
         content={content}
         images={images}
         lang={lang}

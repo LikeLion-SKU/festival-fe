@@ -11,6 +11,7 @@ export default function AdminLayout() {
     title: '',
     showBackButton: false,
     onBack: undefined,
+    rightButton: undefined,
   });
 
   return (
@@ -21,6 +22,7 @@ export default function AdminLayout() {
             title={headerConfig.title}
             showBackButton={headerConfig.showBackButton}
             onBack={headerConfig.onBack}
+            rightButton={headerConfig.rightButton}
           />
         )}
         <div className="min-h-0 flex-1">

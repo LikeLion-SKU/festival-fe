@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Outlet, useParams, useSearchParams } from 'react-router';
 
 import { getBoothInfo } from '@/api/booth';
@@ -6,6 +6,14 @@ import { getOrderAvailableMenus } from '@/api/boothMenu';
 import Toast from '@/components/common/Toast';
 import { formatBoothLocationKo } from '@/constants/boothBuildingData';
 import NotFound from '@/pages/NotFound';
+
+const formatLocalTime = (t) => {
+  if (!t) return null;
+  if (typeof t === 'string') return t.slice(0, 5);
+  const h = String(t.hour).padStart(2, '0');
+  const m = String(t.minute).padStart(2, '0');
+  return `${h}:${m}`;
+};
 
 function Order() {
   const { boothId } = useParams();
@@ -34,7 +42,10 @@ function Order() {
     };
   });
 
-  const quantities = cartState.boothId === boothId ? cartState.quantities : {};
+  const quantities = useMemo(
+    () => (cartState.boothId === boothId ? cartState.quantities : {}),
+    [cartState.boothId, cartState.quantities, boothId]
+  );
 
   const setQuantities = (updater) => {
     setCartState((prev) => {
@@ -183,6 +194,10 @@ function Order() {
           departmentName: boothInfo?.departmentName ?? '',
           location: formatBoothLocationKo(boothInfo?.location ?? boothInfo?.locationDetail ?? ''),
           isOpen: boothInfo?.open ?? false,
+          boothStatus: boothInfo?.boothStatus ?? '',
+          dayOpenTime: formatLocalTime(boothInfo?.dayOpenTime),
+          nightOpenTime: formatLocalTime(boothInfo?.nightOpenTime),
+          closeTime: formatLocalTime(boothInfo?.closeTime),
           content: boothInfo?.description ?? '',
           thumbnailUrl: boothInfo?.thumbnailUrl ?? null,
           images: boothInfo?.detailImages?.map((d) => d.imageUrl) ?? [],

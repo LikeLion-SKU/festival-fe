@@ -396,7 +396,7 @@ export default function MenuManagement() {
           style={{ paddingTop: '60px', gap: '28px' }}
         >
           <WarningIcon style={{ width: '36px', height: '36px' }} />
-          <div className="flex flex-col items-center gap-1.5">
+          <div className="flex flex-col items-center gap-0.5">
             <p
               className="font-semibold text-[#1A1A1A] [font-family:Pretendard]"
               style={{ fontSize: '20px', lineHeight: '28px', letterSpacing: '-0.01em' }}

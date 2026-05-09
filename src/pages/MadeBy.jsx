@@ -429,13 +429,7 @@ export default function MadeBy() {
         <section className="px-[2rem] pt-[7.5rem] pb-[6.75rem]">
           <ScrollFade>
             <SectionHeader
-              title={
-                <>
-                  For Students, By Students
-                  <br />
-                  Student Affairs Office
-                </>
-              }
+              title={<>Student Affairs Office</>}
               subtitle="학생을 위해, 학생처가 함께 만들었습니다"
             />
             <div className="mt-[3rem] grid grid-cols-2 gap-x-[0.5rem] gap-y-[1.5rem]">

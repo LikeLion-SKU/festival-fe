@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 
 import { login } from '@/api/auth';
@@ -11,15 +11,6 @@ import OrderButton from '@/components/common/OrderButton';
 import LoginSplash from './LoginSplash';
 
 export default function AdminLogin() {
-  useEffect(() => {
-    const existing = document.querySelector('link[rel="manifest"]');
-    const prev = existing?.href ?? null;
-    if (existing) existing.href = '/login-manifest.json';
-    return () => {
-      if (existing && prev) existing.href = prev;
-    };
-  }, []);
-
   const [department, setDepartment] = useState('');
   const [password, setPassword] = useState('');
   const [isFail, setIsFail] = useState(false);
