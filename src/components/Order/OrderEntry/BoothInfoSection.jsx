@@ -65,12 +65,12 @@ function BoothInfoSection({
           </div>
         )}
       </div>
-      <div className="relative flex mt-4 gap-3">
-        <div className={`w-7 h-5 text-sm font-medium ${textLabel}`}>학과</div>
+      <div className="relative flex items-start mt-4 gap-3">
+        <div className={`w-7 shrink-0 text-sm font-medium ${textLabel}`}>학과</div>
         {isLoading ? (
           <Skeleton className="w-24 h-5" />
         ) : (
-          <div className={`h-5 text-sm font-medium ${textSecondary} ${fontClass}`}>
+          <div className={`text-sm font-medium ${textSecondary} ${fontClass}`}>
             {departmentName}
           </div>
         )}
