@@ -173,7 +173,7 @@ export default function Intro() {
               <span className="font-bold">서경대학교</span>
               <span className="font-medium"> 대동제</span>
             </p>
-            <div className="relative left-1/2 mt-[0.375rem] h-[0.03125rem] w-[calc(100vw-13rem)] -translate-x-1/2 bg-[#FFFFFF]" />
+            <div className="relative left-1/2 mt-[0.375rem] h-[0.03125rem] w-[12.75rem] -translate-x-1/2 bg-[#FFFFFF]" />
             <div className="mt-[0.8125rem] flex items-center justify-center gap-[0.0625rem]">
               <img src={ZeroIcon} alt="" aria-hidden="true" className="h-auto w-auto" />
               <img src={FiveIcon} alt="" aria-hidden="true" className="h-auto w-auto" />
