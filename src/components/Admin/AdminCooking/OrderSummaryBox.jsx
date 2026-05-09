@@ -8,7 +8,7 @@ export default function OrderSummaryBox({ orderData }) {
   const [summaryOpen, setSummaryOpen] = useState(false);
 
   return (
-    <div className="sticky z-10 flex w-full min-h-13 shrink-0 max-h-50 overflow-auto flex-col bg-white px-5 py-2 shadow-[0_1px_2px_0_rgba(0,0,0,0.1)]">
+    <div className="sticky top-0 z-10 flex w-full min-h-13 shrink-0 max-h-50 overflow-auto flex-col bg-white px-5 py-2 shadow-[0_1px_2px_0_rgba(0,0,0,0.1)]">
       <button
         type="button"
         onClick={() => setSummaryOpen((v) => !v)}
