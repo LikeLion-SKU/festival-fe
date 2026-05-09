@@ -198,7 +198,7 @@ function CustomerInfo() {
           setSoldOutToast(false);
           sessionStorage.removeItem('orderQuantities');
           sessionStorage.removeItem('orderCart');
-          navigate(`/order/${boothId}`, { replace: true });
+          navigate(`/order/${boothId}?entry=qr`, { replace: true });
         }}
       />
     </div>
