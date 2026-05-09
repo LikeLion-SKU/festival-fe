@@ -427,7 +427,7 @@ export default function Lineup() {
   return (
     <section
       id="lineup"
-      className="relative min-h-[34.1rem] overflow-hidden bg-[#141414] px-[3.65625rem] pt-[0rem]"
+      className="relative min-h-[34.1rem] overflow-hidden bg-black px-[3.65625rem] pt-[0rem]"
     >
       <div
         aria-hidden="true"

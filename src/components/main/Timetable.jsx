@@ -46,13 +46,13 @@ export default function Timetable() {
   return (
     <section
       id="timetable"
-      className="min-h-[70rem] overflow-x-hidden bg-[#141414] px-[1.5rem] pt-[7.5rem]"
+      className="min-h-[70rem] overflow-x-hidden bg-black px-[1.5rem] pt-[7.5rem]"
       style={{
-        backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 32%), linear-gradient(0deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0) 35%), url(${FireBg}), url(${FireBg2}), linear-gradient(180deg, rgba(20,20,20,0.6) 0%, rgba(20,20,20,1) 100%)`,
+        backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.58) 22%, rgba(8,8,8,0.28) 40%, rgba(0,0,0,0) 54%), linear-gradient(0deg, rgba(0,0,0,0.52) 0%, rgba(0,0,0,0) 35%), url(${FireBg}), url(${FireBg2}), linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,1) 100%)`,
         backgroundRepeat: 'no-repeat, no-repeat, no-repeat, no-repeat, no-repeat',
-        backgroundPosition: 'center top, center bottom, center 6rem, center 6rem, center',
+        backgroundPosition: 'center top, center bottom, center -5rem, center -5rem, center',
         backgroundSize: 'cover, cover, cover, cover, cover',
-        backgroundBlendMode: 'normal, normal, hard-light, normal, normal',
+        backgroundBlendMode: 'normal, normal, hard-light, hard-light, normal',
       }}
     >
       <style>{`
