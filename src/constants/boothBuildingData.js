@@ -1,3 +1,4 @@
+import BoothDefaultImage from '@/assets/images/booth-default.png';
 import BoothImagePlaceholder from '@/assets/images/booth_image.svg';
 import CheongunChineseImage from '@/assets/images/cheongun-chinese.png';
 import CheongunDoshiImage from '@/assets/images/cheongun-doshi.png';
@@ -112,6 +113,7 @@ const RAW_DEPARTMENTS_BY_BUILDING = {
       boothNumberEnd: 12,
     },
     { department: '광고홍보영상학과', boothNumber: 13 },
+    { department: '사회과학대', boothNumber: 14 },
     { department: '사회과학대', boothNumber: 14 },
     { department: '군사학과', boothNumber: 15 },
   ],
