@@ -358,7 +358,7 @@ export default function Booth() {
           </div>
         </div>
       </div>
-      <div className="relative z-10 mx-[1.15625rem] mt-4">
+      <div className="relative z-10 mx-auto mt-4 w-[min(86.5vw,25rem)]">
         <button
           type="button"
           onClick={() => navigate('/booth-map')}

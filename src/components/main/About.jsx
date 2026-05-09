@@ -133,7 +133,7 @@ export default function About() {
           <p className="text-center text-[1.125rem] leading-[1.2] [font-family:Sekuya]">CAST</p>
           <CastCreditsAnimation rows={CAST_ROWS} />
         </div>
-        <div className="mt-[2.45rem] -mx-[1rem] flex w-[calc(100%+2rem)] flex-col gap-[0.55rem]">
+        <div className="mt-[2.45rem] -mx-[1rem] flex w-[calc(100%+4rem)] flex-col gap-[0.55rem]">
           <button
             type="button"
             onClick={() => navigate('/made-by')}
