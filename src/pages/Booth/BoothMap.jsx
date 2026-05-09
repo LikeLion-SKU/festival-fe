@@ -14,6 +14,8 @@ import SearchInput from '@/components/common/SearchInput';
 import { BUILDING_ID_TO_API_LOCATION, formatBoothLocationKo } from '@/constants/boothBuildingData';
 import { BUILDINGS } from '@/constants/mainDummyData';
 
+const BOOTH_MAP_SCROLL_Y_STORAGE_KEY = 'booth-map-scroll-y';
+
 function normalizeBoothList(payload) {
   if (payload == null) return [];
   if (Array.isArray(payload)) return payload;
@@ -41,19 +43,43 @@ function normalizeBoothNumbersFromApi(item) {
 
 const BUILDING_BUTTON_ORDER = ['hyein', 'eunju1', 'eunju2', 'cheongun', 'daeil'];
 
-/*헤더 + 검색바 + 부스 안내 지도 + 하단 모달창 */
+/*헤더 + 검색바 + 부스 안내 지도 + 하단 카드 (스크롤 페이지로 수정 완) */
 export default function BoothMapPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const persistedUiState = location.state?.boothMapUiState;
+  const hasPendingScrollRestore =
+    typeof window !== 'undefined' && sessionStorage.getItem(BOOTH_MAP_SCROLL_Y_STORAGE_KEY) != null;
   const [activeBuildingId, setActiveBuildingId] = useState(
     persistedUiState?.activeBuildingId ?? null
   );
   const [search, setSearch] = useState(persistedUiState?.search ?? '');
   const [searchMode, setSearchMode] = useState(persistedUiState?.searchMode ?? false);
   const [isHyeinFlashing, setIsHyeinFlashing] = useState(false);
+  const [cardsAnimateEnabled, setCardsAnimateEnabled] = useState(() => !hasPendingScrollRestore);
+  const [cardsAnimVersion, setCardsAnimVersion] = useState(() => (hasPendingScrollRestore ? 0 : 1));
+
+  /* 스크롤 후 특정 카드 진입 후 뒤로 가기 버튼 클릭 시 이전 위치 복원 */
+  useEffect(() => {
+    const raw = sessionStorage.getItem(BOOTH_MAP_SCROLL_Y_STORAGE_KEY);
+    if (raw == null) return;
+    const y = Number(raw);
+    if (!Number.isFinite(y)) {
+      sessionStorage.removeItem(BOOTH_MAP_SCROLL_Y_STORAGE_KEY);
+      return;
+    }
+
+    const restore = () => {
+      window.scrollTo({ top: Math.max(0, y), behavior: 'auto' });
+      sessionStorage.removeItem(BOOTH_MAP_SCROLL_Y_STORAGE_KEY);
+    };
+
+    requestAnimationFrame(restore);
+  }, []);
 
   useEffect(() => {
+    const hasPendingScrollRestore = sessionStorage.getItem(BOOTH_MAP_SCROLL_Y_STORAGE_KEY) != null;
+    if (hasPendingScrollRestore) return;
     const t1 = setTimeout(() => setIsHyeinFlashing(true), 500);
     const t2 = setTimeout(() => setIsHyeinFlashing(false), 2900);
     return () => {
@@ -66,6 +92,7 @@ export default function BoothMapPage() {
   useEffect(() => {
     navigate(location.pathname, {
       replace: true,
+      preventScrollReset: true,
       state: {
         boothMapUiState: {
           activeBuildingId,
@@ -141,9 +168,14 @@ export default function BoothMapPage() {
     });
   }, [boothRows, searchQ]);
 
-  const cardsAnimKey = `${searchMode ? 'search' : 'map'}-${searchQ}-${activeBuildingId ?? 'all'}-${
-    boothRows.length
-  }`;
+  const triggerCardsAnimation = () => {
+    setCardsAnimateEnabled(true);
+    setCardsAnimVersion((v) => v + 1);
+  };
+  const handleBoothCardNavigate = () => {
+    sessionStorage.setItem(BOOTH_MAP_SCROLL_Y_STORAGE_KEY, String(window.scrollY || 0));
+    setCardsAnimateEnabled(false);
+  };
 
   const sectionBgStyle = searchMode
     ? { backgroundColor: '#121212' }
@@ -181,6 +213,7 @@ export default function BoothMapPage() {
             setSearchMode(false);
             setSearch('');
             setActiveBuildingId(null);
+            triggerCardsAnimation();
             return;
           }
           navigate('/');
@@ -193,7 +226,12 @@ export default function BoothMapPage() {
             placeholder="학과명으로 부스 검색"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            onFocus={() => setSearchMode(true)}
+            onFocus={() => {
+              if (!searchMode) {
+                setSearchMode(true);
+                triggerCardsAnimation();
+              }
+            }}
           />
         </div>
 
@@ -218,9 +256,10 @@ export default function BoothMapPage() {
                       key={item.id}
                       type="button"
                       title={item.label}
-                      onClick={() =>
-                        setActiveBuildingId((prev) => (prev === item.id ? null : item.id))
-                      }
+                      onClick={() => {
+                        setActiveBuildingId((prev) => (prev === item.id ? null : item.id));
+                        triggerCardsAnimation();
+                      }}
                       className={clsx(
                         'relative overflow-hidden flex h-8 min-h-8 min-w-0 flex-[1_1_60px] items-center justify-center border border-solid px-1 text-[clamp(12px,3vw,14px)] font-medium leading-none tracking-[-0.02em] [font-family:Pretendard]',
                         active
@@ -267,17 +306,22 @@ export default function BoothMapPage() {
             <ul className="flex flex-col gap-3 px-1 pb-4">
               {searchOverlayRows.map((row, i) => (
                 <li
-                  key={`${cardsAnimKey}-${row.id}`}
+                  key={cardsAnimateEnabled ? `${cardsAnimVersion}-${row.id}` : row.id}
                   className="min-w-0"
-                  style={{
-                    opacity: 0,
-                    animation: 'booth-card-in 0.7s ease forwards',
-                    animationDelay: `${i * 70}ms`,
-                  }}
+                  style={
+                    cardsAnimateEnabled
+                      ? {
+                          opacity: 0,
+                          animation: 'booth-card-in 0.7s ease forwards',
+                          animationDelay: `${i * 70}ms`,
+                        }
+                      : undefined
+                  }
                 >
                   <BoothCard
                     variant="search"
                     to={row.boothId != null ? `/order/${row.boothId}` : undefined}
+                    onClick={handleBoothCardNavigate}
                     imageSrc={row.thumbnailUrl || BoothPlaceholderImg}
                     location={row.location}
                     departmentName={row.departmentName}
@@ -290,16 +334,21 @@ export default function BoothMapPage() {
             <div className="grid min-w-0 grid-cols-2 gap-x-3 gap-y-4">
               {sheetBoothRows.map((row, i) => (
                 <div
-                  key={`${cardsAnimKey}-${row.id}`}
-                  style={{
-                    opacity: 0,
-                    animation: 'booth-card-in 0.7s ease forwards',
-                    animationDelay: `${i * 70}ms`,
-                  }}
+                  key={cardsAnimateEnabled ? `${cardsAnimVersion}-${row.id}` : row.id}
+                  style={
+                    cardsAnimateEnabled
+                      ? {
+                          opacity: 0,
+                          animation: 'booth-card-in 0.7s ease forwards',
+                          animationDelay: `${i * 70}ms`,
+                        }
+                      : undefined
+                  }
                 >
                   <BoothCard
                     variant="sheet"
                     to={row.boothId != null ? `/order/${row.boothId}` : undefined}
+                    onClick={handleBoothCardNavigate}
                     imageSrc={row.thumbnailUrl || BoothPlaceholderImg}
                     location={row.location}
                     departmentName={row.departmentName}
