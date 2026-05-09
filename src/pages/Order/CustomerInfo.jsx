@@ -40,7 +40,11 @@ function CustomerInfo() {
 
   const handlePhoneChange = (e) => {
     const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
-    setPhoneDigits(digits);
+    if (phoneDigits === '' && digits.length > 0) {
+      setPhoneDigits(('010' + digits).slice(0, 11));
+    } else {
+      setPhoneDigits(digits);
+    }
   };
 
   const handleTableChange = (e) => {
