@@ -132,13 +132,17 @@ export default function Timetable() {
               : banner.id >= 2
                 ? '-mt-[1.6rem]'
                 : '';
+          const banner37OffsetClass =
+            selectedDay === 'day3' && banner.id === 7 ? '-mt-[0.95rem]' : '';
+          const banner28OffsetClass =
+            selectedDay === 'day2' && banner.id === 8 ? 'mt-[0.01rem]' : '';
 
           return (
             <div
               key={`${selectedDay}-${banner.id}`}
               className={`${isRightAligned ? 'self-end' : 'self-start'} ${variant1ShiftClass} ${variant2ShiftClass} ${
                 stackSpacingClass
-              } ${banner.variant === 2 ? 'z-0' : 'z-10'}`}
+              } ${banner37OffsetClass} ${banner28OffsetClass} ${banner.variant === 2 ? 'z-0' : 'z-9'}`}
             >
               <div
                 style={{
