@@ -45,7 +45,10 @@ function BoothImageSection({ thumbnailUrl, onLangChange, isLoading, isQR }) {
         {isLoading ? (
           <Skeleton className="w-full h-full rounded-none" />
         ) : (
-          <img src={thumbnailUrl} className="w-full h-full object-cover blur" />
+          <>
+            <img src={thumbnailUrl} className="w-full h-full object-cover blur" />
+            <div className="absolute inset-0 bg-[#391412]/50" />
+          </>
         )}
       </div>
       {isLoading ? (
