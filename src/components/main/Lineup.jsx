@@ -6,7 +6,7 @@ import HorseCard from '@/assets/images/horse-card.png';
 import HorseRed from '@/assets/images/horse-red.svg';
 import LineupCardDay2Bg from '@/assets/images/lineup-card-day2.svg';
 import LineupCardBg from '@/assets/images/lineup-card.svg';
-import LineupStarBg from '@/assets/images/lineup-star.svg';
+import LineupStarBg from '@/assets/images/lineup-star.png';
 import LineupCarouselDragSurface from '@/components/animation/LineupCarouselDragSurface';
 import LineupSlotCard from '@/components/animation/LineupSlotCard';
 import {
@@ -71,7 +71,7 @@ function sortSlotsStable(slots) {
 }
 
 function LineupCardFace({ item }) {
-  const starWrapperClass = 'right-[13rem] top-[2.35rem] h-[8.9rem] w-[8.9rem]';
+  const starWrapperClass = 'right-[13rem] top-[2.35rem] h-[7.2rem] w-[8rem]';
   const starTextTiltClass = '-rotate-[7deg]';
   const imageOffsetX = item.imageOffsetX ?? '0.4rem';
   const imageOffsetY = item.imageOffsetY ?? '4.0rem';
