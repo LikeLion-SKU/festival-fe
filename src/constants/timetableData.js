@@ -71,6 +71,7 @@ export const TIMETABLE_DAY_BANNERS = {
       team: '실음 x 실무 연합',
       time: '18:40 ★ ~ 19:00',
       variant: 2,
+      bannerScale: 0.8,
       bannerImageSrc: bannerDay26,
     },
     {
@@ -80,6 +81,7 @@ export const TIMETABLE_DAY_BANNERS = {
       time: '19:00 ★ ~ 19:30',
       variant: 1,
       bannerImageSrc: bannerDay27,
+      bannerScale: 1,
       imageSlotSrc: animoonBg,
     },
     {
@@ -125,6 +127,7 @@ export const TIMETABLE_DAY_BANNERS = {
       team: '실용음악학부',
       time: '18:05 ★ ~ 18:30',
       variant: 2,
+      bannerScale: 1,
       bannerImageSrc: bannerDay34,
     },
     {
@@ -134,6 +137,7 @@ export const TIMETABLE_DAY_BANNERS = {
       time: '18:30 ★ ~ 18:45',
       variant: 1,
       bannerImageSrc: bannerDay35,
+      bannerScale: 0.8,
     },
     {
       id: 6,

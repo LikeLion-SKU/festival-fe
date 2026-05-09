@@ -126,12 +126,18 @@ export default function Timetable() {
           const isRightAligned = index % 2 === 1;
           const variant1ShiftClass = isVariant1 ? 'translate-x-[0.95rem]' : '';
           const variant2ShiftClass = isVariant2 ? '-translate-x-[0.95rem]' : '';
+          const stackSpacingClass =
+            (selectedDay === 'day2' && banner.id >= 6) || (selectedDay === 'day3' && banner.id >= 5)
+              ? '-mt-[1.9rem]'
+              : banner.id >= 2
+                ? '-mt-[1.6rem]'
+                : '';
 
           return (
             <div
               key={`${selectedDay}-${banner.id}`}
               className={`${isRightAligned ? 'self-end' : 'self-start'} ${variant1ShiftClass} ${variant2ShiftClass} ${
-                banner.id >= 2 ? '-mt-[1.5rem]' : ''
+                stackSpacingClass
               } ${banner.variant === 2 ? 'z-0' : 'z-10'}`}
             >
               <div
@@ -145,7 +151,10 @@ export default function Timetable() {
                 }}
                 className="transform-gpu"
               >
-                <Banner bannerImageSrc={banner.bannerImageSrc} />
+                <Banner
+                  bannerImageSrc={banner.bannerImageSrc}
+                  bannerScale={banner.bannerScale ?? 1}
+                />
               </div>
             </div>
           );
