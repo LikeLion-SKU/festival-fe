@@ -50,16 +50,12 @@ const BG_ACTIVE = '#C43A31';
 const SIDE_RECT_CLASS =
   'relative box-border flex h-[0.75rem] w-[3.75rem] shrink-0 border-2 border-solid border-[#C43A31] bg-[#121212]';
 
-function SideRectWithTicks({ active }) {
+function SideRectWithTicks() {
   const tick = '#C43A31';
   const TICK_COUNT = 8;
 
   return (
-    <div
-      className={SIDE_RECT_CLASS}
-      style={{ borderColor: active ? 'transparent' : '#C43A31' }}
-      aria-hidden
-    >
+    <div className={SIDE_RECT_CLASS} aria-hidden>
       {/* grid 대신 절대좌표로 */}
       <div className="pointer-events-none absolute inset-x-[2px] inset-y-[0px]">
         {Array.from({ length: TICK_COUNT }).map((_, i) => (
@@ -96,13 +92,13 @@ export default function Hyein({
   const buildingGlowStyle = active
     ? {
         filter:
-          'drop-shadow(0 0 12px rgba(196,58,49,0.24)) drop-shadow(0 0 28px rgba(196,58,49,0.16)) drop-shadow(0 0 44px rgba(196,58,49,0.10))',
+          'drop-shadow(0 0 6px rgba(196,58,49,0.18)) drop-shadow(0 0 14px rgba(196,58,49,0.10)) drop-shadow(0 0 20px rgba(196,58,49,0.06))',
       }
     : undefined;
   const boxStyle =
     isFlashing && !active
       ? { animation: 'hyein-panel-flash 1.2s ease-out 2 forwards' }
-      : { backgroundColor: panelBg, ...buildingGlowStyle };
+      : { backgroundColor: panelBg };
   /** 건물·무대·마커 일괄 확대 (지도 상단 배치 기준) */
   const wrapperClass = clsx(
     'relative inline-flex origin-top scale-[1.15] flex-col items-center gap-[0.25rem]',
@@ -126,7 +122,7 @@ export default function Hyein({
         <span className={labelClass}>혜인관</span>
       </div>
       <div className="mt-auto flex w-full translate-y-[3px] items-end justify-center">
-        <SideRectWithTicks active={active} />
+        <SideRectWithTicks />
         <div
           className="z-10 -mx-[2px] box-border flex h-[1.25rem] w-[3rem] shrink-0 items-end justify-center border-2 border-solid bg-[#121212] pb-[1px]"
           style={{ borderColor: '#C43A31' }}
@@ -134,7 +130,7 @@ export default function Hyein({
         >
           <div className="box-border h-[0.7rem] w-[0.8rem] translate-y-[2px] border-2 border-solid border-[#C43A31] bg-[#121212]" />
         </div>
-        <SideRectWithTicks active={active} />
+        <SideRectWithTicks />
       </div>
       <div className="absolute right-[4px] top-[8px] flex items-center justify-center" aria-hidden>
         <AedIcon
@@ -195,7 +191,7 @@ export default function Hyein({
 
   if (onClick) {
     return (
-      <div className={wrapperClass}>
+      <div className={wrapperClass} style={buildingGlowStyle}>
         <button
           type="button"
           onClick={onClick}
@@ -216,7 +212,7 @@ export default function Hyein({
   }
 
   return (
-    <div className={wrapperClass}>
+    <div className={wrapperClass} style={buildingGlowStyle}>
       <div className={boxClass} style={{ backgroundColor: panelBg }}>
         {inner}
       </div>

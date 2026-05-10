@@ -64,11 +64,14 @@ export function computeScrollOpacity(rect, viewportHeight, options = {}) {
  * }} [options]
  * @returns {number}
  */
+const OPACITY_UPDATE_EPS = 0.012;
+
 export function useScrollDrivenOpacity(elementRef, options = {}) {
   const { minOpacity = 0.15, maxOpacity = 1, peakViewportY = 0.42, bandVH = 0.52 } = options;
 
   const [opacity, setOpacity] = useState(maxOpacity);
   const frameRef = useRef(0);
+  const lastCommittedRef = useRef(null);
 
   useEffect(() => {
     const measure = () => {
@@ -82,6 +85,9 @@ export function useScrollDrivenOpacity(elementRef, options = {}) {
         peakViewportY,
         bandVH,
       });
+      const prev = lastCommittedRef.current;
+      if (prev !== null && Math.abs(next - prev) < OPACITY_UPDATE_EPS) return;
+      lastCommittedRef.current = next;
       setOpacity(next);
     };
 
@@ -90,6 +96,7 @@ export function useScrollDrivenOpacity(elementRef, options = {}) {
       frameRef.current = requestAnimationFrame(measure);
     };
 
+    lastCommittedRef.current = null;
     measure();
     window.addEventListener('scroll', onScrollOrResize, { passive: true });
     window.addEventListener('resize', onScrollOrResize);

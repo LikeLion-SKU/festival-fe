@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import HorseIcon from '@/assets/icons/horse.svg';
 import FenceBg from '@/assets/images/fence.svg';
@@ -11,15 +11,15 @@ import LineupCarouselDragSurface from '@/components/animation/LineupCarouselDrag
 import LineupSlotCard from '@/components/animation/LineupSlotCard';
 import {
   LINEUP_CARD_WIDTH_PX,
-  LINEUP_SPRING_TRANSITION,
   LINEUP_STAGE_WIDTH_PX,
-  LINEUP_TWEEN_TRANSITION,
+  lineupManualNavCooldownMs,
+  slotPositionFromIndex,
 } from '@/components/animation/lineupMotion';
 import {
   MAIN_SECTION_ICON_SCROLL_FADE,
   useScrollDrivenOpacity,
 } from '@/components/animation/useScrollDrivenOpacity';
-import { LINEUP_DAY_GROUPS } from '@/constants/lineupDummyData';
+import { LINEUP_ITEMS } from '@/constants/lineupDummyData';
 
 const LINEUP_TEXT_GLOBAL_OFFSET_Y = '2.2rem';
 const LINEUP_TEXT_GLOBAL_TILT = -4;
@@ -31,43 +31,19 @@ const LINEUP_SWIPE_AXIS_EPS_PX = 8;
 
 const LINEUP_IGNORE_DRAG_AFTER_NAV_MS = 480;
 
-/**
- * id 순서 기준으로 카드 배치
- */
-function slotsFromIdRing(navIds, centerCursor, itemById, swapSideNeighbors = false) {
-  const n = navIds.length;
+/** 3슬롯 + 단일 링: 카드 객체는 id로 유지되고 slotIndex만 바뀌어 공전처럼 보이게 함 */
+function buildVisibleCards(items, centerCursor) {
+  const n = items.length;
   if (n === 0) return [];
-  if (n === 1) {
-    const item = itemById.get(navIds[0]);
-    return item ? [{ item, position: 'center' }] : [];
-  }
-  const ci = ((centerCursor % n) + n) % n;
-  const leftI = (ci - 1 + n) % n;
-  const rightI = (ci + 1) % n;
-  const triple = swapSideNeighbors
-    ? [
-        { idx: rightI, position: 'left' },
-        { idx: ci, position: 'center' },
-        { idx: leftI, position: 'right' },
-      ]
-    : [
-        { idx: leftI, position: 'left' },
-        { idx: ci, position: 'center' },
-        { idx: rightI, position: 'right' },
-      ];
-  return triple
-    .map(({ idx, position }) => {
-      const item = itemById.get(navIds[idx]);
-      return item ? { item, position } : null;
-    })
-    .filter(Boolean);
-}
-
-/**
- * DOM 순서를 item.id 기준으로 고정해 매 스텝마다 재정렬되지 않게 함.
- */
-function sortSlotsStable(slots) {
-  return [...slots].sort((a, b) => a.item.id - b.item.id);
+  if (n === 1) return [{ item: items[0], slotIndex: 1 }];
+  const center = ((centerCursor % n) + n) % n;
+  const left = (center - 1 + n) % n;
+  const right = (center + 1) % n;
+  return [
+    { item: items[left], slotIndex: 0 },
+    { item: items[center], slotIndex: 1 },
+    { item: items[right], slotIndex: 2 },
+  ];
 }
 
 function LineupCardFace({ item }) {
@@ -95,7 +71,7 @@ function LineupCardFace({ item }) {
           alt=""
           aria-hidden="true"
           loading="eager"
-          decoding="sync"
+          decoding="async"
           className="absolute inset-0 h-full w-full scale-[var(--lineup-image-scale)] translate-y-[var(--lineup-image-offset-y)] translate-x-[var(--lineup-image-offset-x)] object-contain object-bottom"
           style={{
             '--lineup-image-offset-x': imageOffsetX,
@@ -115,9 +91,11 @@ function LineupCardFace({ item }) {
         }}
       >
         <div className="flex items-end gap-[0.35rem]">
-          <p className="pb-[0.18rem] text-[0.72rem] font-medium leading-[1.2] whitespace-normal break-keep">
-            {item.group}
-          </p>
+          {item.group ? (
+            <p className="pb-[0.18rem] text-[0.72rem] font-medium leading-[1.2] whitespace-normal break-keep">
+              {item.group}
+            </p>
+          ) : null}
           <p
             className="text-[1.45rem] font-extrabold leading-[1.1] whitespace-nowrap"
             style={{ color: artistTextColor }}
@@ -155,51 +133,18 @@ function LineupCardFace({ item }) {
 }
 
 export default function Lineup() {
-  /** 라인업 자동 회전 속도*/
   const lineupAutoRotateIntervalMs = 4700;
   const lineupAutoRotatePauseAfterManualMs = lineupAutoRotateIntervalMs;
 
-  const leftNavIds = useMemo(() => LINEUP_DAY_GROUPS[0].items.map((it) => it.id), []);
-  // 우측 화살표 모션도 3카드 회전
-  const rightNavIds = useMemo(() => LINEUP_DAY_GROUPS[1].items.map((it) => it.id).slice(0, 3), []);
-  const itemById = useMemo(() => {
-    const m = new Map();
-    for (const g of LINEUP_DAY_GROUPS) {
-      for (const it of g.items) m.set(it.id, it);
-    }
-    return m;
-  }, []);
+  const [centerCursor, setCenterCursor] = useState(0);
 
   const [pressedLeft, setPressedLeft] = useState(false);
   const [pressedRight, setPressedRight] = useState(false);
   const pressLeftTimerRef = useRef(null);
   const pressRightTimerRef = useRef(null);
 
-  const [laneNav, setLaneNav] = useState(() => ({
-    /** 버튼 혹은 스와이프 등 수동 조작 후에는 좌/우 동작만 */
-    arrowOrSwipeUsed: false,
-    /** 뱌튼 미사용 시 1→2→3 전체 순환 */
-    fullAutoCursor: 0,
-    activeLane: 'left',
-    cursorLeft: 0,
-    cursorRight: 0,
-  }));
+  const total = LINEUP_ITEMS.length;
 
-  /** 버튼 혹은 스와이프 전에는 DAY 2 가 디폴트임 */
-  const navIds = laneNav.arrowOrSwipeUsed
-    ? laneNav.activeLane === 'left'
-      ? leftNavIds
-      : rightNavIds
-    : leftNavIds;
-  const centerCursor = laneNav.arrowOrSwipeUsed
-    ? laneNav.activeLane === 'left'
-      ? laneNav.cursorLeft
-      : laneNav.cursorRight
-    : laneNav.fullAutoCursor;
-  const total = navIds.length;
-
-  /** 슬롯 미러링을 항상 유지해 세 카드가 원형 회전하듯 교차 이동하도록 한다. 방향은 각 레인의 커서 증감으로만 제어한다. */
-  const swapSideNeighbors = true;
   const stageRef = useRef(null);
   const cardMeasureRef = useRef(null);
   const [layoutMetrics, setLayoutMetrics] = useState(() => ({
@@ -210,13 +155,13 @@ export default function Lineup() {
   const iconBlockRef = useRef(null);
   const ignoreCarouselDragUntilRef = useRef(0);
   const suppressAutoRotateUntilRef = useRef(0);
+  const manualNavCooldownUntilRef = useRef(0);
   const iconOpacity = useScrollDrivenOpacity(iconBlockRef, MAIN_SECTION_ICON_SCROLL_FADE);
 
   const pauseAutoRotateAfterUserGesture = () => {
     suppressAutoRotateUntilRef.current = Date.now() + lineupAutoRotatePauseAfterManualMs;
   };
 
-  /** 네비 버튼: 드래그 종료 오판 방지 + 자동 회전과 동시 충돌 방지 */
   const registerManualCarouselNav = () => {
     ignoreCarouselDragUntilRef.current = Date.now() + LINEUP_IGNORE_DRAG_AFTER_NAV_MS;
     pauseAutoRotateAfterUserGesture();
@@ -229,14 +174,17 @@ export default function Lineup() {
     window.matchMedia &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const transition = reduceMotion ? LINEUP_TWEEN_TRANSITION : LINEUP_SPRING_TRANSITION;
+  const visible = buildVisibleCards(LINEUP_ITEMS, centerCursor);
 
-  const visible = slotsFromIdRing(navIds, centerCursor, itemById, swapSideNeighbors);
-  const stableSlots = sortSlotsStable(visible);
+  const commitLayoutIfChanged = (stageW, cardW) => {
+    if (stageW <= 0) return;
+    setLayoutMetrics((prev) => {
+      if (Math.abs(prev.stage - stageW) < 0.5 && Math.abs(prev.card - cardW) < 0.5) return prev;
+      return { stage: stageW, card: cardW };
+    });
+  };
 
-  /**
-   * 중앙 카드 왼쪽 좌표 대비 평행 이동량 계산
-   */
+  /** centerCursor마다 RO 재연결/전체 리렌더 유발하지 않음 */
   useLayoutEffect(() => {
     const stageEl = stageRef.current;
     if (!stageEl || typeof ResizeObserver === 'undefined') return;
@@ -245,80 +193,62 @@ export default function Lineup() {
       const stageW = stageEl.getBoundingClientRect().width;
       const cardEl = cardMeasureRef.current;
       const cardW = cardEl && cardEl.offsetWidth > 0 ? cardEl.offsetWidth : LINEUP_CARD_WIDTH_PX;
-      if (stageW > 0) setLayoutMetrics({ stage: stageW, card: cardW });
+      commitLayoutIfChanged(stageW, cardW);
     };
 
     measure();
-
     const ro = new ResizeObserver(measure);
     ro.observe(stageEl);
-    const cardEl = cardMeasureRef.current;
-    if (cardEl) ro.observe(cardEl);
-
     return () => ro.disconnect();
-  }, [
-    laneNav.arrowOrSwipeUsed,
-    laneNav.activeLane,
-    laneNav.cursorLeft,
-    laneNav.cursorRight,
-    laneNav.fullAutoCursor,
-  ]);
+  }, []);
+
+  /** 가운데 카드 ref가 바뀔 때만 카드 폭 재측정 */
+  useLayoutEffect(() => {
+    const stageEl = stageRef.current;
+    if (!stageEl) return;
+    const stageW = stageEl.getBoundingClientRect().width;
+    const cardEl = cardMeasureRef.current;
+    const cardW = cardEl && cardEl.offsetWidth > 0 ? cardEl.offsetWidth : LINEUP_CARD_WIDTH_PX;
+    commitLayoutIfChanged(stageW, cardW);
+  }, [centerCursor]);
 
   const designCenterLeft = LINEUP_STAGE_WIDTH_PX / 2 - LINEUP_CARD_WIDTH_PX / 2;
   const actualCenterLeft = layoutMetrics.stage / 2 - layoutMetrics.card / 2;
   const stageShiftX = actualCenterLeft - designCenterLeft;
 
-  /** 왼쪽 UI(DAY 2): 같은 레인일 때 커서 +1 → 중앙 id 1→2→3, 회전은 반시계 느낌(swap). 오른쪽에서 넘어오면 id 1부터 */
-  const handleLeftLaneNav = () => {
-    setLaneNav((s) => {
-      if (!s.arrowOrSwipeUsed) {
-        return {
-          ...s,
-          arrowOrSwipeUsed: true,
-          activeLane: 'left',
-          cursorLeft: 0,
-          cursorRight: 0,
-        };
-      }
-      if (s.activeLane !== 'left') {
-        return {
-          ...s,
-          activeLane: 'left',
-          cursorLeft: 0,
-        };
-      }
-      return {
-        ...s,
-        cursorLeft: (s.cursorLeft + 1) % leftNavIds.length,
-      };
-    });
+  const tryAdvanceCenterCursor = (update) => {
+    if (total < 2) return;
+    const now = Date.now();
+    if (now < manualNavCooldownUntilRef.current) return;
+    manualNavCooldownUntilRef.current = now + lineupManualNavCooldownMs(total);
+    setCenterCursor(update);
   };
 
-  /** 오른쪽 UI(DAY 3): 같은 레인일 때 커서를 반대로 이동시켜 좌측 버튼 모션의 역방향 회전을 만든다. 왼쪽에서 넘어오면 id 4부터 */
-  const handleRightLaneNav = () => {
-    setLaneNav((s) => {
-      if (!s.arrowOrSwipeUsed) {
-        return {
-          ...s,
-          arrowOrSwipeUsed: true,
-          activeLane: 'right',
-          cursorLeft: 0,
-          cursorRight: 0,
-        };
-      }
-      if (s.activeLane !== 'right') {
-        return {
-          ...s,
-          activeLane: 'right',
-          cursorRight: 0,
-        };
-      }
-      return {
-        ...s,
-        cursorRight: (s.cursorRight - 1 + rightNavIds.length) % rightNavIds.length,
-      };
-    });
+  /** 오른쪽: 오른쪽 카드가 중앙으로 → ci+1 */
+  const handleNext = () => {
+    tryAdvanceCenterCursor((prev) => (prev + 1) % total);
   };
+
+  /** 왼쪽: 왼쪽 카드가 중앙으로 → ci-1 */
+  const handlePrev = () => {
+    tryAdvanceCenterCursor((prev) => (prev - 1 + total) % total);
+  };
+
+  const lineupSectionRef = useRef(null);
+  const lineupInViewRef = useRef(true);
+
+  useEffect(() => {
+    const el = lineupSectionRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        lineupInViewRef.current = e.isIntersecting;
+      },
+      { root: null, rootMargin: '80px 0px', threshold: 0 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!hasManyCards || reduceMotion) return;
@@ -326,36 +256,13 @@ export default function Lineup() {
 
     const id = window.setInterval(() => {
       if (document.visibilityState !== 'visible') return;
+      if (!lineupInViewRef.current) return;
       if (Date.now() < suppressAutoRotateUntilRef.current) return;
-      setLaneNav((s) => {
-        if (!s.arrowOrSwipeUsed) {
-          const n = leftNavIds.length;
-          return {
-            ...s,
-            fullAutoCursor: (s.fullAutoCursor + 1) % n,
-          };
-        }
-        if (s.activeLane === 'left') {
-          return {
-            ...s,
-            cursorLeft: (s.cursorLeft + 1) % leftNavIds.length,
-          };
-        }
-        return {
-          ...s,
-          cursorRight: (s.cursorRight + 1) % rightNavIds.length,
-        };
-      });
+      setCenterCursor((prev) => (prev + 1) % total);
     }, lineupAutoRotateIntervalMs);
 
     return () => clearInterval(id);
-  }, [
-    hasManyCards,
-    reduceMotion,
-    leftNavIds.length,
-    rightNavIds.length,
-    lineupAutoRotateIntervalMs,
-  ]);
+  }, [hasManyCards, reduceMotion, total, lineupAutoRotateIntervalMs]);
 
   const onCarouselDragEnd = (_, info) => {
     if (reduceMotion || !hasManyCards) return;
@@ -373,61 +280,20 @@ export default function Lineup() {
 
     if (wantsForward) {
       pauseAutoRotateAfterUserGesture();
-      setLaneNav((s) => {
-        if (!s.arrowOrSwipeUsed) {
-          return {
-            ...s,
-            arrowOrSwipeUsed: true,
-            activeLane: 'right',
-            cursorLeft: 0,
-            cursorRight: 0,
-          };
-        }
-        if (s.activeLane !== 'right') {
-          return {
-            ...s,
-            activeLane: 'right',
-            cursorRight: 0,
-          };
-        }
-        return {
-          ...s,
-          cursorRight: (s.cursorRight + 1) % rightNavIds.length,
-        };
-      });
+      tryAdvanceCenterCursor((prev) => (prev + 1) % total);
       return;
     }
     if (wantsBackward) {
       pauseAutoRotateAfterUserGesture();
-      setLaneNav((s) => {
-        if (!s.arrowOrSwipeUsed) {
-          return {
-            ...s,
-            arrowOrSwipeUsed: true,
-            activeLane: 'left',
-            cursorLeft: 0,
-            cursorRight: 0,
-          };
-        }
-        if (s.activeLane !== 'left') {
-          return {
-            ...s,
-            activeLane: 'left',
-            cursorLeft: 0,
-          };
-        }
-        return {
-          ...s,
-          cursorLeft: (s.cursorLeft + 1) % leftNavIds.length,
-        };
-      });
+      tryAdvanceCenterCursor((prev) => (prev - 1 + total) % total);
     }
   };
 
   return (
     <section
       id="lineup"
-      className="relative min-h-[34.1rem] overflow-hidden bg-black px-[3.65625rem] pt-[0rem]"
+      ref={lineupSectionRef}
+      className="relative min-h-[34.1rem] overflow-hidden bg-black px-[3.65625rem] pt-[0rem] [contain:layout_paint]"
     >
       <div
         aria-hidden="true"
@@ -460,7 +326,7 @@ export default function Lineup() {
       />
       <div
         ref={iconBlockRef}
-        style={{ opacity: iconOpacity, willChange: 'opacity' }}
+        style={{ opacity: iconOpacity }}
         className="relative z-10 flex flex-col items-center gap-[0.25rem]"
       >
         <img src={HorseIcon} alt="" aria-hidden="true" className="h-[2.5rem] w-[2.4375rem]" />
@@ -471,25 +337,26 @@ export default function Lineup() {
 
       <div
         ref={stageRef}
-        className="relative z-[20] mx-auto mt-[3.1rem] h-[20.5rem] w-full max-w-[21rem] overflow-visible [perspective:1100px] [transform-style:preserve-3d]"
+        className="relative z-[20] mx-auto mt-[3.1rem] h-[20.5rem] w-full max-w-[21rem] overflow-visible [perspective-origin:center_38%] [perspective:1750px] [transform-style:preserve-3d]"
       >
-        <LineupCarouselDragSurface reduceMotion={reduceMotion} onDragEnd={onCarouselDragEnd}>
-          {stableSlots.map(({ item, position }, index) => (
+        <div className="relative h-full w-full [transform-style:preserve-3d]">
+          {visible.map(({ item, slotIndex }) => (
             <LineupSlotCard
               key={item.id}
-              position={position}
-              transition={transition}
+              position={slotPositionFromIndex(slotIndex)}
               stageShiftX={stageShiftX}
-              measureRef={index === 0 ? cardMeasureRef : undefined}
+              measureRef={slotIndex === 1 ? cardMeasureRef : undefined}
+              reduceMotion={reduceMotion}
             >
               <LineupCardFace item={item} />
             </LineupSlotCard>
           ))}
-        </LineupCarouselDragSurface>
+        </div>
+        <LineupCarouselDragSurface reduceMotion={reduceMotion} onDragEnd={onCarouselDragEnd} />
       </div>
 
       {hasManyCards && (
-        <div className="pointer-events-none absolute left-1/2 top-[22.2rem] z-[30] flex w-full max-w-[22rem] -translate-x-1/2 items-center justify-between px-[0.75rem]">
+        <div className="pointer-events-none absolute left-1/2 top-[22.2rem] z-[150] flex w-full max-w-[22rem] -translate-x-1/2 items-center justify-between px-[0.75rem]">
           <button
             type="button"
             onPointerDown={(e) => {
@@ -500,9 +367,9 @@ export default function Lineup() {
               setPressedLeft(true);
               clearTimeout(pressLeftTimerRef.current);
               pressLeftTimerRef.current = setTimeout(() => setPressedLeft(false), 400);
-              handleLeftLaneNav();
+              handlePrev();
             }}
-            aria-label="DAY 2 라인업 카드 순서 보기"
+            aria-label="라인업 이전 카드"
             className="pointer-events-auto flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.25)]"
             style={{
               background: pressedLeft ? '#2A2A2A' : '#ffffff',
@@ -524,9 +391,9 @@ export default function Lineup() {
               setPressedRight(true);
               clearTimeout(pressRightTimerRef.current);
               pressRightTimerRef.current = setTimeout(() => setPressedRight(false), 400);
-              handleRightLaneNav();
+              handleNext();
             }}
-            aria-label="DAY 3 라인업 카드 순서 보기"
+            aria-label="라인업 다음 카드"
             className="pointer-events-auto flex h-[2.5rem] w-[2.5rem] items-center justify-center rounded-full shadow-[0_4px_10px_rgba(0,0,0,0.25)]"
             style={{
               background: pressedRight ? '#2A2A2A' : '#ffffff',

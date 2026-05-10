@@ -177,19 +177,35 @@ export default function BoothMapPage() {
     setCardsAnimateEnabled(false);
   };
 
-  const sectionBgStyle = searchMode
-    ? { backgroundColor: '#121212' }
-    : {
-        backgroundImage: `url(${backgroundImg})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundColor: '#121212',
-      };
+  /** about-fire2 배경을 section background로 두고
+   *  viewport 고정 레이어로 분리해 콘텐츠 변화의 영향을 받지 않도록 함함*/
+  const fixedBgStyle = useMemo(
+    () => ({
+      backgroundImage: `url(${backgroundImg})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      transform: 'translateZ(0)',
+      backfaceVisibility: 'hidden',
+      willChange: 'transform',
+    }),
+    []
+  );
 
   return (
-    <section className="relative min-h-dvh overflow-x-hidden text-white" style={sectionBgStyle}>
-      <style>{`
+    <section
+      className="relative min-h-dvh overflow-x-hidden bg-[#121212] text-white"
+      style={{ isolation: 'isolate' }}
+    >
+      {!searchMode && (
+        <div
+          className="pointer-events-none fixed inset-0 z-0 bg-[#121212]"
+          style={fixedBgStyle}
+          aria-hidden
+        />
+      )}
+      <div className="relative z-[1] flex flex-col">
+        <style>{`
         @keyframes hyein-panel-flash {
           0%   { background-color: #121212; }
           50%  { background-color: #8A2822; }
@@ -205,166 +221,169 @@ export default function BoothMapPage() {
           to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
-      <PageHeader
-        title="부스 안내"
-        to="/"
-        onBack={() => {
-          if (searchMode) {
-            setSearchMode(false);
-            setSearch('');
-            setActiveBuildingId(null);
-            triggerCardsAnimation();
-            return;
-          }
-          navigate('/');
-        }}
-      />
+        <PageHeader
+          title="부스 안내"
+          to="/"
+          onBack={() => {
+            if (searchMode) {
+              setSearchMode(false);
+              setSearch('');
+              setActiveBuildingId(null);
+              triggerCardsAnimation();
+              return;
+            }
+            navigate('/');
+          }}
+        />
 
-      <div className="mx-auto flex w-full max-w-[450px] flex-col px-4 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] pt-[max(5rem,calc(env(safe-area-inset-top)+2.75rem))]">
-        <div className="mt-5 shrink-0 px-1">
-          <SearchInput
-            placeholder="학과명으로 부스 검색"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onFocus={() => {
-              if (!searchMode) {
-                setSearchMode(true);
-                triggerCardsAnimation();
-              }
-            }}
-          />
-        </div>
+        <div className="mx-auto flex w-full max-w-[450px] flex-col px-4 pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] pt-[max(5rem,calc(env(safe-area-inset-top)+2.75rem))]">
+          <div className="mt-5 shrink-0 px-1">
+            <SearchInput
+              placeholder="학과명으로 부스 검색"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onFocus={() => {
+                if (!searchMode) {
+                  setSearchMode(true);
+                  triggerCardsAnimation();
+                }
+              }}
+            />
+          </div>
 
-        {!searchMode && (
-          <>
-            <div className="mt-5 w-full shrink-0">
-              <BoothMap
-                activeBuildingId={activeBuildingId}
-                isHyeinFlashing={isHyeinFlashing}
-                onSelectBuilding={(id) => setActiveBuildingId((prev) => (prev === id ? null : id))}
-                onMapBackdropClick={() => setActiveBuildingId(null)}
-              />
-            </div>
-
-            <div className="mx-1 mt-15 min-w-0">
-              <div className="flex w-full min-w-0 flex-nowrap items-stretch gap-1.5 sm:gap-2">
-                {orderedBuildingButtons.map((item) => {
-                  const active = item.id === activeBuildingId;
-                  const flashing = item.id === 'hyein' && isHyeinFlashing && !active;
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      title={item.label}
-                      onClick={() => {
-                        setActiveBuildingId((prev) => (prev === item.id ? null : item.id));
-                        triggerCardsAnimation();
-                      }}
-                      onMouseUp={(e) => e.currentTarget.blur()}
-                      onTouchEnd={(e) => e.currentTarget.blur()}
-                      className={clsx(
-                        'relative overflow-hidden flex h-8 min-h-8 min-w-0 flex-[1_1_60px] items-center justify-center px-1 text-[clamp(12px,3vw,14px)] font-medium leading-none tracking-[-0.02em] [font-family:Pretendard] outline-none focus:outline-none focus-visible:outline-none',
-                        active
-                          ? 'bg-[rgba(196,58,49,0.6)] text-[#FFDDDB]'
-                          : 'bg-[#353535] text-[#a0a0a0]'
-                      )}
-                      style={{
-                        WebkitTapHighlightColor: 'transparent',
-                        appearance: 'none',
-                        boxShadow: active ? 'inset 0 0 0 1px #C43A31' : 'inset 0 0 0 1px #595959',
-                      }}
-                    >
-                      {flashing && (
-                        <span
-                          className="pointer-events-none absolute inset-0"
-                          style={{
-                            backgroundColor: '#8A2822',
-                            animation: 'hyein-btn-flash 1.2s ease-in 2 forwards',
-                          }}
-                        />
-                      )}
-                      <span className="relative z-10 block max-w-full truncate text-center">
-                        {item.label}
-                      </span>
-                    </button>
-                  );
-                })}
+          {!searchMode && (
+            <>
+              <div className="mt-5 w-full shrink-0">
+                <BoothMap
+                  activeBuildingId={activeBuildingId}
+                  isHyeinFlashing={isHyeinFlashing}
+                  onSelectBuilding={(id) =>
+                    setActiveBuildingId((prev) => (prev === id ? null : id))
+                  }
+                  onMapBackdropClick={() => setActiveBuildingId(null)}
+                />
               </div>
-            </div>
-          </>
-        )}
 
-        <div className="mx-1 mt-7 min-w-0 pb-4">
-          {searchMode && !search.trim() ? (
-            <div className="min-h-[min(50vh,24rem)]" aria-hidden />
-          ) : isPending ? (
-            <p className="py-8 text-center text-sm text-white/50 [font-family:Pretendard]">
-              불러오는 중…
-            </p>
-          ) : isError ? (
-            <p className="py-8 text-center text-sm text-white/50 [font-family:Pretendard]">
-              부스 목록을 불러오지 못했습니다.
-            </p>
-          ) : (searchMode ? searchOverlayRows : sheetBoothRows).length === 0 ? (
-            <p className="py-8 text-center text-sm text-white/50 [font-family:Pretendard]">
-              {search.trim() ? '검색 결과가 없습니다.' : '등록된 부스 목록이 없습니다.'}
-            </p>
-          ) : searchMode ? (
-            <ul className="flex flex-col gap-3 px-1 pb-4">
-              {searchOverlayRows.map((row, i) => (
-                <li
-                  key={cardsAnimateEnabled ? `${cardsAnimVersion}-${row.id}` : row.id}
-                  className="min-w-0"
-                  style={
-                    cardsAnimateEnabled
-                      ? {
-                          opacity: 0,
-                          animation: 'booth-card-in 0.7s ease forwards',
-                          animationDelay: `${i * 70}ms`,
-                        }
-                      : undefined
-                  }
-                >
-                  <BoothCard
-                    variant="search"
-                    to={row.boothId != null ? `/order/${row.boothId}` : undefined}
-                    onClick={handleBoothCardNavigate}
-                    imageSrc={row.thumbnailUrl || BoothPlaceholderImg}
-                    location={row.location}
-                    departmentName={row.departmentName}
-                    boothNumbers={row.boothNumbers}
-                  />
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="grid min-w-0 grid-cols-2 gap-x-3 gap-y-4">
-              {sheetBoothRows.map((row, i) => (
-                <div
-                  key={cardsAnimateEnabled ? `${cardsAnimVersion}-${row.id}` : row.id}
-                  style={
-                    cardsAnimateEnabled
-                      ? {
-                          opacity: 0,
-                          animation: 'booth-card-in 0.7s ease forwards',
-                          animationDelay: `${i * 70}ms`,
-                        }
-                      : undefined
-                  }
-                >
-                  <BoothCard
-                    variant="sheet"
-                    to={row.boothId != null ? `/order/${row.boothId}` : undefined}
-                    onClick={handleBoothCardNavigate}
-                    imageSrc={row.thumbnailUrl || BoothPlaceholderImg}
-                    location={row.location}
-                    departmentName={row.departmentName}
-                    boothNumbers={row.boothNumbers}
-                  />
+              <div className="mx-1 mt-15 min-w-0">
+                <div className="flex w-full min-w-0 flex-nowrap items-stretch gap-1.5 sm:gap-2">
+                  {orderedBuildingButtons.map((item) => {
+                    const active = item.id === activeBuildingId;
+                    const flashing = item.id === 'hyein' && isHyeinFlashing && !active;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        title={item.label}
+                        onClick={() => {
+                          setActiveBuildingId((prev) => (prev === item.id ? null : item.id));
+                          triggerCardsAnimation();
+                        }}
+                        onMouseUp={(e) => e.currentTarget.blur()}
+                        onTouchEnd={(e) => e.currentTarget.blur()}
+                        className={clsx(
+                          'relative overflow-hidden flex h-8 min-h-8 min-w-0 flex-[1_1_60px] items-center justify-center px-1 text-[clamp(12px,3vw,14px)] font-medium leading-none tracking-[-0.02em] [font-family:Pretendard] outline-none focus:outline-none focus-visible:outline-none',
+                          active
+                            ? 'bg-[rgba(196,58,49,0.6)] text-[#FFDDDB]'
+                            : 'bg-[#353535] text-[#a0a0a0]'
+                        )}
+                        style={{
+                          WebkitTapHighlightColor: 'transparent',
+                          appearance: 'none',
+                          boxShadow: active ? 'inset 0 0 0 1px #C43A31' : 'inset 0 0 0 1px #595959',
+                        }}
+                      >
+                        {flashing && (
+                          <span
+                            className="pointer-events-none absolute inset-0"
+                            style={{
+                              backgroundColor: '#8A2822',
+                              animation: 'hyein-btn-flash 1.2s ease-in 2 forwards',
+                            }}
+                          />
+                        )}
+                        <span className="relative z-10 block max-w-full truncate text-center">
+                          {item.label}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
+              </div>
+            </>
           )}
+
+          <div className="mx-1 mt-7 min-w-0 pb-4">
+            {searchMode && !search.trim() ? (
+              <div className="min-h-[min(50vh,24rem)]" aria-hidden />
+            ) : isPending ? (
+              <p className="py-8 text-center text-sm text-white/50 [font-family:Pretendard]">
+                불러오는 중…
+              </p>
+            ) : isError ? (
+              <p className="py-8 text-center text-sm text-white/50 [font-family:Pretendard]">
+                부스 목록을 불러오지 못했습니다.
+              </p>
+            ) : (searchMode ? searchOverlayRows : sheetBoothRows).length === 0 ? (
+              <p className="py-8 text-center text-sm text-white/50 [font-family:Pretendard]">
+                {search.trim() ? '검색 결과가 없습니다.' : '등록된 부스 목록이 없습니다.'}
+              </p>
+            ) : searchMode ? (
+              <ul className="flex flex-col gap-3 px-1 pb-4">
+                {searchOverlayRows.map((row, i) => (
+                  <li
+                    key={cardsAnimateEnabled ? `${cardsAnimVersion}-${row.id}` : row.id}
+                    className="min-w-0"
+                    style={
+                      cardsAnimateEnabled
+                        ? {
+                            opacity: 0,
+                            animation: 'booth-card-in 0.7s ease forwards',
+                            animationDelay: `${i * 70}ms`,
+                          }
+                        : undefined
+                    }
+                  >
+                    <BoothCard
+                      variant="search"
+                      to={row.boothId != null ? `/order/${row.boothId}` : undefined}
+                      onClick={handleBoothCardNavigate}
+                      imageSrc={row.thumbnailUrl || BoothPlaceholderImg}
+                      location={row.location}
+                      departmentName={row.departmentName}
+                      boothNumbers={row.boothNumbers}
+                    />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="grid min-w-0 grid-cols-2 gap-x-3 gap-y-4">
+                {sheetBoothRows.map((row, i) => (
+                  <div
+                    key={cardsAnimateEnabled ? `${cardsAnimVersion}-${row.id}` : row.id}
+                    style={
+                      cardsAnimateEnabled
+                        ? {
+                            opacity: 0,
+                            animation: 'booth-card-in 0.7s ease forwards',
+                            animationDelay: `${i * 70}ms`,
+                          }
+                        : undefined
+                    }
+                  >
+                    <BoothCard
+                      variant="sheet"
+                      to={row.boothId != null ? `/order/${row.boothId}` : undefined}
+                      onClick={handleBoothCardNavigate}
+                      imageSrc={row.thumbnailUrl || BoothPlaceholderImg}
+                      location={row.location}
+                      departmentName={row.departmentName}
+                      boothNumbers={row.boothNumbers}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>
