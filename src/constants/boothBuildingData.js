@@ -402,4 +402,17 @@ export function getMainBoothCardsByBuilding(buildingId) {
   return ordered.length ? ordered : cards;
 }
 
+/** 메인 랜딩 부스 그리드·페이지 전환에 쓰이는 정적 이미지 URL (프리로드용) */
+export function getMainBoothAssetSrcs() {
+  const srcs = new Set();
+  srcs.add(BoothDefaultImage);
+  srcs.add(BoothImagePlaceholder);
+  for (const buildingId of Object.keys(MAIN_BOOTH_CARD_DEPARTMENTS_BY_BUILDING)) {
+    for (const card of getMainBoothCardsByBuilding(buildingId)) {
+      if (card?.image) srcs.add(card.image);
+    }
+  }
+  return [...srcs];
+}
+
 export const BOOTH_CARDS_FROM_BUILDINGS = Object.values(BOOTH_CARDS_BY_BUILDING).flat();

@@ -46,7 +46,7 @@ export default function Timetable() {
   return (
     <section
       id="timetable"
-      className="min-h-[70rem] overflow-x-hidden bg-black px-[1.5rem] pt-[7.5rem]"
+      className="min-h-[70rem] overflow-x-clip bg-black px-[1.5rem] pt-[7.5rem]"
       style={{
         backgroundImage: `linear-gradient(180deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.58) 22%, rgba(8,8,8,0.28) 40%, rgba(0,0,0,0) 54%), linear-gradient(0deg, rgba(0,0,0,0.52) 0%, rgba(0,0,0,0) 35%), url(${FireBg}), url(${FireBg2}), linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,1) 100%)`,
         backgroundRepeat: 'no-repeat, no-repeat, no-repeat, no-repeat, no-repeat',

@@ -11,9 +11,11 @@ import Lineup from '@/components/main/Lineup.jsx';
 import Safety from '@/components/main/Safety.jsx';
 import Timetable from '@/components/main/Timetable.jsx';
 import Footer from '@/layouts/Footer.jsx';
+import { preloadBoothAssets } from '@/utils/boothAssetPreload';
 import { preloadLineupAssets } from '@/utils/lineupAssetPreload';
 
 void preloadLineupAssets();
+void preloadBoothAssets();
 
 export default function Main() {
   const navigate = useNavigate();
