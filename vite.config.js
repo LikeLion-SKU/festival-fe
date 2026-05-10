@@ -57,7 +57,7 @@ export default defineConfig(({ mode }) => {
         },
         workbox: {
           navigateFallback: '/index.html',
-          navigateFallbackDenylist: [/^\/api\//],
+          navigateFallbackDenylist: [/^\/api\//, /^\/login$/],
           globPatterns: ['**/*.{js,css,html,ico,woff2}'],
           globIgnores: ['**/notosans*/**', '**/NotoSans*/**'],
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
@@ -90,6 +90,14 @@ export default defineConfig(({ mode }) => {
         },
       }),
     ],
+    build: {
+      rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html'),
+          login: path.resolve(__dirname, 'login.html'),
+        },
+      },
+    },
     resolve: {
       alias: [{ find: '@', replacement: path.resolve(__dirname, 'src') }],
     },
