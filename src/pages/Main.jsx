@@ -10,8 +10,10 @@ import Introduce from '@/components/main/Introduce.jsx';
 import Lineup from '@/components/main/Lineup.jsx';
 import Safety from '@/components/main/Safety.jsx';
 import Timetable from '@/components/main/Timetable.jsx';
-import { LINEUP_DAY_GROUPS } from '@/constants/lineupDummyData';
 import Footer from '@/layouts/Footer.jsx';
+import { preloadLineupAssets } from '@/utils/lineupAssetPreload';
+
+void preloadLineupAssets();
 
 export default function Main() {
   const navigate = useNavigate();
@@ -29,26 +31,6 @@ export default function Main() {
       clearTimeout(timer);
       window.removeEventListener('scroll', onScroll);
     };
-  }, []);
-
-  useEffect(() => {
-    const lineupSixImages = LINEUP_DAY_GROUPS.flatMap((group) =>
-      group.items
-        .slice(0, 3)
-        .map((item) => item.image)
-        .filter(Boolean)
-    );
-    const uniqueImages = [...new Set(lineupSixImages)];
-
-    uniqueImages.forEach((src) => {
-      const img = new Image();
-      img.loading = 'eager';
-      img.decoding = 'async';
-      img.src = src;
-      if (typeof img.decode === 'function') {
-        img.decode().catch(() => {});
-      }
-    });
   }, []);
 
   return (
