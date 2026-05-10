@@ -33,7 +33,7 @@ export default defineConfig(({ mode }) => {
               name: '관리자 로그인',
               short_name: '관리자',
               url: '/login',
-              icons: [{ src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],
+              icons: [{ src: '/icons/admin-icon-192.png', sizes: '192x192', type: 'image/png' }],
             },
           ],
           icons: [
