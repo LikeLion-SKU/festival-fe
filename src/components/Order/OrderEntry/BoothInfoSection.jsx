@@ -103,9 +103,11 @@ function BoothInfoSection({
           <span className="text-sm font-medium" style={{ color: '#FF756C' }}>
             {isOpen
               ? '영업 중'
-              : BOOTH_STATUS_LABEL[boothStatus]
-                ? `${BOOTH_STATUS_LABEL[boothStatus]}으로 인한 영업 중단`
-                : '영업 중단'}
+              : boothStatus === 'CLOSED'
+                ? '영업 종료'
+                : BOOTH_STATUS_LABEL[boothStatus]
+                  ? `${BOOTH_STATUS_LABEL[boothStatus]}으로 인한 영업 중단`
+                  : '영업 중단'}
           </span>
         )}
       </div>
