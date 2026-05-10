@@ -56,6 +56,8 @@ export default defineConfig(({ mode }) => {
           ],
         },
         workbox: {
+          navigateFallback: '/index.html',
+          navigateFallbackDenylist: [/^\/api\//],
           globPatterns: ['**/*.{js,css,html,ico,woff2}'],
           globIgnores: ['**/notosans*/**', '**/NotoSans*/**'],
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
