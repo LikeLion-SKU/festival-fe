@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import AedIcon from '@/assets/icons/aed.svg?react';
 import boothMapBg from '@/assets/images/booth-map-bg.svg';
@@ -46,6 +46,20 @@ export default function BoothMap({
     backfaceVisibility: 'hidden',
   };
 
+  /** 건물 활성/비활성 토글 시 인접 레이어(필터·합성) 변화로 배경이 1~2px 흔들리거나
+   *  가장자리에 먼지/회색 실선처럼 보이는 안티앨리어싱 잔상이 나타나는 것을 방지하기 위해
+   *  자체 컴포지터 레이어로 승격하고 스타일 객체를 메모이제이션한다. */
+  const bgStyle = useMemo(
+    () => ({
+      backgroundImage: `url(${boothMapBg})`,
+      backgroundPosition: 'center calc(50%)',
+      transform: 'translateZ(0)',
+      backfaceVisibility: 'hidden',
+      willChange: 'transform',
+    }),
+    []
+  );
+
   return (
     <div
       ref={containerRef}
@@ -53,10 +67,7 @@ export default function BoothMap({
     >
       <div
         className="pointer-events-none absolute inset-0 z-0 bg-contain bg-no-repeat"
-        style={{
-          backgroundImage: `url(${boothMapBg})`,
-          backgroundPosition: 'center calc(50%)',
-        }}
+        style={bgStyle}
         aria-hidden
       />
       <div className="pointer-events-none absolute inset-0 z-10 overflow-visible">
