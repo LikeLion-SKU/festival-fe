@@ -46,7 +46,7 @@ function BoothImageCard({ image, title }) {
   const titleLabel = Array.isArray(title) ? title.join(' ') : String(title ?? '');
   const imageAlt = titleLabel ? `${titleLabel} 부스 카드` : '부스 카드';
   return (
-    <article className="relative h-[13.25rem] w-full overflow-hidden shadow-[1px_1px_0px_rgba(0,0,0,0.12)]">
+    <article className="relative aspect-[155/212] w-full overflow-hidden shadow-[1px_1px_0px_rgba(0,0,0,0.12)]">
       <img
         src={image}
         alt={imageAlt}
