@@ -30,10 +30,10 @@ export default defineConfig(({ mode }) => {
           start_url: '/',
           shortcuts: [
             {
-              name: '관리자 로그인',
-              short_name: '관리자',
+              name: '라이언오더',
+              short_name: '라이언오더',
               url: '/login',
-              icons: [{ src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' }],
+              icons: [{ src: '/icons/admin-icon-192.png', sizes: '192x192', type: 'image/png' }],
             },
           ],
           icons: [
