@@ -12,13 +12,13 @@ function DateDot() {
   return (
     <span
       className="inline-flex shrink-0"
-      style={{ transform: 'translateY(6px) scale(0.7)', transformOrigin: 'center' }}
+      style={{ transform: 'translateY(6px) scale(0.8)', transformOrigin: 'center' }}
     >
       <img
         src={SpotIcon}
         alt=""
         aria-hidden="true"
-        className="block h-[0.4rem] w-[0.5rem] max-w-none"
+        className="block h-[0.5rem] w-[0.6rem] max-w-none"
       />
     </span>
   );
@@ -173,7 +173,7 @@ export default function Intro() {
               <span className="font-bold">서경대학교</span>
               <span className="font-medium"> 대동제</span>
             </p>
-            <div className="relative left-1/2 mt-[0.375rem] h-[0.03125rem] w-[12.75rem] -translate-x-1/2 bg-[#FFFFFF]" />
+            <div className="relative left-1/2 mt-[0.375rem] h-[0.03125rem] w-[10.5rem] -translate-x-1/2 bg-[#FFFFFF]" />
             <div className="mt-[0.8125rem] flex items-center justify-center gap-[0.0625rem]">
               <img src={ZeroIcon} alt="" aria-hidden="true" className="h-auto w-auto" />
               <img src={FiveIcon} alt="" aria-hidden="true" className="h-auto w-auto" />

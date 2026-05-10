@@ -47,7 +47,13 @@ function BoothImageCard({ image, title }) {
   const imageAlt = titleLabel ? `${titleLabel} 부스 카드` : '부스 카드';
   return (
     <article className="relative h-[13.25rem] w-full overflow-hidden shadow-[1px_1px_0px_rgba(0,0,0,0.12)]">
-      <img src={image} alt={imageAlt} className="size-full object-cover" />
+      <img
+        src={image}
+        alt={imageAlt}
+        className="size-full object-cover"
+        decoding="async"
+        draggable={false}
+      />
     </article>
   );
 }
@@ -61,16 +67,29 @@ export default function Booth() {
   const cardsGridRef = useRef(null);
   const hasCardsGridEnteredRef = useRef(false);
   const settleTimerRef = useRef(null);
+  const spreadHintTimerRef = useRef(null);
   const [isCardsSettled, setIsCardsSettled] = useState(false);
+  const [cardsOpacityAnimDone, setCardsOpacityAnimDone] = useState(false);
+  const [spreadTransformHint, setSpreadTransformHint] = useState(false);
   const iconOpacity = useScrollDrivenOpacity(iconBlockRef, MAIN_SECTION_ICON_SCROLL_FADE);
 
   const runCardsEntrance = useCallback(() => {
-    if (settleTimerRef.current) {
-      window.clearTimeout(settleTimerRef.current);
-    }
+    if (settleTimerRef.current) window.clearTimeout(settleTimerRef.current);
+    if (spreadHintTimerRef.current) window.clearTimeout(spreadHintTimerRef.current);
+    setCardsOpacityAnimDone(false);
+    setSpreadTransformHint(false);
     setIsCardsSettled(false);
     settleTimerRef.current = window.setTimeout(() => {
       setIsCardsSettled(true);
+      setCardsOpacityAnimDone(false);
+      setSpreadTransformHint(true);
+      spreadHintTimerRef.current = window.setTimeout(
+        () => {
+          setSpreadTransformHint(false);
+          spreadHintTimerRef.current = null;
+        },
+        BOOTH_SPREAD_MS + Math.round(3 * 38) + 80
+      );
       settleTimerRef.current = null;
     }, 300);
   }, []);
@@ -170,6 +189,7 @@ export default function Booth() {
   useEffect(
     () => () => {
       if (settleTimerRef.current) window.clearTimeout(settleTimerRef.current);
+      if (spreadHintTimerRef.current) window.clearTimeout(spreadHintTimerRef.current);
     },
     []
   );
@@ -202,15 +222,31 @@ export default function Booth() {
       `}</style>
 
       <div className="pointer-events-none absolute left-1/2 top-[-29rem] z-0 flex w-[28.125rem] max-w-none -translate-x-1/2 flex-col">
-        <img src={FenceBg} alt="" aria-hidden="true" className="w-full object-cover" />
-        <img src={DesertBg} alt="" aria-hidden="true" className="-mt-[20rem] w-full object-cover" />
+        <img
+          src={FenceBg}
+          alt=""
+          aria-hidden="true"
+          className="w-full object-cover"
+          decoding="async"
+          draggable={false}
+          fetchPriority="low"
+        />
+        <img
+          src={DesertBg}
+          alt=""
+          aria-hidden="true"
+          className="-mt-[20rem] w-full object-cover"
+          decoding="async"
+          draggable={false}
+          fetchPriority="low"
+        />
       </div>
 
       <div className="relative z-10 mx-auto flex w-full max-w-[450px] flex-col items-center gap-4">
         <div className="flex w-full flex-col items-center gap-6">
           <div
             ref={iconBlockRef}
-            style={{ opacity: iconOpacity, willChange: 'opacity' }}
+            style={{ opacity: iconOpacity }}
             className="flex flex-col items-center gap-4"
           >
             <img src={HorseIcon} alt="" aria-hidden="true" className="h-[2.5rem] w-[2.4375rem]" />
@@ -253,12 +289,19 @@ export default function Booth() {
 
         <div className="relative w-full">
           <div
-            className="transform-gpu will-change-[opacity]"
+            className={clsx(
+              'transform-gpu',
+              isCardsSettled && !cardsOpacityAnimDone && 'will-change-[opacity]'
+            )}
             style={{
               opacity: isCardsSettled ? undefined : BOOTH_STACKED_GROUP_OPACITY,
               animation: isCardsSettled
                 ? `booth-card-spread-opacity ${BOOTH_SPREAD_MS}ms ${BOOTH_SPREAD_EASE} 0ms both`
                 : 'none',
+            }}
+            onAnimationEnd={(e) => {
+              if (e.animationName !== 'booth-card-spread-opacity') return;
+              setCardsOpacityAnimDone(true);
             }}
           >
             <div
@@ -270,7 +313,7 @@ export default function Booth() {
                   <div
                     style={{
                       '--booth-from-transform': getBoothCardCenterTransform(index),
-                      willChange: 'transform',
+                      ...(spreadTransformHint ? { willChange: 'transform' } : {}),
                       transform: isCardsSettled ? undefined : getBoothCardCenterTransform(index),
                       animation: isCardsSettled
                         ? `booth-card-spread-transform ${BOOTH_SPREAD_MS}ms ${BOOTH_SPREAD_EASE} ${getBoothCardScatterDelayMs(index)}ms both`
@@ -302,7 +345,7 @@ export default function Booth() {
         <button
           type="button"
           onClick={() => navigate('/booth-map')}
-          className="flex h-[3.25rem] w-full shrink-0 items-center justify-center border border-solid border-white bg-[rgba(255,255,255,0.12)] px-4 py-[0.875rem] text-base font-semibold leading-6 tracking-[-0.025rem] text-white shadow-[1px_1px_0px_rgba(0,0,0,0.12)] backdrop-blur-[5px] backdrop-saturate-85"
+          className="flex h-[3.25rem] w-full shrink-0 items-center justify-center border border-solid border-white bg-[rgba(255,255,255,0.2)] px-4 py-[0.875rem] text-base font-semibold leading-6 tracking-[-0.025rem] text-white shadow-[1px_1px_0px_rgba(0,0,0,0.12)]"
         >
           한눈에 보기
         </button>

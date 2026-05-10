@@ -1,17 +1,20 @@
 import { motion as Motion } from 'framer-motion';
 
-export default function LineupCarouselDragSurface({ reduceMotion, onDragEnd, children }) {
+/**
+ * 드래그 레이어
+ */
+export default function LineupCarouselDragSurface({ reduceMotion, onDragEnd }) {
+  if (reduceMotion) return null;
+
   return (
     <Motion.div
-      className={`relative h-full w-full ${reduceMotion ? '' : 'cursor-grab touch-none active:cursor-grabbing'}`}
-      drag={reduceMotion ? false : 'x'}
+      aria-hidden="true"
+      className="absolute inset-0 z-[25] cursor-grab touch-none active:cursor-grabbing"
+      drag="x"
       dragSnapToOrigin
       dragElastic={0.12}
       dragMomentum={false}
       onDragEnd={onDragEnd}
-      style={{ transformStyle: 'preserve-3d' }}
-    >
-      {children}
-    </Motion.div>
+    />
   );
 }
