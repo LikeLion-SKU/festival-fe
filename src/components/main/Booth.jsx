@@ -197,7 +197,7 @@ export default function Booth() {
   return (
     <section
       id="booth"
-      className="relative min-h-[46rem] overflow-hidden bg-[#141414] px-[1.5rem] pb-[9.0rem] pt-[2.5rem]"
+      className="relative min-h-[46rem] overflow-hidden bg-black px-[1.5rem] pb-[9.0rem] pt-[2.5rem]"
     >
       <style>{`
         @keyframes booth-card-spread-opacity {
@@ -221,7 +221,19 @@ export default function Booth() {
         }
       `}</style>
 
-      <div className="pointer-events-none absolute left-1/2 top-[-29rem] z-0 flex w-[28.125rem] max-w-none -translate-x-1/2 flex-col">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{
+          backgroundImage:
+            'linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 32%), linear-gradient(180deg, rgba(20,20,20,0.6) 0%, rgba(20,20,20,1) 100%)',
+          backgroundRepeat: 'no-repeat, no-repeat',
+          backgroundPosition: 'center top, center',
+          backgroundSize: 'cover, cover',
+        }}
+      />
+
+      <div className="pointer-events-none absolute left-1/2 top-[-22.1rem] z-[1] flex w-[28.125rem] max-w-none -translate-x-1/2 flex-col">
         <img
           src={FenceBg}
           alt=""

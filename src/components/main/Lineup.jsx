@@ -295,17 +295,6 @@ export default function Lineup() {
       ref={lineupSectionRef}
       className="relative min-h-[34.1rem] overflow-hidden bg-black px-[3.65625rem] pt-[0rem] [contain:layout_paint]"
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0"
-        style={{
-          backgroundImage:
-            'linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 32%), linear-gradient(180deg, rgba(20,20,20,0.6) 0%, rgba(20,20,20,1) 100%)',
-          backgroundRepeat: 'no-repeat, no-repeat',
-          backgroundPosition: 'center top, center',
-          backgroundSize: 'cover, cover',
-        }}
-      />
       <img
         src={HorseCard}
         alt=""
