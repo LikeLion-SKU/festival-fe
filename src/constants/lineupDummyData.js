@@ -14,7 +14,7 @@ export const LINEUP_ITEMS = [
     id: 1,
     artist: '다비치',
     day: 'DAY 2',
-    time: '18:00 ~ 18:30',
+    time: '20:00 ~ 20:30',
     image: DavichiBg,
     imageOffsetX: '-3rem',
     imageOffsetY: '2rem',
