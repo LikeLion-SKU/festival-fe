@@ -104,7 +104,7 @@ export default function Intro() {
       onPointerDownCapture={tryPlayFromUserGesture}
     >
       <img
-        src="/images/main-poster.png"
+        src="/images/main-poster.webp"
         alt=""
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
@@ -115,10 +115,9 @@ export default function Intro() {
         autoPlay
         muted
         defaultMuted
-        loop={false}
         playsInline
         controls={false}
-        preload="auto"
+        preload="metadata"
         disablePictureInPicture
         controlsList="nodownload noplaybackrate noremoteplayback"
         onPlaying={() => setVideoPlaying(true)}

@@ -1,24 +1,19 @@
-import animoonBg from '@/assets/images/animoon.jpg';
-import bannerDay21 from '@/assets/images/banner-day2-1.png';
-import bannerDay22 from '@/assets/images/banner-day2-2.png';
-import bannerDay23 from '@/assets/images/banner-day2-3.png';
-import bannerDay24 from '@/assets/images/banner-day2-4.png';
-import bannerDay25 from '@/assets/images/banner-day2-5.png';
-import bannerDay26 from '@/assets/images/banner-day2-6.png';
-import bannerDay27 from '@/assets/images/banner-day2-7.png';
-import bannerDay28 from '@/assets/images/banner-day2-8.png';
-import bannerDay31 from '@/assets/images/banner-day3-1.png';
-import bannerDay32 from '@/assets/images/banner-day3-2.png';
-import bannerDay33 from '@/assets/images/banner-day3-3.png';
-import bannerDay34 from '@/assets/images/banner-day3-4.png';
-import bannerDay35 from '@/assets/images/banner-day3-5.png';
-import bannerDay36 from '@/assets/images/banner-day3-6.png';
-import bannerDay37 from '@/assets/images/banner-day3-7.png';
-import gramiBg from '@/assets/images/grami.jpg';
-import imagineBg from '@/assets/images/imagine.jpg';
-import SDRBg from '@/assets/images/sdr.png';
-import UdreamBg from '@/assets/images/udream.jpg';
-import workersBg from '@/assets/images/workers.png';
+import animoonBg from '@/assets/images/animoon.webp';
+import bannerDay21 from '@/assets/images/banner-day2-1.webp';
+import bannerDay22 from '@/assets/images/banner-day2-2.webp';
+import bannerDay23 from '@/assets/images/banner-day2-3.webp';
+import bannerDay24 from '@/assets/images/banner-day2-4.webp';
+import bannerDay25 from '@/assets/images/banner-day2-5.webp';
+import bannerDay26 from '@/assets/images/banner-day2-6.webp';
+import bannerDay27 from '@/assets/images/banner-day2-7.webp';
+import bannerDay28 from '@/assets/images/banner-day2-8.webp';
+import bannerDay31 from '@/assets/images/banner-day3-1.webp';
+import bannerDay32 from '@/assets/images/banner-day3-2.webp';
+import bannerDay33 from '@/assets/images/banner-day3-3.webp';
+import bannerDay34 from '@/assets/images/banner-day3-4.webp';
+import bannerDay35 from '@/assets/images/banner-day3-5.webp';
+import bannerDay36 from '@/assets/images/banner-day3-6.webp';
+import bannerDay37 from '@/assets/images/banner-day3-7.webp';
 
 export const TIMETABLE_DAY_BANNERS = {
   day2: [
@@ -39,7 +34,6 @@ export const TIMETABLE_DAY_BANNERS = {
       variant: 2,
       bannerScale: 1.1,
       bannerImageSrc: bannerDay22,
-      imageSlotSrc: UdreamBg,
     },
     {
       id: 3,
@@ -94,7 +88,6 @@ export const TIMETABLE_DAY_BANNERS = {
       variant: 2,
       bannerScale: 1.1,
       bannerImageSrc: bannerDay28,
-      imageSlotSrc: workersBg,
     },
   ],
   day3: [
@@ -106,7 +99,6 @@ export const TIMETABLE_DAY_BANNERS = {
       variant: 1,
       bannerScale: 1.1,
       bannerImageSrc: bannerDay31,
-      imageSlotSrc: SDRBg,
     },
     {
       id: 2,
@@ -124,7 +116,6 @@ export const TIMETABLE_DAY_BANNERS = {
       variant: 1,
       bannerScale: 1.1,
       bannerImageSrc: bannerDay33,
-      imageSlotSrc: gramiBg,
     },
     {
       id: 4,
@@ -161,7 +152,6 @@ export const TIMETABLE_DAY_BANNERS = {
       bannerVariant: 3,
       bannerScale: 1.1,
       bannerImageSrc: bannerDay37,
-      imageSlotSrc: imagineBg,
     },
   ],
 };
