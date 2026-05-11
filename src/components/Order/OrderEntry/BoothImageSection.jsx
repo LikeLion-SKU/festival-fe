@@ -63,7 +63,7 @@ function BoothImageSection({ thumbnailUrl, onLangChange, isLoading, isQR }) {
 
       {!isQR && (
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate('/booth-map')}
           className="absolute top-11 left-5 z-20 w-12 h-12 bg-white rounded-[35px] shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] overflow-hidden flex items-center justify-center"
         >
           <Back />

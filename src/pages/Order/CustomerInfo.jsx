@@ -117,6 +117,13 @@ function CustomerInfo() {
             type="tel"
           />
         </div>
+        <div className="mt-2 px-2 py-4 text-[11px] text-[#B0B0B0] leading-[1.6] [font-family:Pretendard]">
+          <p className="font-semibold text-[#888888] mb-1">개인정보 수집 및 이용 안내</p>
+          <p>수집 항목: 이름, 휴대폰 번호{isDineIn ? ', 인원 수, 테이블 번호' : ''}</p>
+          <p>수집 목적: 주문 접수 및 처리</p>
+          <p>보유 기간: 축제 종료 후 즉시 삭제</p>
+          <p className="mt-1">주문 요청 시 위 내용에 동의한 것으로 간주됩니다.</p>
+        </div>
       </div>
       <OrderButtonBox
         buttonName="주문 요청하기"
