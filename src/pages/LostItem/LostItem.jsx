@@ -379,7 +379,7 @@ export default function LostItem() {
               </p>
             )}
 
-            <div className="flex w-full gap-[0.625rem]">
+            <div className="flex gap-[0.625rem]" style={{ width: '276px' }}>
               <button
                 type="button"
                 onClick={() => {
@@ -389,7 +389,7 @@ export default function LostItem() {
                 }}
                 className="bg-[#7F7F7F] text-[#FFFFFF] text-[0.875rem] font-semibold [font-family:Pretendard]"
                 style={{
-                  width: '132px',
+                  flex: 1,
                   height: '40px',
                   padding: '15px 20px',
                   borderRadius: 0,
@@ -407,7 +407,7 @@ export default function LostItem() {
                 onClick={handleLogin}
                 className="bg-[#8A2822] text-[#FFFFFF] text-[0.875rem] font-semibold [font-family:Pretendard]"
                 style={{
-                  width: '132px',
+                  flex: 1,
                   height: '40px',
                   padding: '15px 20px',
                   borderRadius: 0,
