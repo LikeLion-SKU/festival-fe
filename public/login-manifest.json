@@ -1,6 +1,6 @@
 {
-  "name": "관리자 로그인",
-  "short_name": "관리자",
+  "name": "라이언오더",
+  "short_name": "라이언오더",
   "description": "대동제 관리자 로그인",
   "start_url": "/login",
   "display": "standalone",
