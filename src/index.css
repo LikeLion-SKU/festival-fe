@@ -102,11 +102,6 @@ body {
   font-family: 'Pretendard', sans-serif;
 }
 
-@layer base {
-  input:focus, textarea:focus, select:focus {
-    font-size: 16px;
-  }
-}
 
 @theme {
   --color-button-red: #ff756c;
@@ -137,3 +132,4 @@ body,
 #root {
   height: 100%;
 }
+
