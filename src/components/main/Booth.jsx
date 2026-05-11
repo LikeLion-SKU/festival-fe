@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import clsx from 'clsx';
 
@@ -41,11 +41,11 @@ function getBoothCardScatterDelayMs(index) {
   return Math.round(index * 38);
 }
 
-/** @param {{ image: string; title: string | string[] }} props */
-function BoothImageCard({ image, title }) {
+/** @param {{ image: string; title: string | string[]; to?: string }} props */
+function BoothImageCard({ image, title, to }) {
   const titleLabel = Array.isArray(title) ? title.join(' ') : String(title ?? '');
   const imageAlt = titleLabel ? `${titleLabel} 부스 카드` : '부스 카드';
-  return (
+  const article = (
     <article className="relative aspect-[155/212] w-full overflow-hidden shadow-[1px_1px_0px_rgba(0,0,0,0.12)]">
       <img
         src={image}
@@ -56,6 +56,14 @@ function BoothImageCard({ image, title }) {
       />
     </article>
   );
+  if (to) {
+    return (
+      <Link to={to} className="block">
+        {article}
+      </Link>
+    );
+  }
+  return article;
 }
 
 export default function Booth() {
@@ -332,7 +340,7 @@ export default function Booth() {
                         : 'none',
                     }}
                   >
-                    <BoothImageCard image={card.image} title={card.title} />
+                    <BoothImageCard image={card.image} title={card.title} to={card.to} />
                   </div>
                 </div>
               ))}
