@@ -30,4 +30,5 @@ export const departmentList = [
   { department: '신문사', departmentName: 'PRESS' },
   { department: '축제기획단', departmentName: 'FESTIVAL_PLANNING' },
   { department: '학생처', departmentName: 'STUDENT_OFFICE' },
+  { department: '총학생회', departmentName: 'STUDENT_COUNCIL' },
 ];
