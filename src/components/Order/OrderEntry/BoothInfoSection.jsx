@@ -132,7 +132,7 @@ function BoothInfoSection({
           </span>
         </div>
       )}
-      <div className={`relative mt-7 text-sm font-normal leading-6 ${textSecondary} ${fontClass}`}>
+      <div className={`relative mt-7 text-sm font-normal leading-5 ${textSecondary} ${fontClass}`}>
         {isLoading ? (
           <div className="flex flex-col gap-2">
             <Skeleton className="h-4 w-full" />
