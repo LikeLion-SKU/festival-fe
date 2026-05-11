@@ -19,7 +19,7 @@ export default function PasswordBox({ value, onChange, isFail, inputRef }) {
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="비밀번호를 입력해주세요"
-          className={`flex-1 min-w-0 h-7.5 bg-transparent text-[14px] leading-[1.6] 
+          className={`flex-1 min-w-0 h-7.5 bg-transparent text-[14px] leading-[1.6]
             ${
               isFail
                 ? 'text-[#FF9500] placeholder:text-[#FF9500]'
