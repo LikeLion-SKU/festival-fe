@@ -114,25 +114,12 @@ export default function BusinessManagementSheet({ open, onOpenChange }) {
                     <div className="flex items-center gap-3">
                       <span
                         className="font-semibold [font-family:Pretendard]"
-                        style={{
-                          fontSize: '16px',
-                          lineHeight: '28px',
-                          letterSpacing: '-0.01em',
-                          color: '#1A1A1A',
-                        }}
+                        style={{ fontSize: '16px', lineHeight: '28px', letterSpacing: '-0.01em' }}
                       >
-                        부스 영업 상태 :
-                      </span>
-                      <span
-                        className="font-semibold [font-family:Pretendard]"
-                        style={{
-                          fontSize: '16px',
-                          lineHeight: '28px',
-                          letterSpacing: '-0.01em',
-                          color: '#FE5F54',
-                        }}
-                      >
-                        {isBusinessOpen ? '영업 중' : '영업 중단'}
+                        <span style={{ color: '#1A1A1A' }}>부스 영업 상태 : </span>
+                        <span style={{ color: '#FE5F54' }}>
+                          {isBusinessOpen ? '영업 중' : '영업 중단'}
+                        </span>
                       </span>
                       <button
                         onClick={() => setStep('confirm')}
@@ -143,7 +130,7 @@ export default function BusinessManagementSheet({ open, onOpenChange }) {
                       </button>
                     </div>
 
-                    <div className="border-l-2 border-[#E5E5E5] pl-3 flex flex-col gap-1">
+                    <div className="border-l-2 border-[#E5E5E5] pl-3 flex flex-col gap-0.5">
                       <p className="text-[12px] text-[#7F7F7F]">
                         {info?.dayOpenTime
                           ? `낮 오픈 ${info.dayOpenTime} / 밤 오픈 ${info.nightOpenTime} / 부스 마감 ${info.closeTime}`
@@ -155,7 +142,7 @@ export default function BusinessManagementSheet({ open, onOpenChange }) {
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-4 mt-5">
                     <div className="flex items-center justify-between">
                       <span
                         className="font-semibold [font-family:Pretendard]"
