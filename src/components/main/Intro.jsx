@@ -7,6 +7,7 @@ import ThreeIcon from '@/assets/icons/main/3.svg';
 import FiveIcon from '@/assets/icons/main/5.svg';
 import HyphenIcon from '@/assets/icons/main/hypen.svg';
 import SpotIcon from '@/assets/icons/main/spot.svg';
+import { ensureIntroVideoPlayableUrl, getIntroVideoPlayableUrlSync } from '@/utils/introVideoCache';
 
 function DateDot() {
   return (
@@ -28,12 +29,21 @@ export default function Intro() {
   const videoRef = useRef(null);
   const hasStoppedRef = useRef(false);
   const [videoPlaying, setVideoPlaying] = useState(false);
-  /** 리로드나 재라우팅 시 새 media 요소로 캐시된 재생 위치 섞임 방지 */
-  const [videoMountKey] = useState(
-    () => globalThis.crypto?.randomUUID?.() ?? `intro-video-${Date.now()}`
-  );
+  const [videoSrc, setVideoSrc] = useState(() => getIntroVideoPlayableUrlSync());
 
   useEffect(() => {
+    if (videoSrc) return;
+    let cancelled = false;
+    void ensureIntroVideoPlayableUrl().then((url) => {
+      if (!cancelled) setVideoSrc(url);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [videoSrc]);
+
+  useEffect(() => {
+    if (!videoSrc) return;
     const el = videoRef.current;
     if (!el) return;
 
@@ -45,23 +55,23 @@ export default function Intro() {
     el.setAttribute('webkit-playsinline', 'true');
     hasStoppedRef.current = false;
 
-    const attemptPlay = () => {
+    const tryPlay = () => {
       if (hasStoppedRef.current) return;
       if (!el.paused) return;
       el.play().catch(() => {});
     };
 
-    attemptPlay();
-    const retryTimers = [160, 450, 900].map((ms) => window.setTimeout(attemptPlay, ms));
-    const retryInterval = window.setInterval(attemptPlay, 300);
-    const stopRetryTimer = window.setTimeout(() => window.clearInterval(retryInterval), 4200);
+    const onCanPlay = () => tryPlay();
+    el.addEventListener('canplay', onCanPlay, { once: true });
+    const t1 = window.setTimeout(tryPlay, 120);
+    const t2 = window.setTimeout(tryPlay, 450);
 
     return () => {
-      retryTimers.forEach((timer) => window.clearTimeout(timer));
-      window.clearInterval(retryInterval);
-      window.clearTimeout(stopRetryTimer);
+      el.removeEventListener('canplay', onCanPlay);
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
     };
-  }, []);
+  }, [videoSrc]);
 
   useEffect(() => {
     const onPageShow = (e) => {
@@ -103,50 +113,59 @@ export default function Intro() {
       className="relative flex min-h-[48rem] flex-col bg-[#121212] px-[1.5rem] pb-[5rem] pt-[4.5rem]"
       onPointerDownCapture={tryPlayFromUserGesture}
     >
+      <style>{`
+        #intro-hero-video::-webkit-media-controls,
+        #intro-hero-video::-webkit-media-controls-enclosure,
+        #intro-hero-video::-webkit-media-controls-start-playback-button {
+          display: none !important;
+        }
+      `}</style>
       <img
         src="/images/main-poster.webp"
         alt=""
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
       />
-      <video
-        key={videoMountKey}
-        ref={videoRef}
-        autoPlay
-        muted
-        defaultMuted
-        playsInline
-        controls={false}
-        preload="metadata"
-        disablePictureInPicture
-        controlsList="nodownload noplaybackrate noremoteplayback"
-        onPlaying={() => setVideoPlaying(true)}
-        onError={() => setVideoPlaying(false)}
-        onLoadedData={(e) => {
-          const v = e.currentTarget;
-          v.muted = true;
-          v.defaultMuted = true;
-          v.play().catch(() => {});
-        }}
-        onTimeUpdate={(e) => {
-          const video = e.currentTarget;
-          if (hasStoppedRef.current) return;
-          if (!Number.isFinite(video.duration) || video.duration <= 0) return;
-          const stopAt = Math.max(video.duration - 0.5, 0);
-          if (video.currentTime >= stopAt) {
-            hasStoppedRef.current = true;
-            video.currentTime = stopAt;
-            video.pause();
-          }
-        }}
-        aria-hidden="true"
-        style={{ top: '-12px' }}
-        className={`pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-full w-full object-cover transition-opacity duration-150 ${
-          videoPlaying ? 'opacity-100' : 'opacity-0'
-        }`}
-      >
-        <source src="/video/main-animation-no-audio.mp4" type="video/mp4" />
-      </video>
+      {videoSrc ? (
+        <video
+          id="intro-hero-video"
+          ref={videoRef}
+          src={videoSrc}
+          autoPlay
+          muted
+          defaultMuted
+          playsInline
+          {...{ 'webkit-playsinline': 'true' }}
+          controls={false}
+          preload="auto"
+          disablePictureInPicture
+          controlsList="nodownload noplaybackrate noremoteplayback"
+          onPlaying={() => setVideoPlaying(true)}
+          onError={() => setVideoPlaying(false)}
+          onLoadedData={(e) => {
+            const v = e.currentTarget;
+            v.muted = true;
+            v.defaultMuted = true;
+            v.play().catch(() => {});
+          }}
+          onTimeUpdate={(e) => {
+            const video = e.currentTarget;
+            if (hasStoppedRef.current) return;
+            if (!Number.isFinite(video.duration) || video.duration <= 0) return;
+            const stopAt = Math.max(video.duration - 0.5, 0);
+            if (video.currentTime >= stopAt) {
+              hasStoppedRef.current = true;
+              video.currentTime = stopAt;
+              video.pause();
+            }
+          }}
+          aria-hidden="true"
+          style={{ top: '-12px' }}
+          className={`pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-full w-full object-cover transition-opacity duration-150 ${
+            videoPlaying ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+      ) : null}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-[3]"
