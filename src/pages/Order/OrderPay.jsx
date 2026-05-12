@@ -65,6 +65,12 @@ function OrderPay() {
         <OrderHeader title="결제하기" />
       </div>
 
+      <style>{`
+        @keyframes pay-card-in {
+          from { opacity: 0; transform: translateY(20px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
       <div className="flex-1 overflow-y-auto min-h-0 px-5 flex flex-col items-center pt-12 pb-29 gap-2.5">
         <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 shrink-0">
           <img src={thumbnailUrl} className="w-full h-full object-cover" />
@@ -96,7 +102,10 @@ function OrderPay() {
           </div>
         </div>
 
-        <div className="w-full bg-button-red rounded-xl px-5 py-6">
+        <div
+          className="w-full bg-button-red rounded-xl px-5 py-6"
+          style={{ animation: 'pay-card-in 2s cubic-bezier(0.22,1,0.36,1) 0.15s both' }}
+        >
           <div className="flex items-center gap-4">
             <ATM className="w-8 h-8 shrink-0" />
             <div className="flex-1 flex flex-col gap-1.5">

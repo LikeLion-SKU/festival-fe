@@ -36,9 +36,18 @@ function OrderInfo() {
 
   return (
     <>
+      <style>{`
+        @keyframes complete-item-in {
+          from { opacity: 0; transform: translateY(28px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
       <div className="flex flex-col">
         {/* 주문자 정보 */}
-        <div className="bg-white px-5 py-4 flex items-center justify-between">
+        <div
+          className="bg-white px-5 py-4 flex items-center justify-between"
+          style={{ animation: 'complete-item-in 0.6s ease both' }}
+        >
           <div className="flex items-center gap-2">
             <div className="px-2.5 py-1.25 bg-gray-100 rounded-[3px]">
               <div className="text-xs font-medium text-gray-500">{orderTypeLabel}</div>
@@ -52,7 +61,7 @@ function OrderInfo() {
         <div className="h-3 bg-gray-bg" />
 
         {/* 메뉴 목록 */}
-        <div className="px-5 pb-3">
+        <div className="px-5 pb-3" style={{ animation: 'complete-item-in 0.6s ease 200ms both' }}>
           <div className="bg-white rounded-xl px-4 divide-y divide-gray-200">
             {orderItems.map((item) => (
               <div key={item.orderItemId} className="py-6 flex justify-between items-start">
@@ -71,7 +80,10 @@ function OrderInfo() {
         </div>
 
         {/* 총 주문 금액 */}
-        <div className="bg-white px-7 py-5 flex items-center justify-between">
+        <div
+          className="bg-white px-7 py-5 flex items-center justify-between"
+          style={{ animation: 'complete-item-in 0.6s ease 400ms both' }}
+        >
           <div className="flex items-center gap-2.5">
             <Cash className="w-7 h-7 shrink-0" />
             <span className="text-base font-medium">총 주문 금액</span>
@@ -82,7 +94,10 @@ function OrderInfo() {
         <div className="h-2.5 bg-gray-bg" />
 
         {/* 계좌 정보 */}
-        <div className="bg-white px-7 py-5 flex items-center gap-2.5">
+        <div
+          className="bg-white px-7 py-5 flex items-center gap-2.5"
+          style={{ animation: 'complete-item-in 0.6s ease 600ms both' }}
+        >
           <AtmBlack className="w-10 h-10 shrink-0 -ml-1.25" />
           <div className="flex-1 flex flex-col gap-1">
             <span className="text-base font-medium">{bankName}</span>
@@ -107,7 +122,10 @@ function OrderInfo() {
         <div className="h-4 bg-gray-bg" />
 
         {/* 하단 버튼 */}
-        <div className="px-6.5 pb-4 flex gap-3">
+        <div
+          className="px-6.5 pb-4 flex gap-3"
+          style={{ animation: 'complete-item-in 0.6s ease 800ms both' }}
+        >
           <button
             onClick={() => {
               onReset();

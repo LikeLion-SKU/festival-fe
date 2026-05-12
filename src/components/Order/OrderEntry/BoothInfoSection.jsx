@@ -75,7 +75,7 @@ function BoothInfoSection({
         ) : (
           <div
             className={`text-2xl font-bold ${textPrimary} ${fontClass}`}
-            style={{ animation: 'info-item-in 0.35s ease both' }}
+            style={{ animation: 'info-item-in 0.45s ease both' }}
           >
             {boothName}
           </div>
@@ -103,7 +103,7 @@ function BoothInfoSection({
         ) : (
           <div
             className={`text-sm font-medium ${textSecondary} ${fontClass}`}
-            style={{ animation: 'info-item-in 0.35s ease 40ms both' }}
+            style={{ animation: 'info-item-in 0.45s ease 40ms both' }}
           >
             {departmentName}
           </div>
@@ -116,7 +116,7 @@ function BoothInfoSection({
         ) : (
           <div
             className={`h-5 text-sm font-medium ${textSecondary}`}
-            style={{ animation: 'info-item-in 0.35s ease 65ms both' }}
+            style={{ animation: 'info-item-in 0.45s ease 65ms both' }}
           >
             {location}
           </div>
@@ -129,7 +129,7 @@ function BoothInfoSection({
         ) : (
           <span
             className="text-sm font-medium"
-            style={{ color: '#FF756C', animation: 'info-item-in 0.35s ease 90ms both' }}
+            style={{ color: '#FF756C', animation: 'info-item-in 0.45s ease 90ms both' }}
           >
             {isOpen
               ? '영업 중'
@@ -142,7 +142,7 @@ function BoothInfoSection({
         )}
       </div>
       {!isLoading && (dayOpenTime || nightOpenTime || closeTime) && (
-        <div className="relative mt-0.5" style={{ animation: 'info-item-in 0.35s ease 90ms both' }}>
+        <div className="relative mt-0.5" style={{ animation: 'info-item-in 0.45s ease 90ms both' }}>
           <span
             className="font-semibold [font-family:Pretendard]"
             style={{
@@ -170,7 +170,7 @@ function BoothInfoSection({
             <Skeleton className="h-4 w-3/5" />
           </div>
         ) : (
-          <div style={{ animation: 'info-item-in 0.35s ease 120ms both' }}>
+          <div style={{ animation: 'info-item-in 0.45s ease 120ms both' }}>
             {displayText}
             {isLong && !expanded && (
               <button
@@ -201,7 +201,7 @@ function BoothInfoSection({
                 key={index}
                 className="w-27.5 h-28 rounded object-cover shrink-0 cursor-pointer transition-[opacity,transform] duration-100 active:opacity-75 active:scale-[0.97]"
                 src={src}
-                style={{ animation: `info-item-in 0.35s ease ${150 + index * 40}ms both` }}
+                style={{ animation: `info-item-in 0.45s ease ${150 + index * 40}ms both` }}
                 onClick={() => setLightboxIndex(index)}
               />
             ))}
@@ -210,12 +210,12 @@ function BoothInfoSection({
       {lightboxIndex !== null && (
         <div
           className="fixed inset-0 z-100 bg-black/75 flex items-center justify-center"
-          style={{ animation: 'lightbox-backdrop-in 0.22s ease both' }}
+          style={{ animation: 'lightbox-backdrop-in 0.28s ease both' }}
           onClick={() => setLightboxIndex(null)}
         >
           <div
             className="w-80 h-80 relative bg-white overflow-hidden"
-            style={{ animation: 'lightbox-content-in 0.28s cubic-bezier(0.34,1.56,0.64,1) both' }}
+            style={{ animation: 'lightbox-content-in 0.35s cubic-bezier(0.34,1.56,0.64,1) both' }}
             onClick={(e) => e.stopPropagation()}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}

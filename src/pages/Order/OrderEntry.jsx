@@ -60,7 +60,7 @@ function OrderEntry() {
       className={isQR ? '' : 'bg-[#1A1A1A] min-h-screen'}
       style={
         !isQR
-          ? { animation: 'booth-detail-page-in 0.45s cubic-bezier(0.22,1,0.36,1) both' }
+          ? { animation: 'booth-detail-page-in 0.55s cubic-bezier(0.22,1,0.36,1) both' }
           : undefined
       }
     >

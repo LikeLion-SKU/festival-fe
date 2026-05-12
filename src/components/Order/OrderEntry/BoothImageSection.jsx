@@ -77,7 +77,7 @@ function BoothImageSection({ thumbnailUrl, onLangChange, isLoading, isQR }) {
           className="px-1.25 py-1.25 bg-white rounded-[35px] shadow-[0px_0px_4px_0px_rgba(0,0,0,0.25)] inline-flex flex-row-reverse items-center gap-2 overflow-hidden"
           style={{
             width: isExpanded ? '146px' : '50px',
-            transition: 'width 320ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+            transition: 'width 400ms cubic-bezier(0.34, 1.56, 0.64, 1)',
           }}
         >
           <button
@@ -96,7 +96,7 @@ function BoothImageSection({ thumbnailUrl, onLangChange, isLoading, isQR }) {
               style={{
                 opacity: isExpanded ? 1 : 0,
                 transform: isExpanded ? 'scale(1)' : 'scale(0.85)',
-                transition: `opacity 200ms ease ${i * 60}ms, transform 200ms ease ${i * 60}ms`,
+                transition: `opacity 250ms ease ${i * 70}ms, transform 250ms ease ${i * 70}ms`,
               }}
             >
               <img src={lang.flag} alt={lang.code} className="w-full h-full object-cover" />
