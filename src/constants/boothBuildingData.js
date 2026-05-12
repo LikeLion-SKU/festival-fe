@@ -1,35 +1,34 @@
-import BoothDefaultImage from '@/assets/images/booth-default.png';
 import BoothImagePlaceholder from '@/assets/images/booth_image.svg';
-import CheongunChineseImage from '@/assets/images/cheongun-chinese.png';
-import CheongunDoshiImage from '@/assets/images/cheongun-doshi.png';
-import CheongunJapanImage from '@/assets/images/cheongun-japan.png';
-import CheongunSportImage from '@/assets/images/cheongun-sport.png';
-import CheongunYoongImage from '@/assets/images/cheongun-yoong.png';
-import DaeilElectricImage from '@/assets/images/daeil-electric.png';
-import DaeilHakImage from '@/assets/images/daeil-hak.png';
-import DaeilIgongImage from '@/assets/images/daeil-igong.png';
-import DaeilMoneyImage from '@/assets/images/daeil-money.png';
-import DaeilMullImage from '@/assets/images/daeil-mull.png';
-import DaeilNanoImage from '@/assets/images/daeil-nano.png';
-import DaeilTomokImage from '@/assets/images/daeil-tomok.png';
-import Eunju1AdongImage from '@/assets/images/eunju1-adong.png';
-import Eunju1GongongImage from '@/assets/images/eunju1-gongong.png';
-import Eunju1GyoungImage from '@/assets/images/eunju1-gyoung.png';
-import Eunju1Mirae1Image from '@/assets/images/eunju1-mirae1.png';
-import Eunju1Mirae2Image from '@/assets/images/eunju1-mirae2.png';
-import Eunju1SoftwareImage from '@/assets/images/eunju1-software.png';
-import Eunju2BeautyImage from '@/assets/images/eunju2-beauty.png';
-import Eunju2Design11Image from '@/assets/images/eunju2-design1.png';
-import Eunju2Design2Image from '@/assets/images/eunju2-design2.png';
-import Eunju2GunsaImage from '@/assets/images/eunju2-gunsa.png';
-import Eunju2GwangImage from '@/assets/images/eunju2-gwang.png';
-import Eunju2IeumImage from '@/assets/images/eunju2-ieum.png';
-import Eunju2MovieImage from '@/assets/images/eunju2-movie.png';
-import Eunju2MusicImage from '@/assets/images/eunju2-music.png';
-import Eunju2SocialImage from '@/assets/images/eunju2-social.png';
-import HyeinChongdongImage from '@/assets/images/hyein-chongdong.png';
-import HyeinCoreImage from '@/assets/images/hyein-core.png';
-import HyeinShinmunImage from '@/assets/images/hyein-shinmun.png';
+import CheongunChineseImage from '@/assets/images/cheongun-chinese.webp';
+import CheongunDoshiImage from '@/assets/images/cheongun-doshi.webp';
+import CheongunJapanImage from '@/assets/images/cheongun-japan.webp';
+import CheongunSportImage from '@/assets/images/cheongun-sport.webp';
+import CheongunYoongImage from '@/assets/images/cheongun-yoong.webp';
+import DaeilElectricImage from '@/assets/images/daeil-electric.webp';
+import DaeilHakImage from '@/assets/images/daeil-hak.webp';
+import DaeilIgongImage from '@/assets/images/daeil-igong.webp';
+import DaeilMoneyImage from '@/assets/images/daeil-money.webp';
+import DaeilMullImage from '@/assets/images/daeil-mull.webp';
+import DaeilNanoImage from '@/assets/images/daeil-nano.webp';
+import DaeilTomokImage from '@/assets/images/daeil-tomok.webp';
+import Eunju1AdongImage from '@/assets/images/eunju1-adong.webp';
+import Eunju1GongongImage from '@/assets/images/eunju1-gongong.webp';
+import Eunju1GyoungImage from '@/assets/images/eunju1-gyoung.webp';
+import Eunju1Mirae1Image from '@/assets/images/eunju1-mirae1.webp';
+import Eunju1Mirae2Image from '@/assets/images/eunju1-mirae2.webp';
+import Eunju1SoftwareImage from '@/assets/images/eunju1-software.webp';
+import Eunju2BeautyImage from '@/assets/images/eunju2-beauty.webp';
+import Eunju2Design11Image from '@/assets/images/eunju2-design1.webp';
+import Eunju2Design2Image from '@/assets/images/eunju2-design2.webp';
+import Eunju2GunsaImage from '@/assets/images/eunju2-gunsa.webp';
+import Eunju2GwangImage from '@/assets/images/eunju2-gwang.webp';
+import Eunju2IeumImage from '@/assets/images/eunju2-ieum.webp';
+import Eunju2MovieImage from '@/assets/images/eunju2-movie.webp';
+import Eunju2MusicImage from '@/assets/images/eunju2-music.webp';
+import Eunju2SocialImage from '@/assets/images/eunju2-social.webp';
+import HyeinChongdongImage from '@/assets/images/hyein-chongdong.webp';
+import HyeinCoreImage from '@/assets/images/hyein-core.webp';
+import HyeinShinmunImage from '@/assets/images/hyein-shinmun.webp';
 
 /** 지도 건물 id → `GET /booths?location=` 쿼리 값 */
 export const BUILDING_ID_TO_API_LOCATION = {
@@ -435,7 +434,6 @@ export function getMainBoothCardsByBuilding(buildingId) {
 /** 메인 랜딩 부스 그리드·페이지 전환에 쓰이는 정적 이미지 URL (프리로드용) */
 export function getMainBoothAssetSrcs() {
   const srcs = new Set();
-  srcs.add(BoothDefaultImage);
   srcs.add(BoothImagePlaceholder);
   for (const buildingId of Object.keys(MAIN_BOOTH_CARD_DEPARTMENTS_BY_BUILDING)) {
     for (const card of getMainBoothCardsByBuilding(buildingId)) {

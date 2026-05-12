@@ -51,6 +51,7 @@ function BoothImageCard({ image, title, to }) {
         src={image}
         alt={imageAlt}
         className="size-full object-cover"
+        loading="lazy"
         decoding="async"
         draggable={false}
       />

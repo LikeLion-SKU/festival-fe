@@ -5,9 +5,9 @@ import HorseRedIcon from '@/assets/icons/horse-red.svg';
 import HorseIcon from '@/assets/icons/horse.svg';
 import InstagramIcon from '@/assets/icons/instagram.svg?react';
 import LinkIcon from '@/assets/icons/link.svg';
-import BgMadeByMid2 from '@/assets/images/bg-madeby-mid-2.png';
-import BgMadeByTop1 from '@/assets/images/bg-madeby-top-1.png';
-import BgMadeByTop2 from '@/assets/images/bg-madeby-top-2.png';
+import BgMadeByMid2 from '@/assets/images/bg-madeby-mid-2.webp';
+import BgMadeByTop1 from '@/assets/images/bg-madeby-top-1.webp';
+import BgMadeByTop2 from '@/assets/images/bg-madeby-top-2.webp';
 import TitleLogo from '@/assets/images/title-logo.svg';
 import MenuButton from '@/components/common/Button/MenuButton';
 

@@ -2,11 +2,11 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import HorseIcon from '@/assets/icons/horse.svg';
 import FenceBg from '@/assets/images/fence.svg';
-import HorseCard from '@/assets/images/horse-card.png';
+import HorseCard from '@/assets/images/horse-card.webp';
 import HorseRed from '@/assets/images/horse-red.svg';
 import LineupCardDay2Bg from '@/assets/images/lineup-card-day2.svg';
 import LineupCardBg from '@/assets/images/lineup-card.svg';
-import LineupStarBg from '@/assets/images/lineup-star.png';
+import LineupStarBg from '@/assets/images/lineup-star.webp';
 import LineupCarouselDragSurface from '@/components/animation/LineupCarouselDragSurface';
 import LineupSlotCard from '@/components/animation/LineupSlotCard';
 import {
@@ -62,6 +62,8 @@ function LineupCardFace({ item }) {
         src={cardBackgroundImage}
         alt=""
         aria-hidden="true"
+        loading="lazy"
+        decoding="async"
         className="absolute inset-0 h-full w-full object-contain"
       />
 
@@ -70,7 +72,7 @@ function LineupCardFace({ item }) {
           src={item.image}
           alt=""
           aria-hidden="true"
-          loading="eager"
+          loading="lazy"
           decoding="async"
           className="absolute inset-0 h-full w-full scale-[var(--lineup-image-scale)] translate-y-[var(--lineup-image-offset-y)] translate-x-[var(--lineup-image-offset-x)] object-contain object-bottom"
           style={{
@@ -299,18 +301,24 @@ export default function Lineup() {
         src={HorseCard}
         alt=""
         aria-hidden="true"
+        loading="lazy"
+        decoding="async"
         className="pointer-events-none absolute left-1/2 top-[0.75rem] z-[10] w-[28.125rem] max-w-none -translate-x-1/2 object-contain"
       />
       <img
         src={HorseRed}
         alt=""
         aria-hidden="true"
+        loading="lazy"
+        decoding="async"
         className="pointer-events-none absolute left-1/2 top-[8rem] z-[11] w-[9.28125rem] max-w-none -translate-x-1/2 object-contain mix-blend-multiply"
       />
       <img
         src={FenceBg}
         alt=""
         aria-hidden="true"
+        loading="lazy"
+        decoding="async"
         className="pointer-events-none absolute left-1/2 top-[19rem] z-[2] w-[28.125rem] max-w-none -translate-x-1/2 object-cover"
       />
       <div

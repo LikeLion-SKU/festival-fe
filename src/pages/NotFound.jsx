@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router';
 
 import HatIcon from '@/assets/icons/hat.svg';
-import bg404 from '@/assets/images/bg-404-1.png';
+import bg404 from '@/assets/images/bg-404-1.webp';
 
 export default function NotFound() {
   const navigate = useNavigate();

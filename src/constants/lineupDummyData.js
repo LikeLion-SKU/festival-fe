@@ -1,10 +1,10 @@
-import DavichiBg from '@/assets/images/davichi.jpg';
-import DodriBg from '@/assets/images/dodri.jpg';
-import EnflyBg from '@/assets/images/enfly.jpg';
-import KiofBg from '@/assets/images/kiof.jpg';
-import LgnBg from '@/assets/images/lgnshot.jpg';
-import LimeBg from '@/assets/images/lime.jpg';
-import ParkBg from '@/assets/images/park.jpg';
+import DavichiBg from '@/assets/images/davichi.webp';
+import DodriBg from '@/assets/images/dodri.webp';
+import EnflyBg from '@/assets/images/enfly.webp';
+import KiofBg from '@/assets/images/kiof.webp';
+import LgnBg from '@/assets/images/lgnshot.webp';
+import LimeBg from '@/assets/images/lime.webp';
+import ParkBg from '@/assets/images/park.webp';
 
 /**
  * 캐러셀 데이터
