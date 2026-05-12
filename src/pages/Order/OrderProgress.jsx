@@ -96,6 +96,7 @@ function OrderProgress() {
           onIncrease={onIncrease}
           onDecrease={onDecrease}
           lang={lang}
+          isLoading={isMenuLoading}
         />
         <div className="h-25" />
       </div>
