@@ -8,6 +8,8 @@ export default function Banner({ bannerImageSrc = '', mirrorImage = false, banne
           src={bannerImage}
           alt=""
           aria-hidden="true"
+          loading="lazy"
+          decoding="async"
           className={`h-auto w-full object-contain ${mirrorImage ? '-scale-x-100' : ''}`}
         />
       </div>

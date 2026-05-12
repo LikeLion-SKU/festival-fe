@@ -14,12 +14,42 @@ import Footer from '@/layouts/Footer.jsx';
 import { preloadBoothAssets } from '@/utils/boothAssetPreload';
 import { preloadLineupAssets } from '@/utils/lineupAssetPreload';
 
-void preloadLineupAssets();
-void preloadBoothAssets();
+/** 첫 로드에 라인업·부스 전 이미지를 받지 않고, 해당 섹션이 가까워질 때만 프리로드 */
+const SECTION_PRELOAD_ROOT_MARGIN = '280px 0px';
 
 export default function Main() {
   const navigate = useNavigate();
   const [hasScrolled, setHasScrolled] = useState(false);
+
+  useEffect(() => {
+    let lineupStarted = false;
+    let boothStarted = false;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const id = entry.target.id;
+          if (id === 'lineup' && !lineupStarted) {
+            lineupStarted = true;
+            void preloadLineupAssets();
+          }
+          if (id === 'booth' && !boothStarted) {
+            boothStarted = true;
+            void preloadBoothAssets();
+          }
+        }
+      },
+      { root: null, rootMargin: SECTION_PRELOAD_ROOT_MARGIN, threshold: 0 }
+    );
+
+    const lineupEl = document.getElementById('lineup');
+    const boothEl = document.getElementById('booth');
+    if (lineupEl) io.observe(lineupEl);
+    if (boothEl) io.observe(boothEl);
+
+    return () => io.disconnect();
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => setHasScrolled(true), 4200);

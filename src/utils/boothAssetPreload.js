@@ -5,21 +5,21 @@ import { getMainBoothAssetSrcs } from '@/constants/boothBuildingData';
 function preloadImage(src) {
   return new Promise((resolve) => {
     const img = new Image();
-    const afterLoad = () => {
-      if (typeof img.decode === 'function') {
-        img.decode().then(resolve).catch(resolve);
-      } else {
-        resolve();
-      }
-    };
-    img.onload = afterLoad;
+    img.onload = () => resolve();
     img.onerror = () => resolve();
     img.src = src;
   });
 }
 
-/** 모션 시 이미지 끊김 완화 */
-export function preloadBoothAssets() {
+async function preloadBoothAssetsStaggered() {
   const srcs = [...getMainBoothAssetSrcs(), FenceBg, DesertBg];
-  return Promise.all(srcs.map(preloadImage)).then(() => undefined);
+  for (const src of srcs) {
+    await preloadImage(src);
+    await new Promise((r) => requestAnimationFrame(r));
+  }
+}
+
+/** 모션 시 끊김 완화 — 일괄 decode 대신 프레임 나눠 캐시만 채움 */
+export function preloadBoothAssets() {
+  return preloadBoothAssetsStaggered().then(() => undefined);
 }
