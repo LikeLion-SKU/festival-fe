@@ -10,6 +10,7 @@ import DaeilIgongImage from '@/assets/images/daeil-igong.webp';
 import DaeilMoneyImage from '@/assets/images/daeil-money.webp';
 import DaeilMullImage from '@/assets/images/daeil-mull.webp';
 import DaeilNanoImage from '@/assets/images/daeil-nano.webp';
+import DaeilOnbitImage from '@/assets/images/daeil-onbit.webp';
 import DaeilTomokImage from '@/assets/images/daeil-tomok.webp';
 import Eunju1AdongImage from '@/assets/images/eunju1-adong.webp';
 import Eunju1GongongImage from '@/assets/images/eunju1-gongong.webp';
@@ -88,6 +89,7 @@ const RAW_DEPARTMENTS_BY_BUILDING = {
     },
     { department: '토목건축공학과', boothNumber: 30 },
     { department: '나노화학생명공학과', boothNumber: 31 },
+    { department: '홍보단', boothNumber: 32 },
   ],
   eunju1: [
     { department: '아동청소년학과', boothNumber: 16 },
@@ -221,6 +223,12 @@ const BOOTH_CARD_CONTENT_BY_BUILDING = {
       subtitle: '대일관 앞',
       title: '학생처 학생과',
       to: '/order/36',
+    },
+    홍보단: {
+      image: DaeilOnbitImage,
+      subtitle: '대일관 앞',
+      title: '홍보단',
+      to: '/order/38',
     },
   },
   eunju2: {
@@ -416,6 +424,7 @@ export const MAIN_BOOTH_CARD_DEPARTMENTS_BY_BUILDING = {
     '물류시스템공학과',
     '학생처',
     '금융정보공학과',
+    '홍보단',
   ],
 };
 

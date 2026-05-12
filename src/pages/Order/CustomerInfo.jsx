@@ -34,9 +34,9 @@ function CustomerInfo() {
   const [name, setName] = useState('');
   const [headCount, setHeadCount] = useState('');
   const [tableNumber, setTableNumber] = useState('');
-  const [phoneDigits, setPhoneDigits] = useState('');
+  const [phoneDigits, setPhoneDigits] = useState('010');
 
-  const phone = formatPhone(phoneDigits);
+  const phone = phoneDigits === '010' ? '010-' : formatPhone(phoneDigits);
 
   const handlePhoneChange = (e) => {
     const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
@@ -54,7 +54,7 @@ function CustomerInfo() {
   const nameState = getState(name.trim(), true);
   const headCountState = getState(headCount, /^\d+$/.test(headCount));
   const tableState = getState(tableNumber, tableNumber.length > 0);
-  const phoneState = getState(phoneDigits, phoneDigits.length === 11);
+  const phoneState = getState(phoneDigits === '010' ? '' : phoneDigits, phoneDigits.length === 11);
 
   const isFormValid =
     nameState === 'valid' &&
@@ -66,12 +66,12 @@ function CustomerInfo() {
       <div className="shrink-0">
         <OrderHeader showBackButton onBack={() => navigate(-1)} />
       </div>
-      <div className="flex-1 px-7 pt-10 flex flex-col gap-6">
+      <div className="flex-1 px-7 pt-10 [@media(max-height:720px)]:pt-4 flex flex-col gap-6 [@media(max-height:720px)]:gap-3">
         <div className="flex flex-col px-2 gap-1">
           <p className="text-xl font-semibold text-order-button">결제하기 앞서,</p>
           <p className="text-xl font-semibold">주문자 정보를 입력해주세요</p>
         </div>
-        <div className="flex flex-col gap-6 mt-4">
+        <div className="flex flex-col gap-6 [@media(max-height:720px)]:gap-4 mt-4 [@media(max-height:720px)]:mt-1">
           <InputField
             placeholder="이름"
             value={name}
@@ -117,12 +117,19 @@ function CustomerInfo() {
             type="tel"
           />
         </div>
-        <div className="mt-2 px-2 py-4 text-[11px] text-[#B0B0B0] leading-[1.6] [font-family:Pretendard]">
+        <div className="mt-[-20px] [@media(max-height:720px)]:mt-[-8px] px-2 py-4 text-[11px] text-[#B0B0B0] leading-[1.6] [font-family:Pretendard]">
           <p className="font-semibold text-[#888888] mb-1">개인정보 수집 및 이용 안내</p>
           <p>수집 항목: 이름, 휴대폰 번호{isDineIn ? ', 인원 수, 테이블 번호' : ''}</p>
           <p>수집 목적: 주문 접수 및 처리</p>
           <p>보유 기간: 축제 종료 후 즉시 삭제</p>
           <p className="mt-1">주문 요청 시 위 내용에 동의한 것으로 간주됩니다.</p>
+          <p className="mt-3 text-[10px] text-[#FE5F54] tracking-[-0.02em] leading-[1.6]">
+            {'본 서비스에 대한 주문·결제 정보 위변조, 서비스 방해 행위는'}
+            <br />
+            <span className="font-bold">
+              관련 법령에 의해 형사처벌 및 민사상 손해배상 대상이 될 수 있습니다.
+            </span>
+          </p>
         </div>
       </div>
       <OrderButtonBox

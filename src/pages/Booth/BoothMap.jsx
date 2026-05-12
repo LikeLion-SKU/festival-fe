@@ -15,6 +15,7 @@ import { BUILDING_ID_TO_API_LOCATION, formatBoothLocationKo } from '@/constants/
 import { BUILDINGS } from '@/constants/mainDummyData';
 
 const BOOTH_MAP_SCROLL_Y_STORAGE_KEY = 'booth-map-scroll-y';
+const BOOTH_MAP_BUILDING_STORAGE_KEY = 'booth-map-active-building';
 
 function normalizeBoothList(payload) {
   if (payload == null) return [];
@@ -50,9 +51,16 @@ export default function BoothMapPage() {
   const persistedUiState = location.state?.boothMapUiState;
   const hasPendingScrollRestore =
     typeof window !== 'undefined' && sessionStorage.getItem(BOOTH_MAP_SCROLL_Y_STORAGE_KEY) != null;
-  const [activeBuildingId, setActiveBuildingId] = useState(
-    persistedUiState?.activeBuildingId ?? null
-  );
+  const [activeBuildingId, setActiveBuildingId] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const scrollRaw = sessionStorage.getItem(BOOTH_MAP_SCROLL_Y_STORAGE_KEY);
+      if (scrollRaw != null) {
+        const savedBuilding = sessionStorage.getItem(BOOTH_MAP_BUILDING_STORAGE_KEY);
+        if (savedBuilding != null) return savedBuilding;
+      }
+    }
+    return persistedUiState?.activeBuildingId ?? null;
+  });
   const [search, setSearch] = useState(persistedUiState?.search ?? '');
   const [searchMode, setSearchMode] = useState(persistedUiState?.searchMode ?? false);
   const [isHyeinFlashing, setIsHyeinFlashing] = useState(false);
@@ -62,16 +70,21 @@ export default function BoothMapPage() {
   /* 스크롤 후 특정 카드 진입 후 뒤로 가기 버튼 클릭 시 이전 위치 복원 */
   useEffect(() => {
     const raw = sessionStorage.getItem(BOOTH_MAP_SCROLL_Y_STORAGE_KEY);
-    if (raw == null) return;
+    if (raw == null) {
+      sessionStorage.removeItem(BOOTH_MAP_BUILDING_STORAGE_KEY);
+      return;
+    }
     const y = Number(raw);
     if (!Number.isFinite(y)) {
       sessionStorage.removeItem(BOOTH_MAP_SCROLL_Y_STORAGE_KEY);
+      sessionStorage.removeItem(BOOTH_MAP_BUILDING_STORAGE_KEY);
       return;
     }
 
     const restore = () => {
       window.scrollTo({ top: Math.max(0, y), behavior: 'auto' });
       sessionStorage.removeItem(BOOTH_MAP_SCROLL_Y_STORAGE_KEY);
+      sessionStorage.removeItem(BOOTH_MAP_BUILDING_STORAGE_KEY);
     };
 
     requestAnimationFrame(restore);
@@ -174,6 +187,11 @@ export default function BoothMapPage() {
   };
   const handleBoothCardNavigate = () => {
     sessionStorage.setItem(BOOTH_MAP_SCROLL_Y_STORAGE_KEY, String(window.scrollY || 0));
+    if (activeBuildingId != null) {
+      sessionStorage.setItem(BOOTH_MAP_BUILDING_STORAGE_KEY, activeBuildingId);
+    } else {
+      sessionStorage.removeItem(BOOTH_MAP_BUILDING_STORAGE_KEY);
+    }
     setCardsAnimateEnabled(false);
   };
 

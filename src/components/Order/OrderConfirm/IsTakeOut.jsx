@@ -31,7 +31,7 @@ function IsTakeOut({ orderType, onTypeChange }) {
           >
             포장
           </span>
-          <div className="font-medium">해갈게요!</div>
+          <div className="font-medium">해 갈게요!</div>
         </div>
         {orderType === 'takeout' && <Location />}
       </IsTakeOutButton>
