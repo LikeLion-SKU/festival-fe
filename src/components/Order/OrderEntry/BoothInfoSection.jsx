@@ -55,11 +55,30 @@ function BoothInfoSection({
 
   return (
     <div className="relative px-7 mt-18">
+      <style>{`
+        @keyframes info-item-in {
+          from { opacity: 0; transform: translateY(10px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes lightbox-backdrop-in {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes lightbox-content-in {
+          from { opacity: 0; transform: scale(0.92); }
+          to   { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
       <div className="relative flex justify-between items-center">
         {isLoading ? (
           <Skeleton className="h-7 w-40" />
         ) : (
-          <div className={`text-2xl font-bold ${textPrimary} ${fontClass}`}>{boothName}</div>
+          <div
+            className={`text-2xl font-bold ${textPrimary} ${fontClass}`}
+            style={{ animation: 'info-item-in 0.35s ease both' }}
+          >
+            {boothName}
+          </div>
         )}
         {isLoading ? (
           <Skeleton className="w-12 h-6" />
@@ -82,7 +101,10 @@ function BoothInfoSection({
         {isLoading ? (
           <Skeleton className="w-24 h-5" />
         ) : (
-          <div className={`text-sm font-medium ${textSecondary} ${fontClass}`}>
+          <div
+            className={`text-sm font-medium ${textSecondary} ${fontClass}`}
+            style={{ animation: 'info-item-in 0.35s ease 40ms both' }}
+          >
             {departmentName}
           </div>
         )}
@@ -92,7 +114,12 @@ function BoothInfoSection({
         {isLoading ? (
           <Skeleton className="w-24 h-5" />
         ) : (
-          <div className={`h-5 text-sm font-medium ${textSecondary}`}>{location}</div>
+          <div
+            className={`h-5 text-sm font-medium ${textSecondary}`}
+            style={{ animation: 'info-item-in 0.35s ease 65ms both' }}
+          >
+            {location}
+          </div>
         )}
       </div>
       <div className="relative flex mt-1 gap-3 items-center">
@@ -100,7 +127,10 @@ function BoothInfoSection({
         {isLoading ? (
           <Skeleton className="w-16 h-5" />
         ) : (
-          <span className="text-sm font-medium" style={{ color: '#FF756C' }}>
+          <span
+            className="text-sm font-medium"
+            style={{ color: '#FF756C', animation: 'info-item-in 0.35s ease 90ms both' }}
+          >
             {isOpen
               ? '영업 중'
               : boothStatus === 'CLOSED'
@@ -112,7 +142,7 @@ function BoothInfoSection({
         )}
       </div>
       {!isLoading && (dayOpenTime || nightOpenTime || closeTime) && (
-        <div className="relative mt-0.5">
+        <div className="relative mt-0.5" style={{ animation: 'info-item-in 0.35s ease 90ms both' }}>
           <span
             className="font-semibold [font-family:Pretendard]"
             style={{
@@ -140,7 +170,7 @@ function BoothInfoSection({
             <Skeleton className="h-4 w-3/5" />
           </div>
         ) : (
-          <>
+          <div style={{ animation: 'info-item-in 0.35s ease 120ms both' }}>
             {displayText}
             {isLong && !expanded && (
               <button
@@ -158,7 +188,7 @@ function BoothInfoSection({
                 접기
               </button>
             )}
-          </>
+          </div>
         )}
       </div>
       <div className="flex gap-1 mt-7 overflow-hidden">
@@ -169,8 +199,9 @@ function BoothInfoSection({
           : images.map((src, index) => (
               <img
                 key={index}
-                className="w-27.5 h-28 rounded object-cover shrink-0 cursor-pointer active:opacity-80 transition-opacity duration-100"
+                className="w-27.5 h-28 rounded object-cover shrink-0 cursor-pointer transition-[opacity,transform] duration-100 active:opacity-75 active:scale-[0.97]"
                 src={src}
+                style={{ animation: `info-item-in 0.35s ease ${150 + index * 40}ms both` }}
                 onClick={() => setLightboxIndex(index)}
               />
             ))}
@@ -179,10 +210,12 @@ function BoothInfoSection({
       {lightboxIndex !== null && (
         <div
           className="fixed inset-0 z-100 bg-black/75 flex items-center justify-center"
+          style={{ animation: 'lightbox-backdrop-in 0.22s ease both' }}
           onClick={() => setLightboxIndex(null)}
         >
           <div
             className="w-80 h-80 relative bg-white overflow-hidden"
+            style={{ animation: 'lightbox-content-in 0.28s cubic-bezier(0.34,1.56,0.64,1) both' }}
             onClick={(e) => e.stopPropagation()}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}

@@ -56,7 +56,22 @@ function OrderEntry() {
       : dayMenus;
 
   return (
-    <div className={isQR ? '' : 'bg-[#1A1A1A] min-h-screen'}>
+    <div
+      className={isQR ? '' : 'bg-[#1A1A1A] min-h-screen'}
+      style={
+        !isQR
+          ? { animation: 'booth-detail-page-in 0.45s cubic-bezier(0.22,1,0.36,1) both' }
+          : undefined
+      }
+    >
+      {!isQR && (
+        <style>{`
+          @keyframes booth-detail-page-in {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+          }
+        `}</style>
+      )}
       <BoothImageSection
         thumbnailUrl={thumbnailUrl}
         onLangChange={onLangChange}

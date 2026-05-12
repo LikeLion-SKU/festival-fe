@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react';
+
 import Garbage from '@/assets/icons/garbage.svg?react';
 import Minus from '@/assets/icons/minus.svg?react';
 import Noodle from '@/assets/icons/noodle.svg';
@@ -16,6 +18,7 @@ function MenuSection({
   onIncrease,
   onDecrease,
   lang,
+  isLoading,
 }) {
   const fontClass = getLangFontClass(lang);
   const grouped = CATEGORY_ORDER.reduce((acc, cat) => {
@@ -23,12 +26,28 @@ function MenuSection({
     return acc;
   }, {});
 
+  const [animKey, setAnimKey] = useState(0);
+  const prevLoadingRef = useRef(isLoading);
+
+  useEffect(() => {
+    if (prevLoadingRef.current && !isLoading) {
+      setAnimKey((k) => k + 1);
+    }
+    prevLoadingRef.current = isLoading;
+  }, [isLoading]);
+
+  let flatIdx = 0;
+
   return (
     <div className="px-4 py-5 flex flex-col gap-6">
       <style>{`
         @keyframes expand-controls {
           from { max-height: 0; opacity: 0; }
           to   { max-height: 60px; opacity: 1; }
+        }
+        @keyframes menu-item-in {
+          from { opacity: 0; transform: translateY(10px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
       {CATEGORY_ORDER.map((cat) => (
@@ -48,17 +67,19 @@ function MenuSection({
                 const key = `${cat}-${index}`;
                 const qty = quantities[key];
                 const isSoldOut = item.soldOut === true;
+                const delay = flatIdx++ * 40;
 
                 return (
                   <div
-                    key={index}
-                    className={`px-3 rounded-lg ${
+                    key={`${animKey}-${index}`}
+                    className={`px-3 rounded-lg transition-[background-color,transform,opacity] duration-150 ${
                       isSoldOut
                         ? 'bg-disable-gray py-5 cursor-default'
                         : qty
                           ? 'bg-gray-100 pt-4 pb-5 cursor-pointer'
-                          : 'py-2 cursor-pointer'
+                          : 'py-2 cursor-pointer active:scale-[0.985] active:opacity-80'
                     }`}
+                    style={{ animation: `menu-item-in 0.32s ease ${delay}ms both` }}
                     onClick={() => !qty && !isSoldOut && onSelect(key)}
                   >
                     <div className="flex justify-between items-center">
@@ -94,7 +115,7 @@ function MenuSection({
                               e.stopPropagation();
                               onDecrease(key);
                             }}
-                            className="w-7 h-7 rounded-full bg-white shadow flex items-center justify-center text-gray-400"
+                            className="w-7 h-7 rounded-full bg-white shadow flex items-center justify-center text-gray-400 active:scale-90 transition-transform duration-100"
                           >
                             {qty === 1 ? (
                               <Garbage className="w-2.5 h-2.5" />
@@ -108,7 +129,7 @@ function MenuSection({
                               e.stopPropagation();
                               onIncrease(key);
                             }}
-                            className="w-7 h-7 rounded-full bg-white shadow flex items-center justify-center text-gray-400"
+                            className="w-7 h-7 rounded-full bg-white shadow flex items-center justify-center text-gray-400 active:scale-90 transition-transform duration-100"
                           >
                             <Plus className="w-2 h-2" />
                           </button>
