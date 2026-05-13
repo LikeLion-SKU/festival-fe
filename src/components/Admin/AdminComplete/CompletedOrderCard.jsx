@@ -31,7 +31,7 @@ export default function CompletedOrderCard({
         <div className="flex h-7 w-full items-center justify-between">
           <div className="flex items-center gap-2">
             <p className="text-[16px] font-bold leading-6.75 tracking-[-0.5px] text-[#222]">
-              테이블 {tableNumber}
+              {tableNumber == 0 ? '포장' : `테이블 ${tableNumber}`}
             </p>
             <div className="flex h-7 max-w-17 items-center justify-center rounded-[5px] bg-[#F6F6F6] px-2 py-1">
               <p className="whitespace-nowrap text-[12px] font-medium leading-[1.6] text-[#7F7F7F]">
